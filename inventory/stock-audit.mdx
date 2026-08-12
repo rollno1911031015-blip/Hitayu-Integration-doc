@@ -1,173 +1,124 @@
 ---
-title: "Stock Audit: Physical Count & Reconciliation Guide"
+title: "Stock Audit - Physical Count & Reconciliation"
 sidebarTitle: "Stock Audit"
-description: "Run formal stock audits in Hitayu ERP to reconcile system quantities against physical counts, review discrepancies, and keep your inventory data accurate."
+description: "Create warehouse count sheets, enter counted quantities, and post stock variances from the implemented Hitayu CRM stock audit workflow."
 ---
 
-A stock audit is the process of comparing what your system says you have against what is actually sitting on the warehouse shelf. Discrepancies creep in over time due to shipping errors, damaged goods that weren't recorded, counting mistakes in inward stock, or theft. Running regular audits ensures your inventory data stays trustworthy and your customer-facing availability figures remain accurate.
+Stock Audit is an Inventory segment used to compare warehouse stock in the system with a physical count.
 
----
+Open **Admin -> Inventory -> Stock Audit** (`/admin/inventory/stock-audit`).
 
-## When to Run a Stock Audit
+<Note>
+  Creating, saving, and completing stock audits requires both `inventory.stock_audit` and `inventory.manage`.
+</Note>
 
-Consider running a stock audit in any of these situations:
+## Create an Audit
 
-- **Scheduled cycle count** — a routine periodic check (weekly, monthly, or quarterly) covering a subset of your SKUs
-- **Full physical inventory** — an end-of-period count of all products, often aligned with a financial year-end
-- **Post-incident investigation** — when a significant discrepancy is noticed in orders or returns
-- **After warehouse changes** — following a warehouse move, reorganisation, or handover to new staff
+The **New Stock Audit** form contains:
 
-<Tip>
-  Best practice is to run audits during **off-peak hours** — overnight or on weekends — when order activity is minimal. This reduces the risk of stock movements occurring mid-count that could distort your comparison figures.
-</Tip>
+| Field | Requirement |
+|---|---|
+| **Warehouse** | Required. Must be an existing warehouse. |
+| **Notes** | Optional. Maximum 2000 characters. |
 
----
+When **Create Audit** is submitted:
 
-## Navigating to Stock Audits
+- The audit number is generated as `SA-YYYYMMDDHHMMSS-###`.
+- The audit starts in `draft` status.
+- The selected warehouse is stored on the audit.
+- Every active product variant is added as an audit item.
+- Each item's system quantity is copied from that variant's stock in the selected warehouse.
+- Audit totals are refreshed.
 
-Go to **Admin → Inventory → Stock Audit** (`/admin/inventory/stock-audit`). This segment lists all past and in-progress audits for your account.
+<Note>
+  The implemented flow does not manually add individual products to an audit. Audit items are generated from active product variants when the audit is created.
+</Note>
 
----
+## Recent Audits
 
-## Creating a New Audit
+The left side of the Stock Audit page shows up to 20 recent audits.
 
-<Steps>
-  <Step title="Start a new audit">
-    On the Stock Audit page, click **New Stock Audit**. A creation form will appear.
-  </Step>
-  <Step title="Select the warehouse">
-    Choose the **warehouse** you are auditing. Each audit is scoped to a single warehouse so you can run audits for multiple locations independently.
-  </Step>
-  <Step title="Name the audit">
-    Give the audit a recognisable name — for example, *"Monthly Cycle Count – Delhi Warehouse – June 2025"*. This makes it easy to find in the audit history later.
-  </Step>
-  <Step title="Save the audit">
-    Click **Create Audit**. The audit is created in **Draft** status and you can now begin adding items to count.
-  </Step>
-</Steps>
-
----
-
-## Adding Items to an Audit
-
-Once an audit has been created, you need to specify which product variants you are counting and record the physical quantity found on the shelf.
-
-<Steps>
-  <Step title="Open the audit">
-    Click on the audit name in the Stock Audit list to open its detail view.
-  </Step>
-  <Step title="Add product variants">
-    Click **Add Item**. Search for the product variant you have physically counted and select it. The system will display the **expected quantity** — this is the quantity Hitayu ERP currently holds for that variant in the selected warehouse.
-  </Step>
-  <Step title="Enter the physical count">
-    In the **Physical Count** field, enter the quantity you actually counted on the shelf. This is your ground-truth figure.
-  </Step>
-  <Step title="Record count timestamp">
-    The system automatically records a precise timestamp for each item when you save the entry, giving you a full audit trail of when each count was performed.
-  </Step>
-  <Step title="Repeat for all items">
-    Continue adding all product variants in scope for this audit. You can save progress and return to add more items before completing the audit.
-  </Step>
-</Steps>
-
-### Understanding Expected vs. Physical Count
+Each list item shows:
 
 | Field | Description |
 |---|---|
-| **Expected Quantity** | The system's current warehouse stock figure at the time the item was added to the audit |
-| **Physical Count** | The actual quantity your team counted on the physical shelf |
-| **Discrepancy** | The difference between expected and physical (positive = surplus, negative = shortage) |
+| **Audit number** | Generated audit identifier |
+| **Status** | Draft or Completed |
+| **Warehouse** | The audited warehouse |
+| **Variance** | Current variance quantity for the audit |
 
-<Note>
-  The expected quantity is captured at the moment you add each item to the audit. If stock movements occur after that point (e.g. new MRNs or order dispatches), they will not retroactively change the expected figure in the audit.
-</Note>
+Click an audit to open it with `audit_id` in the query string.
 
----
+## Audit Summary
 
-## Completing the Audit
+The selected audit shows four summary cards:
 
-When all items have been counted and entered, you are ready to finalise the audit and apply the corrections to your live stock levels.
+| Card | Meaning |
+|---|---|
+| **Audit** | Audit number |
+| **System Qty** | Sum of system quantities across audit items |
+| **Counted Qty** | Sum of entered counted quantities |
+| **Variance** | Sum of item variance quantities |
 
-<Warning>
-  **Completing an audit is irreversible and will overwrite your current system stock levels.** Every product variant included in the audit will have its warehouse quantity set to the physical count you recorded, regardless of what the system previously held. Do not complete an audit if the count data is incomplete or if counting is still in progress.
-</Warning>
+## Count Sheet
 
-<Steps>
-  <Step title="Review the discrepancy summary">
-    Before completing, scroll through the audit items and review the **Discrepancy** column. Investigate any unexpectedly large variances — they may indicate a counting error rather than a genuine stock difference.
-  </Step>
-  <Step title="Click Complete Audit">
-    When you are confident the counts are accurate, click **Complete Audit** at the top of the audit detail page.
-  </Step>
-  <Step title="Confirm the action">
-    A confirmation dialog will appear summarising the number of items and warehouses affected. Click **Confirm** to proceed.
-  </Step>
-  <Step title="System updates stock levels">
-    Hitayu ERP will:
-    - Set the warehouse stock quantity for each audited variant to the recorded physical count
-    - Create **Adjustment** entries in the Stock Ledger for every item with a discrepancy, referencing this audit
-    - Mark the audit as **Completed** and record the completion time and the user who completed it
-  </Step>
-</Steps>
-
-<Note>
-  Product variants that were **not** included in the audit are unaffected. Only the items explicitly added to the audit will have their quantities updated.
-</Note>
-
----
-
-## Viewing Audit History and Discrepancies
-
-All completed audits are preserved in full detail. On the **Admin → Inventory → Stock Audit** page, each completed audit row shows:
+The count sheet table contains:
 
 | Column | Description |
 |---|---|
-| **Audit Name** | The name given when the audit was created |
-| **Warehouse** | The warehouse that was audited |
-| **Items Counted** | Total number of product variants included |
-| **Discrepancies** | Count of items where physical count differed from expected |
-| **Completed By** | The user who finalised the audit |
-| **Completed At** | Date and time the audit was closed |
+| **Product** | Product name and variant name |
+| **SKU** | Item SKU |
+| **System** | Quantity recorded for the selected warehouse when the audit was created |
+| **Counted** | Physical quantity entered by the user |
+| **Variance** | `counted_quantity - system_quantity` |
+| **Remarks** | Optional line note, maximum 1000 characters |
 
-Click on any completed audit to view the full item-by-item breakdown, including the expected quantity, physical count, and the resulting adjustment for every SKU.
+Counted quantity must be an integer from `0` to `1000000`. It can be left blank while the audit is still in draft.
 
-<Tip>
-  Cross-reference the audit completion entries in the **Stock Ledger** (under **Admin → Inventory → Stock Ledger**, filtering by movement type **Adjustment**) to see the precise quantity change applied to each variant as a result of the audit.
-</Tip>
+## Save Counts
 
----
+Click **Save Counts** to update counted quantities and remarks.
 
-## Frequently Asked Questions
+For each submitted item, the system:
 
-<Accordion title="Can I edit an audit after it is completed?">
-  No. Completed audits are locked to preserve the integrity of your stock history. If you discover an error after completion, raise a manual stock adjustment through a new audit covering just the affected items, or contact your system administrator.
-</Accordion>
+- Stores counted quantity.
+- Calculates variance.
+- Stores remarks.
+- Sets `counted_at` when counted quantity is provided.
+- Clears `counted_at` when counted quantity is blank.
+- Refreshes audit totals.
 
-<Accordion title="What happens to stock reservations during an audit?">
-  Active stock reservations (held against open orders) are not cancelled by an audit. After completion, the available quantity shown in the current-stock view will reflect the new audited quantity minus any active reservations. If the audited count was lower than the reserved quantity, you may see a negative available stock — you should review and resolve those open orders promptly.
-</Accordion>
+Completed audits cannot be changed.
 
-<Accordion title="Can I audit multiple warehouses at once?">
-  Each audit is scoped to a single warehouse. To audit multiple warehouses simultaneously, create a separate audit for each location. They can run in parallel — completing one does not affect the others.
-</Accordion>
+## Complete Audit
 
-<Accordion title="Who can create and complete stock audits?">
-  Users require the **Inventory: Stock Audit** permission (plus **Inventory: Manage**) to create, edit, and complete audits. Contact your administrator to request access if needed.
-</Accordion>
+Click **Complete Audit** after every audit item has a counted quantity.
 
-<Accordion title="Does completing an audit affect the Stock Ledger?">
-  Yes. For every item where the physical count differs from the expected quantity, Hitayu ERP creates an **Adjustment** entry in the Stock Ledger. These entries link back to the audit record so you have a full traceability chain — you can filter the Stock Ledger by movement type **Adjustment** to review them.
-</Accordion>
+The system blocks completion when:
 
----
+- The audit is already completed.
+- Any audit item still has a blank counted quantity.
 
-## Quick-Navigation Links
+On completion:
+
+- Items with no variance are skipped.
+- Items with a variance call the inventory stock service to set the selected warehouse stock to the counted quantity.
+- The stock update source is **Stock Audit**.
+- Stock ledger metadata includes audit ID, audit item ID, system quantity, counted quantity, and variance quantity.
+- The audit is marked `completed`.
+- Completed user and completed time are recorded.
+
+<Warning>
+  Completing an audit posts stock changes for variance lines. Check counts carefully before completing, because completed audits are locked.
+</Warning>
+
+## Related Pages
 
 <CardGroup cols={2}>
   <Card title="Current Stock" icon="boxes-stacked" href="/inventory/current-stock">
-    View live stock levels by warehouse and browse the full stock ledger history.
+    Review current variant stock, warehouse quantities, stock status, and recent stock activity.
   </Card>
   <Card title="Purchase Orders" icon="cart-shopping" href="/inventory/purchase-orders">
-    Raise POs, approve them, and receive inward goods to increase stock levels.
+    Raise purchase orders, approve them, and receive goods through MRNs.
   </Card>
 </CardGroup>

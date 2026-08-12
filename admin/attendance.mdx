@@ -1,114 +1,103 @@
 ---
-title: "Attendance Tracking — Clock In, Breaks & History in Hitayu"
+title: "Attendance Tracking - Clock In, Breaks & History in Hitayu"
 sidebarTitle: "Attendance"
-description: "Track employee attendance in Hitayu ERP: clock in and out, log breaks, view your own history, and review team attendance records as a manager."
+description: "Track CRM attendance with day start, day end, break punches, location capture, face photo capture, and attendance history."
 ---
 
-Hitayu ERP includes a built-in attendance module that lets employees record their working hours directly from the CRM. Each punch-in and punch-out captures a **timestamp**, **GPS coordinates**, and an optional **photo**, giving managers an accurate record without manual timesheets.
+Hitayu CRM includes an attendance page where users can start their day, end their day, record breaks, and review attendance records that are visible to them.
 
 <Note>
-  All attendance actions require the **`employee.attendance`** permission. If you do not see the Attendance menu item, ask your administrator to assign this permission to your role.
+  Attendance routes require the `employee.attendance` permission.
 </Note>
 
-Navigate to **Attendance** in the left sidebar to reach the attendance page.
+## Opening Attendance
 
----
+Open **Attendance** from the sidebar or go to `/attendance`.
 
-## Clocking In (Starting Your Day)
+The page shows:
 
-<Steps>
-  <Step title="Open the Attendance page">
-    Click **Attendance** in the sidebar. If you have not yet clocked in today, you will see the **Start Day** panel.
-  </Step>
-  <Step title="Allow location access">
-    Your browser or mobile app will request location permission. Approve it — GPS coordinates are required to record a valid punch. Hitayu also captures location accuracy so records can be verified.
-  </Step>
-  <Step title="Take a check-in photo">
-    If a camera prompt appears, capture a photo. This is stored alongside the attendance record as proof of presence.
-  </Step>
-  <Step title="Click Start Day">
-    Click **Start Day** (or **Punch In**). Hitayu records your check-in time, location, and photo. You will see a confirmation and your daily timer begins.
-  </Step>
-</Steps>
+- Filters for date range.
+- An employee filter when the logged-in user can see more than one user through the staff data scope.
+- Attendance record cards, newest first.
+- Pagination at 20 records per page.
 
-<Warning>
-  You can only start your day once per calendar day. If you accidentally close the page, your clock-in is already saved — do not try to punch in again.
-</Warning>
+## Starting the Day
 
----
+The header attendance button posts to `/attendance/punch` with the type `day_start`.
 
-## Clocking Out (Ending Your Day)
+Before the form is submitted, the browser asks for:
 
-<Steps>
-  <Step title="Return to the Attendance page">
-    Click **Attendance** in the sidebar. Because you have already clocked in, you will now see the **End Day** panel showing your check-in time.
-  </Step>
-  <Step title="Allow location access and take photo">
-    Same as clock-in — allow GPS and capture a photo when prompted.
-  </Step>
-  <Step title="Click End Day">
-    Click **End Day** (or **Punch Out**). Hitayu records your check-out time and location. Your total working hours for the day can be calculated from check-in to check-out, minus any break time.
-  </Step>
-</Steps>
+- Camera access, so a face photo can be captured.
+- Location access, so latitude, longitude, and accuracy can be saved.
 
-<Note>
-  You must have clocked in before you can clock out. Attempting to end the day without a check-in will return an error.
-</Note>
+When the day is started, the system records:
 
----
-
-## Logging Breaks
-
-Employees can log breaks during the working day. Break records include start and end times and GPS coordinates, and they are subtracted from net working hours in reports.
-
-**Starting a break:**
-
-1. On the Attendance page, click **Start Break**.
-2. Allow location access when prompted.
-3. Hitayu records the break start time and your location.
-
-**Ending a break:**
-
-1. Return to the Attendance page and click **End Break**.
-2. Allow location access again.
-3. Hitayu closes the break record with the end time and location.
-
-<Warning>
-  You cannot start a new break while one is already open. You also cannot start a break before clocking in, or after you have clocked out for the day.
-</Warning>
-
----
-
-## Viewing Attendance History
-
-The lower section of the Attendance page shows a **paginated table** of attendance records. Each row displays:
-
-| Column | Description |
+| Field | Stored value |
 |---|---|
-| **Date** | The attendance date |
-| **Employee** | Name and email of the user (managers see all visible team members; employees see only their own records) |
-| **Check-in Time** | Time and location name for the start of the day |
-| **Check-out Time** | Time and location name for the end of the day |
-| **Breaks** | Count and total duration of breaks taken |
-| **Total Hours** | Net working time (check-out minus check-in minus break durations) |
+| **Check-in time** | Current server time |
+| **Latitude / longitude** | Browser geolocation coordinates |
+| **Accuracy** | Browser geolocation accuracy, when available |
+| **Location name** | Submitted location name, when available |
+| **Photo** | Captured image stored under `public/uploads/attendance` |
+| **Source** | Submitted source, defaulting to `crm` |
 
-### Filtering the History
+<Warning>
+  A user can start the day only once per calendar day. If check-in already exists, the system returns "You have already started your day."
+</Warning>
 
-Use the filter bar above the table to narrow records by:
+## Ending the Day
 
-- **Employee** — available to managers who oversee multiple team members
-- **Date From / Date To** — restrict to a specific date range
+The header attendance button posts to `/attendance/punch` with the type used for day end.
 
-The table is sorted with the most recent dates first and paginates at 20 records per page.
+Ending the day also requires camera and location capture. The system records checkout time, checkout coordinates, checkout accuracy, checkout location name, and checkout photo.
 
----
+The system blocks checkout when:
 
-## Manager View
+- The user has not started the day.
+- The user has already ended the day.
 
-If your role gives you visibility over multiple team members (determined by the reporting hierarchy in RBAC), you will see a **Filter by Employee** dropdown and records for your entire visible team. Employees who report to you — or who are in your scope — appear in the filter list.
+## Breaks
 
-Use the date range filter combined with the employee filter to pull up individual attendance records for appraisals, payroll, or compliance reviews.
+Break punches post to `/attendance/break`.
 
-<Tip>
-  For a printable or exportable attendance summary across the whole team, use **Admin → Reports**, which includes an attendance report with date range filtering and export support.
-</Tip>
+### Start Break
+
+When a break is started, the system creates an attendance break with:
+
+- Type `professional`.
+- Start time.
+- Start latitude and longitude.
+- Start accuracy and location name when submitted.
+
+The system blocks break start when:
+
+- The user has not started the day.
+- The user has already ended the day.
+- Another break is already open.
+
+### End Break
+
+When a break is ended, the system updates the open break with end time, end latitude and longitude, end accuracy, and end location name.
+
+The system blocks break end when there is no open break.
+
+## Attendance History
+
+Each attendance record card displays:
+
+| Area | What it shows |
+|---|---|
+| **User and date** | Employee name and attendance date |
+| **Status** | Day Completed when checkout exists, otherwise In Progress |
+| **Check-in** | Time, photo, map link, and accuracy when available |
+| **Check-out** | Time, photo, map link, and accuracy when available |
+| **Breaks** | Start and end time for each break; open breaks show Ongoing |
+
+## Filters
+
+| Filter | Behavior |
+|---|---|
+| **Employee** | Appears only when more than one visible user is in scope |
+| **Date From** | Shows records on or after the selected date |
+| **Date To** | Shows records on or before the selected date |
+| **Reset** | Clears attendance filters |

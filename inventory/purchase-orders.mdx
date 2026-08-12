@@ -1,7 +1,7 @@
 ---
 title: "Purchase Orders, MRNs & Vendor Management in Hitayu ERP"
 sidebarTitle: "Purchase Orders"
-description: "Manage vendors, generate and approve purchase orders, receive goods with MRNs, and process purchase returns — all from one place in Hitayu ERP."
+description: "Manage vendors, generate and approve purchase orders, receive goods with MRNs, and process purchase returns - all from one place in Hitayu ERP."
 ---
 
 Purchase orders in Hitayu ERP cover the entire inbound supply chain: from selecting a vendor and specifying quantities, through an approval step, all the way to physically receiving goods into your warehouse and updating live stock levels. This page walks you through every stage of that workflow, as well as how to handle returns to vendors.
@@ -10,7 +10,7 @@ Purchase orders in Hitayu ERP cover the entire inbound supply chain: from select
 
 ## Managing Vendors
 
-Before you can raise a purchase order, the supplying vendor must exist in the system. Navigate to **Admin → Vendors** (`/admin/vendors`) to view and manage all your vendors.
+Before you can raise a purchase order, the supplying vendor must exist in the system. Navigate to **Admin -> Vendors** (`/admin/vendors`) to view and manage all your vendors.
 
 ### Vendor fields
 
@@ -51,7 +51,7 @@ Each vendor can be associated with specific products, making it faster to genera
 </Steps>
 
 <Note>
-  Only products already existing in your Product Master can be linked to a vendor. If a product is missing, add it first under **Admin → Products**.
+  Only products already existing in your Product Master can be linked to a vendor. If a product is missing, add it first under **Admin -> Products**.
 </Note>
 
 ---
@@ -61,17 +61,18 @@ Each vendor can be associated with specific products, making it faster to genera
 The lifecycle of a purchase order in Hitayu ERP follows four distinct stages:
 
 ```
-Generate PO  →  Approve PO  →  Receive Goods (MRN)  →  Complete
+Generate PO  ->  Approve PO  ->  Receive Goods (MRN)  ->  Complete
 ```
 
 Each stage has a dedicated segment view so your team can see exactly where every order stands.
 
 ### PO Status Segments
 
-Navigate to **Admin → Purchase Orders** (`/admin/purchase-orders/{segment}`). Use the tabs to switch between views:
+Navigate to **Admin -> Purchase Orders** (`/admin/purchase-orders/{segment}`). Use the tabs to switch between views:
 
 | Segment | URL | Description |
 |---|---|---|
+| **Generate** | `/admin/purchase-orders/generate` | Create a new purchase order |
 | **Pending** | `/admin/purchase-orders/pending` | Generated but not yet approved |
 | **Generated** | `/admin/purchase-orders/generated` | Approved and sent to vendor; awaiting delivery |
 | **Partial** | `/admin/purchase-orders/partial` | Some goods received, remainder outstanding |
@@ -84,7 +85,7 @@ Navigate to **Admin → Purchase Orders** (`/admin/purchase-orders/{segment}`). 
 
 <Steps>
   <Step title="Select a vendor">
-    Go to **Admin → Purchase Orders → Pending** and click **New Purchase Order**. Choose the vendor you are ordering from. The system will load that vendor's linked product catalogue.
+    Go to **Admin -> Purchase Orders -> Pending** and click **New Purchase Order**. Choose the vendor you are ordering from. The system will load that vendor's linked product catalogue.
   </Step>
   <Step title="Choose products and quantities">
     For each product variant you wish to order, enter the **quantity (qty)**, **unit price**, and **GST rate (%)**. You can add as many line items as needed.
@@ -93,7 +94,7 @@ Navigate to **Admin → Purchase Orders** (`/admin/purchase-orders/{segment}`). 
     If applicable, enter **freight charges** and **loading charges**. These are added to the PO total for cost tracking purposes but do not affect stock quantities.
   </Step>
   <Step title="Name and describe the PO (optional)">
-    Give the purchase order a descriptive **name** and **description** to make it easy to identify later — for example, *"Q3 Restock – Mumbai Warehouse"*.
+    Give the purchase order a descriptive **name** and **description** to make it easy to identify later - for example, *"Q3 Restock - Mumbai Warehouse"*.
   </Step>
   <Step title="Submit the PO">
     Click **Generate Purchase Order**. The PO is assigned a unique **PO number** and moves to the **Pending** queue awaiting approval.
@@ -112,27 +113,27 @@ Users with the **PO Approve** permission can review and approve pending orders.
 
 <Steps>
   <Step title="Open the pending PO">
-    Navigate to **Admin → Purchase Orders → Pending** and click on the PO you want to review. The detail page shows all line items, quantities, pricing, and charges.
+    Navigate to **Admin -> Purchase Orders -> Pending** and click on the PO you want to review. The detail page shows all line items, quantities, pricing, and charges.
   </Step>
   <Step title="Review the order">
     Confirm that product variants, quantities, prices, and GST rates are correct. If changes are needed, ask the creator to edit the PO before approval.
   </Step>
   <Step title="Approve or cancel">
-    Click **Approve** to advance the PO to **Generated** status. If the order should not proceed, click **Cancel** — cancelled POs are soft-deleted and can be viewed in the Purchases history tab.
+    Click **Approve** to advance the PO to **Generated** status. If the order should not proceed, click **Cancel** - cancelled POs are soft-deleted and can be viewed in the Purchases history tab.
   </Step>
 </Steps>
 
 <Tip>
-  After approval, you can share the PO number or export the PO detail page as a PDF to send to your vendor as a formal order confirmation.
+  The PO detail page is shown as a Purchase Order Challan with vendor, approval, and item details. Share the PO number with the vendor when coordinating the order.
 </Tip>
 
 ---
 
-## Recording Received Goods — MRN (Material Receipt Note)
+## Recording Received Goods - MRN (Material Receipt Note)
 
 An **MRN** (Material Receipt Note) is the formal record of goods arriving at your warehouse against an approved purchase order. Creating an MRN is what actually increases your stock levels in Hitayu ERP.
 
-Navigate to **Admin → Inward Stock** (`/admin/inward-stock`) to manage all MRNs.
+Navigate to **Admin -> Inward Stock** (`/admin/inward-stock`) to manage all MRNs.
 
 ### Creating an MRN
 
@@ -150,7 +151,7 @@ Navigate to **Admin → Inward Stock** (`/admin/inward-stock`) to manage all MRN
     Fill in the vendor's **invoice number** and **invoice date**, along with the **received date** (the physical arrival date at your warehouse).
   </Step>
   <Step title="Record received quantities">
-    For each line item, enter the actual **quantity received**. You do not have to receive all items at once — entering a partial quantity moves the PO to **Partial** status.
+    For each line item, enter the actual **quantity received**. You do not have to receive all items at once - entering a partial quantity moves the PO to **Partial** status.
   </Step>
   <Step title="Save the MRN">
     Click **Save**. The system will:
@@ -176,25 +177,25 @@ Click on any MRN number in the Inward Stock list to open its detail page (`/admi
 
 ### Product-wise Inward Stock View
 
-For a cross-PO view showing how much of each product has been received over time, navigate to **Admin → Inward Stock → Product-wise** (`/admin/inward-stock/product-wise`). This view aggregates all MRN line items by product variant, making it easy to track total inbound volumes for a SKU regardless of which PO or MRN it arrived on.
+For a cross-PO view showing how much of each product has been received over time, navigate to **Admin -> Inward Stock -> Product-wise** (`/admin/inward-stock/product-wise`). This view aggregates all MRN line items by product variant, making it easy to track total inbound volumes for a SKU regardless of which PO or MRN it arrived on.
 
 ---
 
 ## Purchase Returns
 
-If received goods need to be sent back to the vendor — due to damage, quality issues, or over-delivery — raise a **Purchase Return** at **Admin → Purchase Returns** (`/admin/purchase-returns`).
+If received goods need to be sent back to the vendor - due to damage, quality issues, or over-delivery - raise a **Purchase Return** at **Admin -> Purchase Returns** (`/admin/purchase-returns`).
 
 ### Creating a purchase return
 
 <Steps>
   <Step title="Open the Create Return form">
-    Go to **Admin → Purchase Returns** and click **New Purchase Return** (`/admin/purchase-returns/create`).
+    Go to **Admin -> Purchase Returns** and click **New Purchase Return** (`/admin/purchase-returns/create`).
   </Step>
   <Step title="Select the vendor">
     Choose the vendor to whom goods are being returned. The system will load all MRNs from that vendor that contain returnable items.
   </Step>
   <Step title="Choose the MRN">
-    Select the specific MRN the goods arrived on. The system will show each line item along with its **returnable quantity** — the received quantity minus any quantities already returned.
+    Select the specific MRN the goods arrived on. The system will show each line item along with its **returnable quantity** - the received quantity minus any quantities already returned.
   </Step>
   <Step title="Enter return quantities">
     For each item being returned, enter the quantity. You cannot return more than the returnable quantity for any line item.
@@ -205,7 +206,7 @@ If received goods need to be sent back to the vendor — due to damage, quality 
 </Steps>
 
 <Tip>
-  View all past purchase returns, including their status and challan details, on the main **Admin → Purchase Returns** list page.
+  View all past purchase returns, including their status and challan details, on the main **Admin -> Purchase Returns** list page.
 </Tip>
 
 ---

@@ -1,10 +1,10 @@
 ---
 title: "IVR Calling: Queue, Actions & Recordings"
 sidebarTitle: "IVR Calling"
-description: "Work your IVR calling queue, set availability, record call outcomes, log manual calls, and review recordings — all from one workspace in Hitayu ERP."
+description: "Work your IVR calling queue, set availability, record call outcomes, log manual calls, and review recordings - all from one workspace in Hitayu ERP."
 ---
 
-The IVR calling module is Hitayu's built-in inbound calling workspace. When a customer call arrives, Hitayu matches it to an existing order and routes it to an available agent. Every interaction — from call outcomes to payment commitments — is logged directly against the order, so agents have full context during the call and managers can track team performance from a dedicated IVR dashboard.
+The IVR calling module is Hitayu's built-in inbound calling workspace. When a customer call arrives, Hitayu matches it to an existing order and routes it to an available agent. Every interaction - from call outcomes to payment commitments - is logged directly against the order, so agents have full context during the call and managers can track team performance from a dedicated IVR dashboard.
 
 ## Understanding the IVR Calling Queue
 
@@ -29,7 +29,7 @@ Before you start taking calls, mark yourself as available so the system knows to
 
 <Steps>
   <Step title="Open the Calling Queue">
-    Navigate to **Admin → Calling** (`/admin/calling`). Your queue and availability toggle appear at the top of the screen.
+    Navigate to **Admin -> Calling** (`/admin/calling`). Your queue and availability toggle appear at the top of the screen.
   </Step>
   <Step title="Toggle Availability On">
     Click the **Available / Unavailable** toggle. When the indicator turns green, you are active and will receive new call assignments.
@@ -85,11 +85,11 @@ After each call, you must record what happened. This creates an audit trail and 
 
 ## Logging Manual (Outbound) Calls
 
-Sometimes you need to call a customer outside of the automated queue — for example, to re-engage a customer who missed a previous call. Manual calls are logged the same way as queue calls and are fully tracked against the order.
+Sometimes you need to call a customer outside of the automated queue - for example, to re-engage a customer who missed a previous call. Manual calls are logged the same way as queue calls and are fully tracked against the order.
 
 <Steps>
   <Step title="Open the Calling Queue">
-    Go to **Admin → Calling** (`/admin/calling`) and click **Log Manual Call** in the toolbar.
+    Go to **Admin -> Calling** (`/admin/calling`) and click **Log Manual Call** in the toolbar.
   </Step>
   <Step title="Search for the Order">
     Enter the order number or customer phone number in the search field. Search suggestions will surface matching records instantly.
@@ -103,7 +103,7 @@ Sometimes you need to call a customer outside of the automated queue — for exa
 
 ## Viewing Call Details and Recordings
 
-Every call — inbound or manual — has a detail page that aggregates everything about that interaction.
+Every call - inbound or manual - has a detail page that aggregates everything about that interaction.
 
 <Steps>
   <Step title="Open the Call Detail Page">
@@ -113,7 +113,7 @@ Every call — inbound or manual — has a detail page that aggregates everythin
     If your telephony provider recorded the call, the audio player appears at the top of the detail page. Click **Play** to listen to the recording for quality review or dispute resolution.
   </Step>
   <Step title="Review Actions Taken">
-    The **Actions** section lists every outcome recorded for this call — who recorded it, when, and what the outcome was (pay now, pay later, follow-up, or cancel).
+    The **Actions** section lists every outcome recorded for this call - who recorded it, when, and what the outcome was (pay now, pay later, follow-up, or cancel).
   </Step>
   <Step title="Review Order Details">
     The order summary on the detail page shows items, pricing, shipping address, and current payment status so you have full context without leaving the page.
@@ -128,12 +128,12 @@ Every call — inbound or manual — has a detail page that aggregates everythin
 
 ## IVR Webhook: Automatic Status Updates
 
-Hitayu listens for call status updates at the public webhook endpoint (`/webhook`). When your telephony provider fires an event — such as a call being answered, missed, or completed — the system automatically updates the call record without any manual input from your team.
+Hitayu listens for call status updates at the public webhook endpoint (`/webhook`). When your telephony provider fires an event - such as a call being answered, missed, or completed - the system automatically updates the call record without any manual input from your team.
 
 | Call Status | Meaning |
 |-------------|---------|
 | `answered` / `completed` / `connected` | The customer picked up and the call was completed |
-| `missed` / `no-answer` / `busy` / `failed` | The call was not connected — customer unavailable, line busy, or a technical error |
+| `missed` / `no-answer` / `busy` / `failed` | The call was not connected - customer unavailable, line busy, or a technical error |
 
 ---
 
@@ -157,5 +157,5 @@ Managers access the IVR dashboard at `/ivr-dashboard`. This view provides a real
 </CardGroup>
 
 <Tip>
-  Use the **Missed Calls** filter on the IVR dashboard to quickly identify customers who were not reached — then reassign those calls to available agents or schedule follow-ups.
+  Use the **Missed Calls** filter on the IVR dashboard to quickly identify customers who were not reached - then reassign those calls to available agents or schedule follow-ups.
 </Tip>

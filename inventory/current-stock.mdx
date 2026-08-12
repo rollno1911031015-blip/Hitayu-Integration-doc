@@ -1,149 +1,180 @@
 ---
 title: "Current Stock Management & Warehouse Inventory Overview"
 sidebarTitle: "Current Stock"
-description: "View live per-warehouse stock levels, track every ledger movement, sync Shiprocket locations, and understand how orders automatically reserve inventory."
+description: "View Hitayu stock by product variant, check warehouse quantities, review recent stock activity, sync Shopify warehouse locations, and complete warehouse stock audits."
 ---
 
-The Inventory module in Hitayu ERP gives you a single, unified view of your product stock across every warehouse you operate. From live quantity counts to a full audit trail of every item that has moved in or out, this section is your central hub for keeping stock levels accurate and your fulfilment running smoothly.
+The Inventory module shows stock held in Hitayu CRM for product variants, warehouse locations, recent stock ledger activity, and warehouse stock audits. The page is served from the Admin Inventory route and is divided into dashboard, current-stock, warehouse, stock-activity, and stock-audit segments.
 
 ## Navigating to Inventory
 
-Go to **Admin → Inventory** (`/admin/inventory/current-stock`). The Inventory section is split into three segments you can switch between using the tabs at the top of the page:
+Go to **Admin -> Inventory**. The inventory segment is included in the URL:
 
 | Segment | URL | What it shows |
 |---|---|---|
-| **Current Stock** | `/admin/inventory/current-stock` | Live per-product, per-warehouse quantities |
-| **Stock Ledger** | `/admin/inventory/stock-ledger` | Complete history of all stock movements |
-| **Stock Audit** | `/admin/inventory/stock-audit` | Formal reconciliation records |
+| **Dashboard** | `/admin/inventory/dashboard` | Inventory KPIs, stock alerts, and recent activity |
+| **Current Stock** | `/admin/inventory/current-stock` | Product variant stock, warehouse quantities, and stock status |
+| **Warehouses** | `/admin/inventory/warehouses` | Shopify warehouse locations and their stock totals |
+| **Stock Activity** | `/admin/inventory/stock-activity` | The latest 50 stock ledger entries |
+| **Stock Audit** | `/admin/inventory/stock-audit` | Warehouse count sheets and completed audit records |
 
 <Note>
-  Your access to each segment depends on the permissions assigned to your role. Contact your administrator if a tab is missing or greyed out.
+  Access is permission controlled. The dashboard requires `dashboard.inventory`. Inventory segments require one of `inventory.current_stock`, `inventory.stock_ledger`, `inventory.stock_audit`, or `orders.view`. Actions such as adding stock, syncing warehouses, and completing audits require additional management permissions.
 </Note>
 
-## Current Stock View
+## Inventory Dashboard
 
-The **Current Stock** tab shows every product variant alongside its available quantity in each warehouse. Each row in the table represents a unique combination of product variant and warehouse location.
+The dashboard gives a quick summary of inventory health.
 
-### Columns at a glance
+| Area | What it displays |
+|---|---|
+| **Hitayu Inventory Control** | Total ready-to-sell quantity from available stock |
+| **KPI cards** | Total Stock, Available Stock, Reserved Stock, and Out Stock |
+| **Inventory Actions** | Links to Current Stock, Warehouses, Stock Activity, and Stock Audit |
+| **Stock Attention** | Up to 8 low-stock or out-of-stock variants |
+| **Stock Activity** | Up to 8 recent stock ledger movements |
+
+The dashboard data is calculated from product variants and stock ledger rows loaded by the inventory service.
+
+## Current Stock
+
+Open **Admin -> Inventory -> Current Stock** (`/admin/inventory/current-stock`) to view variant-level stock.
+
+### Filters
+
+| Filter | Behavior |
+|---|---|
+| **Search** | Matches product name, product SKU, variant name, or variant SKU |
+| **Stock Status** | Filters by Healthy, Low Stock, or Out of Stock |
+| **Reset** | Returns to the unfiltered current-stock segment |
+
+### Columns
 
 | Column | Description |
 |---|---|
-| **Product** | The parent product name |
-| **Variant** | The specific SKU or variant (size, colour, etc.) |
-| **Warehouse(s)** | The warehouse(s) holding this stock, shown per location |
-| **Total Stock** | Total units physically present across all warehouses |
-| **Reserved** | Units held against open orders and not yet shipped |
-| **Available** | Total stock minus reservations — what can still be sold |
+| **Product** | Product name, with the variant name below it. If the variant has no name, the page shows "Default variant". |
+| **SKU** | Variant SKU, falling back to the product SKU when needed |
+| **Warehouses** | Up to two warehouse quantity lines. If more warehouses hold stock, the row shows a "+ more" count. |
+| **Total Stock** | The variant `total_stock` value |
+| **Reserved** | The variant `reserved_stock` value |
+| **Out** | The variant `out_stock` value |
+| **Available** | The variant `available_stock` value |
+| **Status** | Healthy, Low Stock, or Out of Stock |
 
-<Tip>
-  Use the search bar and warehouse filter at the top of the table to quickly narrow down results when managing a large catalogue.
-</Tip>
+### Stock Status Rules
 
-### Low-Stock Indicators
+Stock status is calculated from available stock:
 
-When a variant's **Available** quantity falls to a low level, the row is highlighted and a warning badge appears beside the quantity. This allows your purchasing team to react quickly before a stockout occurs. A separate badge marks variants that have reached zero available stock — these require immediate attention.
+| Available stock | Status |
+|---:|---|
+| `0` or less | Out of Stock |
+| `1` to `5` | Low Stock |
+| `6` or more | Healthy |
 
-<Note>
-  Stock status badges update automatically as orders are placed and goods are received. No manual configuration is needed for the indicators to appear.
-</Note>
+## Add 1000 Stock
 
-### How Stock Reservations Work
+Users with `inventory.manage`, `inventory.current_stock`, and `inventory.stock_ledger` can see the **Add Stock to Active Products** panel on the Current Stock page.
 
-When a customer places an order, Hitayu ERP immediately creates a **stock reservation** for each item in that order. Reserved units are subtracted from the available quantity shown in the current-stock view but remain physically in the warehouse until the shipment is dispatched.
+When **Add 1000 Stock** is confirmed:
 
-- A reservation is **active** from the moment an order is confirmed.
-- It is **released** automatically when the order is shipped or cancelled.
-- If an order is cancelled, the reserved quantity returns to available stock without any manual intervention.
+- The system adds `1000` units to every product variant whose product status is `active`.
+- Each variant update is written through the inventory stock service.
+- A Stock Activity entry is created for each updated variant.
+- The source used for the change is **CRM Bulk Stock**.
+- The user is redirected to `/admin/inventory/stock-activity` with a success message.
 
-This prevents overselling across all your connected sales channels in real time.
-
----
-
-## Stock Ledger
-
-The **Stock Ledger** is an immutable, time-stamped log of every quantity change that has ever occurred for any product variant in your inventory. Think of it as an accounting journal, but for stock.
-
-### What the ledger records
-
-| Movement Type | Triggered by |
-|---|---|
-| **Inward (MRN)** | Goods received against a Purchase Order |
-| **Outward (Order)** | Items dispatched for a customer order |
-| **Reservation** | Stock held when an order is placed |
-| **Release** | Reservation freed on cancellation or return |
-| **Adjustment (Audit)** | Corrections made when a stock audit is completed |
-| **Bootstrap** | Initial stock imported from Shiprocket |
-
-### Filtering the ledger
-
-Use the filters at the top of the Stock Ledger page to narrow down entries:
-
-- **Date range** — view movements within a specific period
-- **Warehouse** — isolate a single location
-- **Product / Variant** — drill into one SKU
-- **Movement type** — show only inward, outward, or adjustment entries
-- **Source channel** — filter by the e-commerce channel that triggered the movement
-
-<Tip>
-  Export the filtered ledger to CSV using the **Export** button on the top-right for reporting or reconciliation with your accounting software.
-</Tip>
-
----
-
-## Bootstrapping Initial CRM Stock
-
-If you are setting up Hitayu ERP for the first time and already have stock recorded in Shiprocket, you can import those quantities into the CRM in a single action — no manual data entry required.
+The form posts to `/admin/inventory/bootstrap-crm-stock` with `quantity=1000` and `mode=increment`.
 
 <Warning>
-  Bootstrap CRM Stock is a **one-time import**. Running it more than once will create duplicate ledger entries and distort your stock history. Only use this action when initialising a brand-new inventory setup.
+  The visible action increases active variant stock by 1000 units. It is not a Shiprocket import and it is not limited to one warehouse row.
 </Warning>
 
-<Steps>
-  <Step title="Open the Bootstrap dialog">
-    Navigate to **Admin → Inventory → Current Stock** (`/admin/inventory/current-stock`). Click the **Bootstrap CRM Stock** button in the top-right area of the page. The page will scroll to the launch section automatically.
-  </Step>
-  <Step title="Review the pre-flight summary">
-    Hitayu ERP will display the number of product variants and warehouses it is about to import from Shiprocket. Verify the counts match what you expect before proceeding.
-  </Step>
-  <Step title="Confirm the import">
-    Click **Confirm Bootstrap**. The system will pull current stock quantities from Shiprocket and create corresponding warehouse-stock records and ledger entries in Hitayu ERP.
-  </Step>
-  <Step title="Verify the results">
-    Once complete, the current-stock table will populate with the imported quantities. Check a sample of SKUs against your Shiprocket dashboard to confirm accuracy.
-  </Step>
-</Steps>
+## Warehouses
 
----
+Open **Admin -> Inventory -> Warehouses** (`/admin/inventory/warehouses`) to view warehouse locations.
 
-## Syncing Warehouses from Shiprocket
+### Warehouse columns
 
-Hitayu ERP mirrors your Shiprocket warehouse locations so that stock is always attributed to the correct physical site. When you add a new fulfilment centre in Shiprocket, you must sync it into Hitayu ERP before that location appears in stock views and purchase orders.
+| Column | Description |
+|---|---|
+| **Warehouse** | Warehouse name and code |
+| **Shopify Location ID** | The linked Shopify location ID, if available |
+| **Address** | Pickup location and pincode |
+| **Stock** | Total quantity across stock rows for the warehouse |
+| **Stock Lines** | Count of non-zero stock rows |
+| **Status** | Active or Inactive |
 
-<Steps>
-  <Step title="Trigger a warehouse sync">
-    From any Inventory page, click **Sync Warehouses** in the toolbar. This calls the Shiprocket API and fetches the latest list of your registered warehouse locations.
-  </Step>
-  <Step title="Review new locations">
-    Any newly discovered warehouses are added to your warehouse list automatically. Existing warehouses are updated with any name or address changes from Shiprocket.
-  </Step>
-  <Step title="Confirm the warehouse list">
-    Navigate to **Admin → Warehouses** to review the full list and ensure all locations are correctly labelled.
-  </Step>
-</Steps>
+### Sync Warehouses
+
+The **Sync Warehouses** button appears on the Warehouses segment. It calls the Shopify warehouse sync flow and returns a success message with the number of synced warehouse locations and channels.
 
 <Note>
-  Warehouse sync requires the **Inventory: Manage Warehouses** and **Settings: Integrations** permissions. Ensure your Shiprocket API credentials are configured under **Settings → Integrations** before running a sync.
+  Warehouse sync requires `inventory.manage`, `inventory.warehouses`, `inventory.current_stock`, and `settings.integrations`. The code validates Shopify Admin access before syncing locations.
 </Note>
 
----
+## Stock Activity
 
-## Quick-Navigation Links
+Open **Admin -> Inventory -> Stock Activity** (`/admin/inventory/stock-activity`) to review stock ledger rows. The page shows the latest 50 entries.
+
+### Filters
+
+| Filter | Behavior |
+|---|---|
+| **Search** | Matches product name, SKU, or reference ID |
+| **Source Channel** | Filters by an existing source channel from stock ledger records |
+| **Reset** | Returns to the unfiltered stock-activity segment |
+
+### Columns
+
+| Column | Description |
+|---|---|
+| **Date & Time** | Ledger creation date and time |
+| **Product** | Product name, with the note below it when available |
+| **SKU** | Ledger SKU |
+| **Source** | Ledger source channel |
+| **Warehouse** | Linked warehouse name, or `-` |
+| **Reference** | Order link when the ledger belongs to an order, otherwise the reference ID |
+| **Previous** | Previous stock balance |
+| **Changed** | Quantity changed, shown as `+` for credit and `-` for debit |
+| **Updated** | Updated stock balance |
+| **Updated By** | User name, or the actor type when no user is linked |
+
+## Stock Audit
+
+Open **Admin -> Inventory -> Stock Audit** (`/admin/inventory/stock-audit`) to create and complete warehouse count sheets.
+
+### Create an audit
+
+Users with `inventory.stock_audit` and `inventory.manage` can create a stock audit by selecting a warehouse and optionally entering notes.
+
+When an audit is created:
+
+- The system creates an audit number in the `SA-YYYYMMDDHHMMSS-###` format.
+- The audit starts in `draft` status.
+- Active product variants are added as audit items.
+- Each item's system quantity is taken from that variant's stock in the selected warehouse.
+
+### Update and complete an audit
+
+Draft audits allow counted quantity and remarks to be saved for each line. Variance is calculated as:
+
+```text
+counted quantity - system quantity
+```
+
+An audit cannot be completed until every audit item has a counted quantity. On completion, only lines with a variance are posted to stock through the inventory stock service. The audit status is then changed to `completed`, with completed user and completed time recorded.
+
+<Note>
+  Completed audits cannot be changed.
+</Note>
+
+## Related Pages
 
 <CardGroup cols={2}>
   <Card title="Purchase Orders" icon="cart-shopping" href="/inventory/purchase-orders">
-    Create and manage purchase orders, approve them, and record received goods with MRNs.
+    Create purchase orders and receive stock through MRN flows.
   </Card>
   <Card title="Stock Audit" icon="clipboard-check" href="/inventory/stock-audit">
-    Run formal physical counts to reconcile your system stock with what is actually on the shelf.
+    Count warehouse stock and post variances back into inventory.
   </Card>
 </CardGroup>

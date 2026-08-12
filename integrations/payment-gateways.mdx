@@ -1,10 +1,10 @@
 ---
-title: "Payment Gateways — PayU, Razorpay, and Cashfree Setup"
+title: "Payment Gateways - PayU, Razorpay, and Cashfree Setup"
 sidebarTitle: "Payment Gateways"
 description: "Configure PayU, Razorpay, or Cashfree as your active payment gateway in Hitayu ERP and register webhook endpoints for automatic payment reconciliation."
 ---
 
-Hitayu ERP supports three payment gateways — PayU, Razorpay, and Cashfree. Only one gateway is active at a time, but credentials for all three can be stored in Settings so you can switch between them without reconfiguration. When a customer pays through a payment link, Hitayu reconciles the transaction automatically against the relevant order and updates the payment status — no manual data entry required.
+Hitayu ERP supports three payment gateways - PayU, Razorpay, and Cashfree. Only one gateway is active at a time, but credentials for all three can be stored in Settings so you can switch between them without reconfiguration. When a customer pays through a payment link, Hitayu reconciles the transaction automatically against the relevant order and updates the payment status - no manual data entry required.
 
 ---
 
@@ -12,7 +12,7 @@ Hitayu ERP supports three payment gateways — PayU, Razorpay, and Cashfree. Onl
 
 <Steps>
   <Step title="Open Payment Gateway settings">
-    Go to **Settings → Integrations → Payment Gateways**.
+    Go to **Settings -> Integrations -> Payment Gateways**.
   </Step>
   <Step title="Choose your active provider">
     Select your preferred gateway from the **Active Payment Provider** dropdown. The options are:
@@ -44,8 +44,8 @@ PayU is a popular payment gateway in India, supporting net banking, UPI, credit/
 
 | Field | Where to Find It | Notes |
 |---|---|---|
-| **Merchant Key** | PayU Dashboard → Profile → Merchant Key | Unique identifier for your merchant account |
-| **Merchant Salt** | PayU Dashboard → Profile → Salt | Used to generate request hashes |
+| **Merchant Key** | PayU Dashboard -> Profile -> Merchant Key | Unique identifier for your merchant account |
+| **Merchant Salt** | PayU Dashboard -> Profile -> Salt | Used to generate request hashes |
 | **Base URL** | PayU Dashboard or PayU docs | Use `https://test.payu.in/_payment` for sandbox; `https://secure.payu.in/_payment` for production |
 
 ### Webhook Endpoint
@@ -79,13 +79,13 @@ Razorpay supports UPI, cards, net banking, wallets, and BNPL across web and mobi
 
 | Field | Where to Find It | Notes |
 |---|---|---|
-| **Key ID** | Razorpay Dashboard → Settings → API Keys | Starts with `rzp_test_` (test) or `rzp_live_` (production) |
-| **Key Secret** | Razorpay Dashboard → Settings → API Keys | Generated alongside the Key ID |
-| **Webhook Secret** | Razorpay Dashboard → Settings → Webhooks | Used to verify the `X-Razorpay-Signature` header |
+| **Key ID** | Razorpay Dashboard -> Settings -> API Keys | Starts with `rzp_test_` (test) or `rzp_live_` (production) |
+| **Key Secret** | Razorpay Dashboard -> Settings -> API Keys | Generated alongside the Key ID |
+| **Webhook Secret** | Razorpay Dashboard -> Settings -> Webhooks | Used to verify the `X-Razorpay-Signature` header |
 
 ### Webhook Endpoint
 
-Register the following URL in your Razorpay Dashboard under **Settings → Webhooks → Add New Webhook**:
+Register the following URL in your Razorpay Dashboard under **Settings -> Webhooks -> Add New Webhook**:
 
 ```text
 POST https://your-hitayu-domain.com/api/webhooks/payment/razorpay
@@ -103,7 +103,7 @@ Enable the following event subscriptions on that webhook in Razorpay:
 
 ### Test vs. Production Mode
 
-Use `rzp_test_` keys for sandbox testing and `rzp_live_` keys in production. The Razorpay API endpoint automatically routes based on the key prefix — there is no separate URL to change.
+Use `rzp_test_` keys for sandbox testing and `rzp_live_` keys in production. The Razorpay API endpoint automatically routes based on the key prefix - there is no separate URL to change.
 
 ---
 
@@ -115,14 +115,14 @@ Cashfree offers payment collection through UPI, cards, net banking, and Cashfree
 
 | Field | Where to Find It | Notes |
 |---|---|---|
-| **App ID** | Cashfree Dashboard → Developers → API Keys | Your merchant App ID |
-| **Secret Key** | Cashfree Dashboard → Developers → API Keys | Your merchant Secret Key |
+| **App ID** | Cashfree Dashboard -> Developers -> API Keys | Your merchant App ID |
+| **Secret Key** | Cashfree Dashboard -> Developers -> API Keys | Your merchant Secret Key |
 | **Environment** | Set in Hitayu settings | `sandbox` for testing, `production` for live |
 | **API Version** | Defaults to `2023-08-01` | Only change if instructed by Hitayu support |
 
 ### Webhook Endpoint
 
-Register the following URL in your Cashfree Dashboard under **Developers → Webhooks → Add Endpoint**:
+Register the following URL in your Cashfree Dashboard under **Developers -> Webhooks -> Add Endpoint**:
 
 ```text
 POST https://your-hitayu-domain.com/api/webhooks/payment/cashfree
@@ -141,7 +141,7 @@ Enable the following event types:
 | **Sandbox** | `sandbox` |
 | **Production** | `production` |
 
-Set the **Environment** field in Hitayu to `production` when you are ready to process real payments. Cashfree uses separate App IDs for sandbox and production — make sure you switch both the environment value and the credentials at the same time.
+Set the **Environment** field in Hitayu to `production` when you are ready to process real payments. Cashfree uses separate App IDs for sandbox and production - make sure you switch both the environment value and the credentials at the same time.
 
 ---
 
@@ -155,7 +155,7 @@ When a customer completes payment on any supported gateway:
 4. A `payment_transaction` record is created for audit and reporting purposes.
 5. If the payment is successful, the order automatically advances to the next lifecycle stage.
 
-All webhooks are idempotent — if the same payment event is delivered more than once (which gateways sometimes do), Hitayu detects the duplicate and ignores it without creating duplicate records.
+All webhooks are idempotent - if the same payment event is delivered more than once (which gateways sometimes do), Hitayu detects the duplicate and ignores it without creating duplicate records.
 
 ---
 
@@ -167,4 +167,4 @@ All webhooks are idempotent — if the same payment event is delivered more than
 | Signature verification failure | Webhook secret mismatch | Re-copy the webhook secret from your gateway into Hitayu |
 | Test payments appearing in live reports | Using test keys in production | Switch to production keys and update the Environment/Base URL |
 | Payment status stuck on Pending | Background processing not running | Ask your technical team to verify the background processing service is active |
-| Wrong gateway processing payments | Active provider not updated | Check **Active Payment Provider** in Settings → Integrations |
+| Wrong gateway processing payments | Active provider not updated | Check **Active Payment Provider** in Settings -> Integrations |

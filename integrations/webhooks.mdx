@@ -1,50 +1,54 @@
 ---
-title: "Webhook Endpoints — Complete Reference for All Integrations"
+title: "Webhook Endpoints - Integration Route Reference"
 sidebarTitle: "Webhooks"
-description: "Full reference for every Hitayu ERP webhook endpoint — methods, authentication, triggers, and processing modes grouped by integration category."
+description: "Reference for Hitayu CRM webhook endpoints, methods, authentication, and implemented processing behavior."
 ---
 
-This page is the single source of truth for all inbound webhook endpoints in Hitayu ERP. Every external platform that sends data to Hitayu — Shopify, Shiprocket, payment gateways, WhatsApp, SMS, and Exotel — does so by calling one of the endpoints listed here. Use this reference when registering webhooks in external platform dashboards, debugging missed events, or auditing your integration setup.
+This page lists the inbound webhook endpoints registered in the current Hitayu CRM routes. Use it when registering webhooks in external dashboards or checking which route handles a callback.
 
-All webhook endpoints are prefixed with `/api/webhooks/` and are publicly accessible (no login required), but each is protected by signature or token verification specific to its source platform.
+Most webhook endpoints are prefixed with `/api/webhooks/`. The public IVR webhook also exists at `/webhook`.
 
 ---
 
 ## How Webhooks Are Processed
 
-Hitayu uses a **queue-based processing model** for all webhook categories except IVR:
+Webhook processing depends on the endpoint:
 
-1. The external platform sends an HTTP POST to a Hitayu webhook endpoint.
-2. Hitayu validates the request signature or token immediately and returns HTTP `200` within milliseconds.
-3. The payload is dispatched to a background processing queue.
-4. The event is processed, domain records are updated, and an activity log entry is written.
-
-This two-phase approach means external platforms always receive a fast acknowledgement, and processing failures (e.g., a downstream API being temporarily unavailable) are retried automatically without the platform needing to resend.
+| Category | Implemented behavior |
+|---|---|
+| **Shopify** | Passed to the Shopify webhook service and returns the webhook log status |
+| **Shiprocket tracking / NDR** | Records a webhook log and dispatches through the Shiprocket tracking dispatch service |
+| **Shiprocket SR checkout abandoned** | Records a webhook log and imports the abandoned checkout immediately |
+| **Razorpay / Cashfree** | Passed to the payment gateway service and returns `queued` or `duplicate` |
+| **PayU** | Passed to the payment gateway service with immediate processing and returns `processed` or `duplicate` |
+| **WhatsApp / SMS status** | Records a webhook log and dispatches a notification status processing job |
+| **IVR call status** | Records a webhook log and processes the call status immediately |
 
 ### Queued vs. Direct Processing
 
-Certain endpoints support a `?mode=direct` query parameter for testing:
+Shiprocket tracking and NDR dispatch can be controlled with `mode` query/header values:
 
 | Mode | Behaviour |
 |---|---|
-| **Default (queued)** | Payload is accepted and dispatched to the queue. Processing happens asynchronously. |
-| **`?mode=direct`** | Payload is processed synchronously in the same HTTP request. Response includes the processing result. Use for testing only. |
+| **Default** | Uses the dispatch service default |
+| **`?mode=direct`**, `sync`, or `process` | Requests direct processing |
+| **`?mode=queue`**, `queued`, or `async` | Requests queued processing |
 
 <Warning>
-  Never use `?mode=direct` in production configurations. It bypasses the queue's retry mechanisms and will cause timeouts under load.
+  Only Shiprocket tracking/NDR endpoints read this mode value in the current controller.
 </Warning>
 
 ---
 
 ## Idempotency
 
-All webhook handlers in Hitayu are **idempotent**. If a platform re-delivers the same event (a common behaviour among webhook systems), Hitayu detects the duplicate using the event's unique identifier and safely ignores the repeat without creating duplicate records or double-processing payments.
+Payment webhooks return `duplicate` when the payment gateway service detects an existing event. Other endpoints rely on their underlying service behavior.
 
 ---
 
 ## Shopify Webhooks
 
-Shopify sends these events to notify Hitayu of changes in your store. Register each URL in **Shopify Admin → Settings → Notifications → Webhooks**.
+Shopify sends these events to notify Hitayu of changes in your store. Register each URL in **Shopify Admin -> Settings -> Notifications -> Webhooks**.
 
 All Shopify webhooks are verified using HMAC-SHA256 computed against your Webhook Secret. Requests with an invalid or missing `X-Shopify-Hmac-Sha256` header are rejected with HTTP `401`.
 
@@ -72,7 +76,7 @@ All Shopify webhooks are verified using HMAC-SHA256 computed against your Webhoo
 
 ## Shiprocket / Carrier Webhooks
 
-Shiprocket sends tracking, NDR, and abandoned checkout events to these endpoints. Register them in **Shiprocket → Settings → API → Webhooks**.
+Shiprocket sends tracking, NDR, and abandoned checkout events to these endpoints. Register them in **Shiprocket -> Settings -> API -> Webhooks**.
 
 ### Webhook Authentication
 
@@ -109,7 +113,7 @@ Requests without a valid token (when the token is configured) are rejected with 
 
 Payment gateways send transaction events to these endpoints. Register them in your respective gateway's webhook settings dashboard.
 
-Each gateway uses its own signature scheme — Hitayu verifies the signature before processing any event:
+Each gateway uses its own signature scheme - Hitayu verifies the signature before processing any event:
 
 - **Razorpay**: validates the `X-Razorpay-Signature` header using HMAC-SHA256 and your Razorpay Webhook Secret.
 - **Cashfree**: validates the signature header using your Cashfree Secret Key.
@@ -130,10 +134,10 @@ WhatsApp and SMS delivery status callbacks arrive at these endpoints. They allow
 | Method | Endpoint | Provider | Trigger | Description | Authentication |
 |---|---|---|---|---|---|
 | POST | `/api/webhooks/whatsapp/status` | Meta (WhatsApp Business API) | Message status update | Receives `sent`, `delivered`, `read`, and `failed` status events for outbound WhatsApp messages. | Meta webhook signature |
-| POST | `/api/webhooks/sms/status` | Exotel | SMS delivery receipt | Receives delivery confirmations and failure events for outbound SMS messages. | None (IP allowlist recommended) |
+| POST | `/api/webhooks/sms/status` | SMS provider | SMS delivery receipt | Records the payload and dispatches SMS notification status processing. | No route-level signature check |
 
 <Note>
-  When registering the WhatsApp webhook in Meta Business Suite, you must also provide a **Verify Token**. Meta sends a one-time GET challenge to the same endpoint to confirm it is live. Hitayu handles this challenge automatically — no extra setup is required on your end beyond providing the correct Verify Token in both Hitayu and Meta.
+  When registering the WhatsApp webhook in Meta Business Suite, you must also provide a **Verify Token**. Meta sends a one-time GET challenge to the same endpoint to confirm it is live. Hitayu handles this challenge automatically - no extra setup is required on your end beyond providing the correct Verify Token in both Hitayu and Meta.
 </Note>
 
 ---
@@ -147,7 +151,7 @@ Exotel sends call lifecycle events to this endpoint throughout and after every c
 | GET or POST | `/api/webhooks/ivr/call-status` | Exotel | Call status change (ringing, answered, completed, missed) | Receives call events and updates the call record. Supports both GET and POST to match Exotel's flexible callback configuration. | None (IP allowlist recommended) |
 
 <Note>
-  The IVR endpoint accepts both `GET` and `POST` requests. This is intentional — Exotel's legacy Apps use GET callbacks while newer Apps use POST. Hitayu handles both transparently.
+  The IVR endpoint accepts both `GET` and `POST` requests. This is intentional - Exotel's legacy Apps use GET callbacks while newer Apps use POST. Hitayu handles both transparently.
 </Note>
 
 ---
@@ -161,8 +165,8 @@ Hitayu accepts inbound lead data from external sources (landing pages, lead gene
 | POST | `/api/webhooks/leads/{source}` | External lead form or ad platform | Receives lead data from any configured source. The `{source}` path segment identifies the originating platform (e.g., `facebook`, `google`, `website`). | Configurable per source |
 
 Replace `{source}` with the identifier for your lead source. For example:
-- `POST /api/webhooks/leads/facebook` — leads from Facebook Lead Ads
-- `POST /api/webhooks/leads/website` — leads from your website contact form
+- `POST /api/webhooks/leads/facebook` - leads from Facebook Lead Ads
+- `POST /api/webhooks/leads/website` - leads from your website contact form
 
 ---
 
@@ -176,10 +180,10 @@ Replace `{source}` with the identifier for your lead source. For example:
 | Cashfree | Gateway signature header (Cashfree Secret Key) | HTTP 401 |
 | PayU | Body hash (Merchant Salt) | HTTP 401 |
 | WhatsApp | Meta webhook signature | HTTP 401 |
-| SMS (Exotel) | No built-in token — use IP allowlist | N/A |
-| IVR (Exotel) | No built-in token — use IP allowlist | N/A |
+| SMS status | No route-level signature check | N/A |
+| IVR (Exotel) | No built-in token - use IP allowlist | N/A |
 | Leads | Configurable per source | Varies |
 
 <Warning>
-  For SMS and IVR endpoints that do not use signature verification, restrict inbound traffic to Exotel's published IP ranges at your firewall or reverse proxy level to prevent unauthorised calls.
+  For endpoints without route-level signature verification, restrict inbound traffic at your firewall or reverse proxy where possible.
 </Warning>

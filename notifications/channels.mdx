@@ -1,5 +1,5 @@
 ---
-title: "Notification Channels — WhatsApp, SMS, and Push in Hitayu"
+title: "Notification Channels - WhatsApp, SMS, and Push in Hitayu"
 sidebarTitle: "Channels"
 description: "Set up WhatsApp, SMS (SMS Wale), and FCM push notification channels in Hitayu ERP, and track message delivery status via provider webhooks."
 ---
@@ -26,7 +26,7 @@ This webhook updates the notification log status from `sent` to `delivered` or `
 
 ### Required Configuration
 
-Go to **Settings → Integrations → WhatsApp** and enter:
+Go to **Settings -> Integrations -> WhatsApp** and enter:
 
 | Setting | Description |
 |---|---|
@@ -41,10 +41,10 @@ Go to **Settings → Integrations → WhatsApp** and enter:
 
 ### Enabling and Disabling WhatsApp Notifications
 
-WhatsApp delivery for each event type is controlled by toggle switches in **Settings → Integrations → Notifications**:
+WhatsApp delivery for each event type is controlled by toggle switches in **Settings -> Integrations -> Notifications**:
 
-- **Payment Links By WhatsApp** — toggle on/off sending payment links via WhatsApp
-- **Order Received By WhatsApp** — toggle on/off sending order confirmations via WhatsApp
+- **Payment Links By WhatsApp** - toggle on/off sending payment links via WhatsApp
+- **Order Received By WhatsApp** - toggle on/off sending order confirmations via WhatsApp
 
 When a toggle is off, Hitayu skips WhatsApp delivery for that event and records the log entry without attempting a send.
 
@@ -68,7 +68,7 @@ The webhook updates the log entry with the final delivery status reported by the
 
 ### Required Configuration
 
-Go to **Settings → Integrations → SMS** and fill in the SMS Wale settings:
+Go to **Settings -> Integrations -> SMS** and fill in the SMS Wale settings:
 
 | Setting | Description |
 |---|---|
@@ -84,10 +84,10 @@ Go to **Settings → Integrations → SMS** and fill in the SMS Wale settings:
 
 ### Enabling and Disabling SMS Notifications
 
-SMS delivery per event is controlled by toggle switches in **Settings → Integrations → Notifications**:
+SMS delivery per event is controlled by toggle switches in **Settings -> Integrations -> Notifications**:
 
-- **Payment Links By SMS** — toggle on/off sending payment links via SMS
-- **Order Received By SMS** — toggle on/off sending order confirmations via SMS
+- **Payment Links By SMS** - toggle on/off sending payment links via SMS
+- **Order Received By SMS** - toggle on/off sending order confirmations via SMS
 
 <Tip>
   The **SMS Wale API URL** defaults to `https://sms.smswala.in/app/smsapi/index.php`. Update this only if SMS Wale provides you with a different endpoint.
@@ -109,11 +109,11 @@ Push notifications are delivered to **staff members' mobile devices** using **Fi
 
 ### How It Works
 
-When a staff member logs in on the mobile app, their device registers a **device token** with Hitayu (`POST /device-tokens`). When a push event fires, Hitayu sends the notification payload to that device token via FCM. If the device token is stale or invalid, the delivery fails silently — no error is surfaced to the customer.
+When a staff member logs in on the mobile app, their device registers a **device token** with Hitayu (`POST /device-tokens`). When a push event fires, Hitayu sends the notification payload to that device token via FCM. If the device token is stale or invalid, the delivery fails silently - no error is surfaced to the customer.
 
 ### Configuration
 
-FCM credentials (Server Key / Service Account JSON) are configured by your system administrator at the environment level. There is no in-app settings card for FCM — contact your administrator if push notifications are not arriving on mobile devices.
+FCM credentials (Server Key / Service Account JSON) are configured by your system administrator at the environment level. There is no in-app settings card for FCM - contact your administrator if push notifications are not arriving on mobile devices.
 
 ---
 

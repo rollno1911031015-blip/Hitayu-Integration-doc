@@ -1,5 +1,5 @@
 ---
-title: "IVR and Calling Integration — Exotel Setup Guide"
+title: "IVR and Calling Integration - Exotel Setup Guide"
 sidebarTitle: "IVR & Calling"
 description: "Connect Exotel to Hitayu ERP to run outbound calling campaigns, log call recordings, track outcomes, and receive call-status callbacks automatically."
 ---
@@ -23,20 +23,20 @@ Before setting up the IVR integration, make sure you have:
 
 ---
 
-## Step 1 — Enter Credentials in Hitayu
+## Step 1 - Enter Credentials in Hitayu
 
 <Steps>
   <Step title="Open IVR integration settings">
-    Go to **Settings → Integrations → IVR / Calling**.
+    Go to **Settings -> Integrations -> IVR / Calling**.
   </Step>
   <Step title="Fill in your Exotel credentials">
 
     | Field | Where to Find It | Required |
     |---|---|---|
-    | **Account SID** | Exotel Dashboard → Settings → API → Account SID | ✅ Yes |
-    | **API Key** | Exotel Dashboard → Settings → API → API Key | ✅ Yes |
-    | **API Token** | Exotel Dashboard → Settings → API → API Token | ✅ Yes |
-    | **Caller ID** | Your ExoPhone number (the virtual number assigned to your account) | ✅ Yes |
+    | **Account SID** | Exotel Dashboard -> Settings -> API -> Account SID | Yes Yes |
+    | **API Key** | Exotel Dashboard -> Settings -> API -> API Key | Yes Yes |
+    | **API Token** | Exotel Dashboard -> Settings -> API -> API Token | Yes Yes |
+    | **Caller ID** | Your ExoPhone number (the virtual number assigned to your account) | Yes Yes |
 
     <Warning>
       The **Caller ID** must be the exact ExoPhone number in international format as assigned in your Exotel account (e.g., `+918068xxxxxx`). If it does not match, Exotel will reject outbound call requests.
@@ -49,7 +49,7 @@ Before setting up the IVR integration, make sure you have:
 
 ---
 
-## Step 2 — Configure the Call-Status Webhook in Exotel
+## Step 2 - Configure the Call-Status Webhook in Exotel
 
 Exotel sends call lifecycle events (ringing, answered, completed, missed) to Hitayu via a callback URL. You must register this URL in your Exotel App configuration.
 
@@ -64,7 +64,7 @@ Exotel sends call lifecycle events (ringing, answered, completed, missed) to Hit
     </Note>
   </Step>
   <Step title="Open your Exotel App settings">
-    Log in to the Exotel Dashboard and go to **Apps → Your App → Settings**.
+    Log in to the Exotel Dashboard and go to **Apps -> Your App -> Settings**.
   </Step>
   <Step title="Set the Status Callback URL">
     Paste your Hitayu URL into the **Status Callback** field:
@@ -79,7 +79,7 @@ Exotel sends call lifecycle events (ringing, answered, completed, missed) to Hit
 
 ---
 
-## Step 3 — Configure the Public Webhook Endpoint
+## Step 3 - Configure the Public Webhook Endpoint
 
 In addition to the `/api/webhooks/ivr/call-status` endpoint, Hitayu also exposes a shorter public webhook path for Exotel compatibility:
 
@@ -87,7 +87,7 @@ In addition to the `/api/webhooks/ivr/call-status` endpoint, Hitayu also exposes
 https://your-hitayu-domain.com/webhook
 ```
 
-This endpoint is provided for Exotel configurations that require a root-level URL. Both paths route to the same handler — use whichever fits your Exotel App configuration.
+This endpoint is provided for Exotel configurations that require a root-level URL. Both paths route to the same handler - use whichever fits your Exotel App configuration.
 
 ---
 
@@ -110,13 +110,13 @@ Call recordings can be listened to directly from the order communication timelin
 Each Hitayu user who makes calls needs their mobile number registered so Exotel can ring them first in the two-leg call flow.
 
 To configure agent numbers:
-1. Go to **Settings → Team → Users**.
+1. Go to **Settings -> Team -> Users**.
 2. Open the agent's profile.
 3. Enter their mobile number in the **Calling Number** field.
 4. Save the profile.
 
 <Tip>
-  Agents can also update their own calling number from **My Profile → Calling Settings** without needing admin access.
+  Agents can also update their own calling number from **My Profile -> Calling Settings** without needing admin access.
 </Tip>
 
 ---
@@ -142,8 +142,8 @@ When **Call Back** or **Follow Up** is selected, the agent can set a follow-up d
 
 | Symptom | Likely Cause | Fix |
 |---|---|---|
-| Calls not initiating | Invalid API Key, Token, or Account SID | Verify all three credentials in Settings → Integrations → IVR |
+| Calls not initiating | Invalid API Key, Token, or Account SID | Verify all three credentials in Settings -> Integrations -> IVR |
 | Wrong number displayed to customer | Caller ID not set correctly | Confirm Caller ID matches your Exotel ExoPhone exactly |
 | Call status not updating in Hitayu | Webhook URL not registered in Exotel App | Add the callback URL to your Exotel App's Status Callback field |
 | Call recordings not appearing | Recording not enabled in Exotel App | Enable recording in your Exotel App settings |
-| Duplicate call log entries | Exotel re-sent the callback | No action needed — Hitayu deduplicates call-status events |
+| Duplicate call log entries | Exotel re-sent the callback | No action needed - Hitayu deduplicates call-status events |

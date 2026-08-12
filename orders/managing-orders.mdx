@@ -4,7 +4,7 @@ sidebarTitle: "Managing Orders"
 description: "Step-by-step guidance for viewing, assigning, editing, paying, shipping, and cancelling orders in Hitayu ERP's daily order management workflow."
 ---
 
-Day-to-day order management in Hitayu ERP is built around a single order detail page that brings together everything your team needs: the customer's information, ordered items, payment links, shipping details, activity log, and every available action — all without leaving the screen. This guide walks through each operation your team performs regularly, in the order you are most likely to encounter them during a shift.
+Day-to-day order management in Hitayu ERP is built around a single order detail page that brings together everything your team needs: the customer's information, ordered items, payment links, shipping details, activity log, and every available action - all without leaving the screen. This guide walks through each operation your team performs regularly, in the order you are most likely to encounter them during a shift.
 
 ---
 
@@ -12,14 +12,14 @@ Day-to-day order management in Hitayu ERP is built around a single order detail 
 
 To open an order, click its row in any order list. The detail page is organised into sections:
 
-- **Order Summary** — order number, source (Shopify or manual), date, assigned team member, and current status badge
-- **Customer & Shipping** — customer name, phone, email, and the delivery address on file
-- **Line Items** — each product, variant, quantity, unit price, discounts, taxes, and the order grand total
-- **Payment Links** — all payment links ever generated for this order, with their amounts, statuses, and direct URLs
-- **Shipment Details** — AWB number, courier name, Shiprocket order ID, and a tracking link once the shipment is live
-- **Activity Log** — a chronological feed of every action taken on the order
-- **Status History** — every status transition with timestamps and responsible team members
-- **Edit History** — a record of every change made to items, address, or totals
+- **Order Summary** - order number, source (Shopify or manual), date, assigned team member, and current status badge
+- **Customer & Shipping** - customer name, phone, email, and the delivery address on file
+- **Line Items** - each product, variant, quantity, unit price, discounts, taxes, and the order grand total
+- **Payment Links** - all payment links ever generated for this order, with their amounts, statuses, and direct URLs
+- **Shipment Details** - AWB number, courier name, Shiprocket order ID, and a tracking link once the shipment is live
+- **Activity Log** - a chronological feed of every action taken on the order
+- **Status History** - every status transition with timestamps and responsible team members
+- **Edit History** - a record of every change made to items, address, or totals
 
 ---
 
@@ -60,10 +60,10 @@ Abandoned checkouts and unconfirmed orders can be converted into active confirme
     Click the order row to open its detail page.
   </Step>
   <Step title="Click Convert">
-    Press the **Convert** button. Enter a short remark (e.g. "Customer confirmed via call — wants to pay online") and submit.
+    Press the **Convert** button. Enter a short remark (e.g. "Customer confirmed via call - wants to pay online") and submit.
   </Step>
   <Step title="Select a Payment Flow">
-    Immediately after converting you will typically choose how the customer will pay — see the **Sending a Payment Link** section below.
+    Immediately after converting you will typically choose how the customer will pay - see the **Sending a Payment Link** section below.
   </Step>
 </Steps>
 
@@ -73,7 +73,7 @@ Abandoned checkouts and unconfirmed orders can be converted into active confirme
 
 Hitayu ERP offers three payment flows to match different customer situations. All three send the customer a link they can use to complete payment on their own device.
 
-### Pay Now — Full Payment
+### Pay Now - Full Payment
 
 Use this when the customer is ready to pay the full order amount immediately.
 
@@ -89,7 +89,7 @@ Use this when the customer is ready to pay the full order amount immediately.
   </Step>
 </Steps>
 
-### Pay Later — COD / Deferred Payment
+### Pay Later - COD / Deferred Payment
 
 Use this when the customer agrees to pay on delivery or wants to defer payment.
 
@@ -102,7 +102,7 @@ Use this when the customer agrees to pay on delivery or wants to defer payment.
   </Step>
 </Steps>
 
-### Pay Partial — Split Payment
+### Pay Partial - Split Payment
 
 Use this when the customer wants to pay a deposit now and the remainder on delivery.
 
@@ -111,7 +111,7 @@ Use this when the customer wants to pay a deposit now and the remainder on deliv
     Select **Pay Partial** from the actions panel.
   </Step>
   <Step title="Enter the Partial Amount">
-    Type in the deposit amount. The system enforces commercial rules — minimums and maximums depend on the order total and your configured thresholds.
+    Type in the deposit amount. The system enforces commercial rules - minimums and maximums depend on the order total and your configured thresholds.
   </Step>
   <Step title="Confirm">
     Submit the form. A payment link is generated for the partial amount and sent to the customer. The order records both the amount collected and the outstanding balance.
@@ -124,7 +124,7 @@ If a customer says they did not receive a link, or the link has expired:
 
 1. Open the order detail page.
 2. In the **Payment Links** section, find the active link and click **Resend**.
-3. Hitayu ERP re-delivers the existing link to the customer — no new link is created unless the previous one is no longer active.
+3. Hitayu ERP re-delivers the existing link to the customer - no new link is created unless the previous one is no longer active.
 
 <Warning>
 You can only resend a link that is in **Created** or **Sent** status. Links in **Paid** or **Failed** status cannot be resent. If a link has failed, use **Pay Now** to generate a fresh one.
@@ -145,10 +145,10 @@ You can modify an order's items, quantities, address, or totals at any time befo
   </Step>
   <Step title="Choose a Payment Action">
     Before saving you must decide what to do about payment:
-    - **Save Only** — save the changes without touching the payment link
-    - **Pay Now** — save and immediately generate a new full-payment link
-    - **Partial Payment** — save and generate a partial-payment link for the revised amount
-    - **Pay Later** — save and mark the revised order as COD
+    - **Save Only** - save the changes without touching the payment link
+    - **Pay Now** - save and immediately generate a new full-payment link
+    - **Partial Payment** - save and generate a partial-payment link for the revised amount
+    - **Pay Later** - save and mark the revised order as COD
   </Step>
   <Step title="Save Changes">
     Click **Update Order**. The system saves the edit, records a snapshot in Edit History, and (if applicable) sends the new payment link to the customer.
@@ -156,7 +156,7 @@ You can modify an order's items, quantities, address, or totals at any time befo
 </Steps>
 
 <Note>
-Every edit is captured in the **Edit History** tab with a full before-and-after snapshot: previous totals, new totals, previous discount, new discount, shipping charges, and tax — plus the name of the team member who made the change.
+Every edit is captured in the **Edit History** tab with a full before-and-after snapshot: previous totals, new totals, previous discount, new discount, shipping charges, and tax - plus the name of the team member who made the change.
 </Note>
 
 ---
@@ -178,7 +178,7 @@ Once an order is verified and packed, push it to Shiprocket to create the shipme
 </Steps>
 
 <Warning>
-If you see the message "Shipment placeholder created — enable Shiprocket settings to push it live", it means your Shiprocket API credentials or order-creation settings have not been configured. Contact your administrator to complete the Shiprocket integration setup before retrying.
+If you see the message "Shipment placeholder created - enable Shiprocket settings to push it live", it means your Shiprocket API credentials or order-creation settings have not been configured. Contact your administrator to complete the Shiprocket integration setup before retrying.
 </Warning>
 
 ---

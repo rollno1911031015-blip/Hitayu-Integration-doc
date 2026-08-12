@@ -1,14 +1,14 @@
 ---
 title: "Payments Overview: Gateways, Statuses & Management"
 sidebarTitle: "Overview"
-description: "Manage all payment activity in Hitayu ERP — view gateway transactions, track statuses from pending to paid, and link payments directly to orders."
+description: "Manage all payment activity in Hitayu ERP - view gateway transactions, track statuses from pending to paid, and link payments directly to orders."
 ---
 
 Hitayu ERP gives you a single place to track every rupee that flows through your store. Whether a customer pays online at checkout, pays cash on delivery, or settles an invoice through a manually collected payment, every transaction is recorded against its order and surfaced on the **Payments** page with real-time status updates from your connected gateway.
 
 ## Supported Payment Gateways
 
-Hitayu ERP integrates with three industry-leading payment gateways. You can activate one or more of them from **Settings → Integrations → Payment Gateway**.
+Hitayu ERP integrates with three industry-leading payment gateways. You can activate one or more of them from **Settings -> Integrations -> Payment Gateway**.
 
 | Gateway | Best For | Checkout Route |
 |---|---|---|
@@ -26,7 +26,7 @@ Every payment in Hitayu ERP is classified as one of three types:
 
 | Type | Description |
 |---|---|
-| **Prepaid** | Customer completes payment online before dispatch — via a payment link sent over WhatsApp or SMS. |
+| **Prepaid** | Customer completes payment online before dispatch - via a payment link sent over WhatsApp or SMS. |
 | **COD** | Cash on delivery. No gateway transaction is created upfront; payment is collected by the courier on delivery. |
 | **Manual** | Payment collected outside a gateway (e.g., bank transfer, cash in-person). An agent records and confirms the payment manually. |
 
@@ -35,7 +35,7 @@ Every payment in Hitayu ERP is classified as one of three types:
 Every gateway payment moves through a defined set of statuses. Understanding these statuses helps you know exactly where a transaction stands at any point in time.
 
 ```
-pending → authorized → paid → refunded
+pending -> authorized -> paid -> refunded
     ↓          ↓
   failed      failed
 ```
@@ -49,7 +49,7 @@ pending → authorized → paid → refunded
 | **Refunded** | The captured amount has been returned to the customer through the gateway. |
 
 <Tip>
-  COD orders do not go through the **pending → paid** gateway flow. They remain in a separate collection state until the courier confirms delivery and the COD remittance is received.
+  COD orders do not go through the **pending -> paid** gateway flow. They remain in a separate collection state until the courier confirms delivery and the COD remittance is received.
 </Tip>
 
 ## Navigating the Payments Page
@@ -58,10 +58,10 @@ Go to **Payments** in the left sidebar to open the full payments list. The page 
 
 **Available filters:**
 
-- **Status** — Filter by `pending`, `authorized`, `paid`, `failed`, or `refunded`.
-- **Gateway** — Show only PayU, Razorpay, or Cashfree transactions.
-- **Date range** — Narrow results to a specific period.
-- **Order ID / Reference** — Search by order number or gateway transaction ID.
+- **Status** - Filter by `pending`, `authorized`, `paid`, `failed`, or `refunded`.
+- **Gateway** - Show only PayU, Razorpay, or Cashfree transactions.
+- **Date range** - Narrow results to a specific period.
+- **Order ID / Reference** - Search by order number or gateway transaction ID.
 
 Click any row to open the payment detail panel, where you can see the full transaction history, gateway reference number, and the linked order.
 
@@ -81,7 +81,7 @@ Conversely, from the **Payments** page, every row carries a clickable order refe
 Once a gateway settles funds to your bank account, Hitayu ERP records the settlement against the payment. You can use this to reconcile your bank statements and confirm that every captured payment has been settled.
 
 <Note>
-  Settlement timelines vary by gateway — typically T+1 for Razorpay, T+2 for PayU, and T+1 for Cashfree. Check your gateway dashboard for the exact schedule.
+  Settlement timelines vary by gateway - typically T+1 for Razorpay, T+2 for PayU, and T+1 for Cashfree. Check your gateway dashboard for the exact schedule.
 </Note>
 
 ## Next Steps

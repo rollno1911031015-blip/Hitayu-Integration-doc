@@ -1,122 +1,82 @@
 ---
-title: "Hitayu ERP Integrations — Connect Your Business Tools"
+title: "Hitayu ERP Integrations - Overview"
 sidebarTitle: "Overview"
-description: "A complete guide to all integrations available in Hitayu ERP — connect Shopify, Shiprocket, payment gateways, WhatsApp, SMS, and IVR in one place."
+description: "Overview of the integration providers and webhook endpoints implemented in Hitayu CRM."
 ---
 
-Hitayu ERP is built to work alongside the tools your e-commerce business already relies on. Rather than replacing your Shopify store, your shipping partner, or your payment gateway, Hitayu connects to all of them — pulling orders in automatically, pushing shipment updates back out, and keeping your team informed through WhatsApp, SMS, and calling workflows. Every integration is configured in one place and takes effect across the entire platform.
+Hitayu CRM integrates with Shopify, Shiprocket, payment gateways, WhatsApp, SMS Wale, and Exotel IVR. Integration credentials and feature gates are managed from the integration console.
 
 ## Where to Configure Integrations
 
-All integrations are managed from a single screen inside the app. Navigate to **Settings → Integrations** to view, configure, and test each connection.
+Open **Settings -> Integrations** (`/settings/integrations`).
 
-<Note>
-  You need **Admin** or **Settings Manager** permissions to access the Integrations screen. Contact your account owner if you do not see this menu item.
-</Note>
+| Permission | Access |
+|---|---|
+| `settings.integrations.view` or `settings.integrations` | View the integration console |
+| `settings.integrations.manage` or `settings.integrations` | Save provider settings, toggles, choices, values, and keys |
 
-Each integration card on that screen shows a status badge:
+## Console Status
+
+Provider cards show credential readiness based on required keys.
 
 | Status | Meaning |
 |---|---|
-| **Ready** | All required credentials are saved and the connection has been verified. |
-| **Missing** | One or more required fields are empty. The integration will not function until they are filled in. |
-| **Disabled** | Credentials are saved but the integration has been manually turned off via its toggle. |
+| **Ready** | All required credential keys for that provider are configured |
+| **Missing** | One or more required credential keys are empty |
 
----
+The console also shows counts for providers, feature gates, configured keys, and missing required keys.
 
-## Available Integrations
+## Built-In Providers
 
 <CardGroup cols={2}>
-  <Card
-    title="Shopify"
-    icon="bag-shopping"
-    href="/integrations/shopify"
-  >
-    Sync orders, products, customers, inventory, and abandoned checkouts directly from your Shopify store into Hitayu ERP.
+  <Card title="Shopify" icon="bag-shopping" href="/integrations/shopify">
+    Admin API sync and webhook verification for orders, products, customers, checkouts, inventory levels, and locations.
   </Card>
-  <Card
-    title="Shiprocket"
-    icon="truck"
-    href="/integrations/shiprocket"
-  >
-    Create shipments, generate AWB numbers, print labels, manage NDR, and receive live tracking updates from Shiprocket.
+  <Card title="Shiprocket" icon="truck" href="/integrations/shiprocket">
+    Shipment creation, pickup location, tracking, NDR, and SR checkout webhook settings.
   </Card>
-  <Card
-    title="Payment Gateways"
-    icon="credit-card"
-    href="/integrations/payment-gateways"
-  >
-    Accept payments via PayU, Razorpay, or Cashfree and automatically reconcile transactions against orders.
+  <Card title="Payment" icon="credit-card" href="/integrations/payment-gateways">
+    Payment gateway credentials and payment webhook endpoints for Razorpay, Cashfree, and PayU.
   </Card>
-  <Card
-    title="WhatsApp & SMS"
-    icon="message"
-    href="/integrations/whatsapp-sms"
-  >
-    Send order confirmations, shipping alerts, and follow-up messages to customers over WhatsApp (Meta) and SMS (Exotel).
+  <Card title="WhatsApp & SMS" icon="message" href="/integrations/whatsapp-sms">
+    WhatsApp Meta credentials, SMS Wale credentials, and notification delivery gates.
   </Card>
-  <Card
-    title="IVR & Calling"
-    icon="phone"
-    href="/integrations/ivr"
-  >
-    Connect Exotel to manage outbound calling campaigns, log call recordings, and receive call-status callbacks in Hitayu.
+  <Card title="IVR" icon="phone" href="/integrations/ivr">
+    Exotel provider credentials for calling and call-status webhooks.
   </Card>
-  <Card
-    title="Webhook Reference"
-    icon="webhook"
-    href="/integrations/webhooks"
-  >
-    Full reference for every inbound webhook endpoint — methods, authentication, and payload details for all categories.
+  <Card title="Webhook Reference" icon="webhook" href="/integrations/webhooks">
+    API webhook route reference for Shopify, Shiprocket, carrier tracking, payment, notification status, IVR, and lead intake.
   </Card>
 </CardGroup>
 
----
+## Webhook Routes
 
-## How Integrations Work
+Webhook routes are grouped under `/api/webhooks/` for API integrations. The IVR public webhook also exists at `/webhook`.
 
-Hitayu ERP uses a queue-based integration architecture. When an external platform sends a webhook (for example, Shopify notifying Hitayu that a new order was placed), Hitayu accepts the request, logs it immediately, and then processes the event asynchronously in the background. This means:
+| Category | Implemented routes |
+|---|---|
+| **Shopify** | Orders, refunds, checkouts, products, customers, inventory levels, locations |
+| **Shiprocket / carrier** | Tracking, NDR, SR checkout abandoned, carrier tracking |
+| **Payment** | Razorpay, Cashfree, PayU |
+| **Notifications** | WhatsApp status, SMS status |
+| **IVR** | `/api/webhooks/ivr/call-status` and `/webhook` |
+| **Leads** | `/api/webhooks/leads/{source}` |
 
-- **Your storefront is never slowed down** by ERP processing delays.
-- **Duplicate events are safely ignored** — all webhooks are idempotent, so re-delivered payloads do not create duplicate records.
-- **Failed events are retried automatically** — if a downstream service is temporarily unavailable, Hitayu will re-attempt processing without any manual intervention.
+See [Webhook Reference](/integrations/webhooks) for the exact paths.
 
-<Tip>
-  For the smoothest experience, confirm with your technical team that the background processing service is running continuously in your production environment.
-</Tip>
-
----
-
-## Integration Setup Checklist
-
-Use this checklist when going live with a new integration:
+## Setup Checklist
 
 <Steps>
-  <Step title="Gather Credentials">
-    Collect all API keys, secrets, and tokens from the external platform's developer or settings dashboard before opening Hitayu.
+  <Step title="Enter credentials">
+    Open `/settings/integrations` and save the required provider keys.
   </Step>
-  <Step title="Enter Credentials in Hitayu">
-    Go to **Settings → Integrations**, open the relevant integration card, and fill in every required field. Save the form.
+  <Step title="Enable feature gates">
+    Turn on only the sync or webhook gates that should run in this deployment.
   </Step>
-  <Step title="Register Webhook URLs">
-    Copy the webhook endpoint URLs shown in Hitayu and paste them into the external platform's webhook configuration. See each integration's page for the exact URLs and topics.
+  <Step title="Register webhook URLs">
+    Add the relevant `/api/webhooks/...` URLs in Shopify, Shiprocket, payment gateway, Meta, SMS provider, or Exotel dashboards.
   </Step>
-  <Step title="Verify the Status Badge">
-    Return to **Settings → Integrations** and confirm the card now shows a **Ready** status badge.
-  </Step>
-  <Step title="Run a Test Event">
-    Trigger a test event from the external platform (e.g., place a test order in Shopify) and confirm it appears in Hitayu within a few seconds.
+  <Step title="Test one event">
+    Trigger one test event for the provider and confirm the expected CRM record or log is created.
   </Step>
 </Steps>
-
----
-
-## Webhook Security
-
-Every inbound webhook endpoint in Hitayu is protected by signature or token verification specific to the sending platform:
-
-- **Shopify** webhooks are verified using HMAC-SHA256 signatures computed against your Webhook Secret.
-- **Shiprocket** tracking webhooks optionally require a bearer token configured in your Shiprocket integration settings.
-- **Payment** webhooks (Razorpay, Cashfree, PayU) use each gateway's own signature scheme.
-
-Requests that fail signature verification are rejected with an HTTP `401` response and logged for audit purposes. See the [Webhook Reference](/integrations/webhooks) for full details.

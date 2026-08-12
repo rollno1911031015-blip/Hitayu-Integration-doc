@@ -4,15 +4,15 @@ sidebarTitle: "Dashboard Overview"
 description: "Understand Hitayu ERP's three dashboards, the navigation sidebar sections, staff notifications, and how the system remembers your last active section."
 ---
 
-When you sign in to Hitayu ERP you are greeted by a dashboard tailored to your role. The platform has three distinct dashboard views — the main ERP Dashboard, the IVR Dashboard for calling teams, and the Shopify Dashboard for e-commerce operations — each surfacing the metrics and quick-action links most relevant to what you do. Understanding which dashboard you are on, and how to navigate between them, is the first step to using the system efficiently.
+When you sign in to Hitayu ERP you are greeted by a dashboard tailored to your role. The platform has three distinct dashboard views - the main ERP Dashboard, the IVR Dashboard for calling teams, and the Shopify Dashboard for e-commerce operations - each surfacing the metrics and quick-action links most relevant to what you do. Understanding which dashboard you are on, and how to navigate between them, is the first step to using the system efficiently.
 
 ## The Main ERP Dashboard
 
 The main administrative dashboard is located at `/admin/dashboard`. It provides a high-level operations overview for managers and administrators, displaying:
 
-- **Key order metrics** — Total orders, recent orders table, and order status breakdowns.
-- **Failed webhook alerts** — A list of the most recent Shopify or payment webhook failures that may need attention.
-- **Open shipment exceptions** — Flagged NDR and RTO events requiring follow-up action.
+- **Key order metrics** - Total orders, recent orders table, and order status breakdowns.
+- **Failed webhook alerts** - A list of the most recent Shopify or payment webhook failures that may need attention.
+- **Open shipment exceptions** - Flagged NDR and RTO events requiring follow-up action.
 
 This dashboard is typically used by operations managers and administrators who need a cross-functional view of the business rather than a single team's queue.
 
@@ -22,24 +22,24 @@ The IVR Dashboard at `/ivr-dashboard` is the primary workspace for calling team 
 
 <Tabs>
   <Tab title="Queue Metrics">
-    - **Today's calls** — Total inbound calls received today.
-    - **Answered** — Calls connected and handled by an agent.
-    - **Missed** — Calls that went unanswered (including no-answer, busy, and failed statuses).
-    - **Handled today** — Calls that have a completed handling action recorded today.
-    - **Average call duration** — Mean duration in seconds across today's calls.
-    - **Active follow-ups** — Open follow-up actions not yet linked to a support ticket.
+    - **Today's calls** - Total inbound calls received today.
+    - **Answered** - Calls connected and handled by an agent.
+    - **Missed** - Calls that went unanswered (including no-answer, busy, and failed statuses).
+    - **Handled today** - Calls that have a completed handling action recorded today.
+    - **Average call duration** - Mean duration in seconds across today's calls.
+    - **Active follow-ups** - Open follow-up actions not yet linked to a support ticket.
   </Tab>
   <Tab title="Outcome Metrics">
-    - **Pay Now** — Customers who agreed to pay immediately during the call.
-    - **Pay Later** — COD or deferred payment commitments recorded by agents.
-    - **Cancelled** — Orders cancelled during today's calling sessions.
-    - **Follow Up** — Calls with a follow-up action scheduled.
+    - **Pay Now** - Customers who agreed to pay immediately during the call.
+    - **Pay Later** - COD or deferred payment commitments recorded by agents.
+    - **Cancelled** - Orders cancelled during today's calling sessions.
+    - **Follow Up** - Calls with a follow-up action scheduled.
   </Tab>
   <Tab title="Agent Status">
-    - **Available agents** — Count of IVR staff currently marked as available for calls.
-    - **Total agents** — Full IVR team size.
-    - **Per-agent stats** — A card for each agent showing answered, missed, and handled call counts, average duration, and current availability status.
-    - **Recent calls table** — The latest inbound calls with customer details, assigned agent, and call status.
+    - **Available agents** - Count of IVR staff currently marked as available for calls.
+    - **Total agents** - Full IVR team size.
+    - **Per-agent stats** - A card for each agent showing answered, missed, and handled call counts, average duration, and current availability status.
+    - **Recent calls table** - The latest inbound calls with customer details, assigned agent, and call status.
   </Tab>
 </Tabs>
 
@@ -51,16 +51,16 @@ The IVR Dashboard at `/ivr-dashboard` is the primary workspace for calling team 
 
 The Shopify Dashboard at `/shopify-dashboard` is the go-to view for e-commerce managers and anyone overseeing Shopify order performance. It supports filtering by individual sales channel (store) so multi-channel businesses can analyse each store independently. Metrics shown include:
 
-- **Today's orders and today's revenue** — Orders placed and gross sales for the current day.
-- **Total orders and total revenue** — All-time figures for the selected channel.
-- **Paid orders vs. payment pending** — A split between fully paid and awaiting-payment orders.
-- **Fulfilled orders** — Orders that have been dispatched or fulfilled on Shopify.
-- **Abandoned checkouts** — Shopify abandoned checkouts that have contact information available for follow-up.
-- **Cancelled orders** — Orders that were cancelled after being placed.
-- **Customers and products** — Counts of synced Shopify customers and products in the system.
-- **Average order value** — Mean order size for the selected channel.
-- **Webhook failures** — Shopify webhook events that failed to process, indicating potential data sync issues.
-- **Recent orders table** — The latest Shopify orders with customer name, channel, and status.
+- **Today's orders and today's revenue** - Orders placed and gross sales for the current day.
+- **Total orders and total revenue** - All-time figures for the selected channel.
+- **Paid orders vs. payment pending** - A split between fully paid and awaiting-payment orders.
+- **Fulfilled orders** - Orders that have been dispatched or fulfilled on Shopify.
+- **Abandoned checkouts** - Shopify abandoned checkouts that have contact information available for follow-up.
+- **Cancelled orders** - Orders that were cancelled after being placed.
+- **Customers and products** - Counts of synced Shopify customers and products in the system.
+- **Average order value** - Mean order size for the selected channel.
+- **Webhook failures** - Shopify webhook events that failed to process, indicating potential data sync issues.
+- **Recent orders table** - The latest Shopify orders with customer name, channel, and status.
 
 ## Navigation Sidebar
 
@@ -75,7 +75,7 @@ The left-hand sidebar is your primary way to move between modules. It is organis
 | **Inventory** | Current stock levels, stock ledger, MRN, purchase orders, warehouses |
 | **Payments** | Payment records, payment links, refunds, settlement reconciliation |
 | **Customers** | Customer list, customer profiles, address management |
-| **Reports** | Downloadable and on-screen reports for orders, payments, calls, and attendance |
+| **Reports** | Reports module landing page protected by `reports.view` |
 | **Settings** | Integrations (Shopify, Shiprocket, payment gateways), company settings, RBAC |
 
 <Note>
@@ -84,7 +84,7 @@ The left-hand sidebar is your primary way to move between modules. It is organis
 
 ## Staff Notifications
 
-The bell icon (🔔) in the top navigation bar shows your unread notification count. Hitayu ERP uses notifications to alert you to important events relevant to your role — such as a new call assignment, a payment received, or a missed call.
+The bell icon (🔔) in the top navigation bar shows your unread notification count. Hitayu ERP uses notifications to alert you to important events relevant to your role - such as a new call assignment, a payment received, or a missed call.
 
 Clicking the bell opens a dropdown listing your most recent 15 notifications, each showing a relative timestamp (e.g. "2 minutes ago") and a brief description of the event.
 
@@ -95,6 +95,6 @@ Clicking the bell opens a dropdown listing your most recent 15 notifications, ea
 
 ## Active Section Preference
 
-Hitayu ERP remembers the last major section you were active in — for example, *ecommerce*, *orders*, or *inventory* — and uses this preference to determine where to send you after your next login. This means calling agents automatically land on the IVR Dashboard and order managers return to the Shopify Dashboard without any manual navigation.
+Hitayu ERP remembers the last major section you were active in - for example, *ecommerce*, *orders*, or *inventory* - and uses this preference to determine where to send you after your next login. This means calling agents automatically land on the IVR Dashboard and order managers return to the Shopify Dashboard without any manual navigation.
 
 Your active section updates automatically as you move through the system. You do not need to configure this setting manually.

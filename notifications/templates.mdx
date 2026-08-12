@@ -1,119 +1,42 @@
 ---
-title: "Notification Templates — Manage Message Content in Hitayu"
+title: "Notification Templates - Message Logs"
 sidebarTitle: "Templates"
-description: "View Hitayu ERP notification templates: what events trigger each message, the variables substituted at send time, and how to read delivery logs."
+description: "View configured notification templates and recent message logs in Hitayu CRM."
 ---
 
-Hitayu ERP sends automated messages to customers whenever key events happen — a payment link is generated, or an order is confirmed. The content of each message is controlled by a **notification template** stored in the system. Templates keep message wording consistent across all channels without requiring code changes.
+The Notifications page is available at `/notifications` and requires the `notifications.view` permission.
+
+The current page is read-only. It shows configured templates and paginated message logs.
+
+## Templates Panel
+
+The templates panel lists each configured notification template.
+
+| Displayed field | Description |
+|---|---|
+| **Channel / Event** | Channel in uppercase and event name in title case |
+| **Template name** | Stored template name |
+
+If no templates exist, the panel shows **No templates configured.**
+
+## Message Logs
+
+The Message Logs table shows:
+
+| Column | Description |
+|---|---|
+| **Channel** | Notification channel in uppercase |
+| **Event** | Event name in title case |
+| **Recipient** | Recipient value, or `-` |
+| **Status** | Log status |
+| **Created** | Log creation timestamp |
+
+Logs are paginated. If no logs exist, the table shows **No notification logs yet.**
+
+## Notification Events
+
+The notification service builds messages for payment link delivery and order received confirmation. Channel delivery is controlled by the Notifications provider gates in **Settings -> Integrations**.
 
 <Note>
-  Access the notification template list by going to **Notifications** in the left sidebar. You need the **`notifications.view`** permission to reach this page.
+  This page does not provide template editing, template preview, or manual test-send controls in the current implementation.
 </Note>
-
----
-
-## What Is a Notification Template?
-
-A notification template is a pre-written message body that Hitayu fills in with real order and customer data before sending. Each template is tied to:
-
-- **An event** — the action that triggers the message (e.g., order confirmed, payment link sent)
-- **A channel** — where the message is sent (WhatsApp, SMS, or email)
-- **Variable placeholders** — tokens in the message body that are replaced with live values at send time
-
----
-
-## Viewing Templates
-
-Navigate to **Notifications** in the sidebar. The page shows:
-
-1. **Template list** — all configured templates, with their event name and channel
-2. **Recent notification logs** — the last delivery attempts, with status (queued, sent, failed) and recipient details
-
-Click any template row to preview its full message body and see which variables it uses.
-
----
-
-## Supported Events
-
-Hitayu currently generates notifications for two core events:
-
-| Event | Channels | What triggers it |
-|---|---|---|
-| **Payment Link Sent** | WhatsApp, SMS, Email | A payment link is generated for a CRM or IVR order and dispatched to the customer |
-| **Order Received** | WhatsApp, SMS, Email | A payment is captured and the order is confirmed in the system |
-
-<Note>
-  Whether each channel fires for a given event is controlled by the toggle switches in **Settings → Integrations → Notifications**. For example, you can enable SMS for payment links while keeping WhatsApp disabled, or vice versa.
-</Note>
-
----
-
-## Template Variables
-
-Variables are placeholders inside a template body. When Hitayu sends the message, each placeholder is replaced with the actual value for that customer or order.
-
-### Payment Link message variables
-
-| Variable | Replaced with |
-|---|---|
-| `customer_name` | The customer's full name |
-| `product_name` | The product name on the order |
-| `reference_number` | The order reference number |
-| `amount` | The payment amount due |
-| `payment_link` | The payment URL sent to the customer |
-
-### Order Received message variables
-
-| Variable | Replaced with |
-|---|---|
-| `customer_name` | The customer's full name |
-| `order_number` | The order reference number |
-| `advance_paid` | Amount already paid by the customer |
-| `balance_due` | Remaining balance on the order |
-| `estimated_delivery` | Estimated delivery date (if available) |
-| `tracking_link` | Order tracking URL |
-
----
-
-## How Templates Map to Channels
-
-A single event can send via multiple channels simultaneously — WhatsApp, SMS, and email. When an event fires, Hitayu checks which channels are enabled in **Settings → Integrations → Notifications** and sends via every active channel.
-
-Each channel has independent enable/disable toggles. For example:
-
-- **Payment Links** — can be enabled or disabled globally, then further toggled per channel (SMS, WhatsApp, Email)
-- **Order Received** — same independent control per channel
-
-<Note>
-  WhatsApp messages are sent as plain-text messages via the Meta Cloud API. Ensure your Meta access token and Phone Number ID are configured in **Settings → Integrations → WhatsApp**.
-</Note>
-
----
-
-## Notification Logs
-
-Below the template list, the **Recent Logs** section shows the last notification delivery attempts. Each log entry displays:
-
-| Column | Meaning |
-|---|---|
-| **Event** | Which event triggered the notification |
-| **Channel** | WhatsApp, SMS, or email |
-| **Recipient** | Phone number or email address |
-| **Status** | `queued`, `sent`, or `failed` |
-| **Sent At** | Timestamp of the delivery attempt |
-| **Provider Response** | Response code or message from the provider |
-
-Use the logs to diagnose delivery failures. A `failed` status with a provider response will show the error returned by the WhatsApp, SMS, or email provider, helping you identify issues such as invalid phone numbers or missing credentials.
-
----
-
-## Related Pages
-
-<CardGroup cols={2}>
-  <Card title="Notification Channels" icon="satellite-dish" href="/notifications/channels">
-    Configure WhatsApp, SMS, and push notification channels and check delivery status
-  </Card>
-  <Card title="System Settings" icon="sliders" href="/admin/settings">
-    Enable or disable notification providers and enter API credentials
-  </Card>
-</CardGroup>

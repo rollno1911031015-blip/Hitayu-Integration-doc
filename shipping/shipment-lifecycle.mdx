@@ -1,7 +1,7 @@
 ---
 title: "Shipment Lifecycle: Statuses, Labels, and Tracking in Hitayu"
 sidebarTitle: "Shipment Lifecycle"
-description: "Follow every shipment from order push to delivery — understand all statuses, download labels and manifests, and sync tracking updates in Hitayu ERP."
+description: "Follow every shipment from order push to delivery - understand all statuses, download labels and manifests, and sync tracking updates in Hitayu ERP."
 ---
 
 Every order you fulfill through Hitayu ERP follows a structured shipment lifecycle managed via Shiprocket. From the moment you push an order to the courier network to the final delivery scan at the customer's door, each stage is tracked in real time and surfaced in the Hitayu ERP interface. This page walks you through every step of that journey, explains every status your shipment can reach, and shows you how to take action at each stage.
@@ -15,7 +15,7 @@ Before a shipment exists, you must push the order from Hitayu ERP to Shiprocket 
     Go to **Orders** and click on the order you want to ship. The order should have a confirmed payment status (Paid or COD) before shipping.
   </Step>
   <Step title="Click Push to Shiprocket">
-    In the **Shipment** section of the order detail page, click the **Push to Shiprocket** button. Hitayu ERP sends the order details — items, weight, dimensions, pickup location, and delivery address — to the Shiprocket API.
+    In the **Shipment** section of the order detail page, click the **Push to Shiprocket** button. Hitayu ERP sends the order details - items, weight, dimensions, pickup location, and delivery address - to the Shiprocket API.
   </Step>
   <Step title="Shiprocket Order Created">
     If successful, a Shiprocket order is created and the shipment status changes from **Pending** to **New**. You will see the Shiprocket Order ID appear on the page.
@@ -28,7 +28,7 @@ Before a shipment exists, you must push the order from Hitayu ERP to Shiprocket 
 
 ## AWB Assignment and Label Download
 
-After a Shiprocket order is created, Shiprocket assigns an Air Waybill (AWB) number — the courier's unique tracking identifier for the package.
+After a Shiprocket order is created, Shiprocket assigns an Air Waybill (AWB) number - the courier's unique tracking identifier for the package.
 
 <Steps>
   <Step title="AWB Assigned">
@@ -137,7 +137,7 @@ The table below covers every status a shipment can have in Hitayu ERP, grouped b
 Hitayu ERP receives automatic status updates via the Shiprocket tracking webhook. If you ever need to force a manual refresh:
 
 - **Sync a single shipment:** On the shipment detail page, click **Sync Shipment**. Hitayu ERP fetches the latest status for that AWB from Shiprocket.
-- **Sync all shipments:** On the **Shiprocket** page (any tab), click **Sync All**. This refreshes every active shipment in your workspace. Use this sparingly — it may take a few minutes for large order volumes.
+- **Sync all shipments:** On the **Shiprocket** page (any tab), click **Sync All**. This refreshes every active shipment in your workspace. Use this sparingly - it may take a few minutes for large order volumes.
 
 ## Navigating Shipments by Stage
 
@@ -155,7 +155,7 @@ The **Shiprocket** section in the left sidebar is divided into tabs that group s
 
 ## Viewing Shipment Tracking Events
 
-Click on any shipment row to open the **Shipment Detail** page. The **Tracking Timeline** section shows every scan event in chronological order — timestamp, location, and event description — exactly as received from the courier's tracking system via webhook.
+Click on any shipment row to open the **Shipment Detail** page. The **Tracking Timeline** section shows every scan event in chronological order - timestamp, location, and event description - exactly as received from the courier's tracking system via webhook.
 
 <Tip>
   You can share the AWB number with your customer so they can track their package directly on the courier's website or the Shiprocket tracking portal.
