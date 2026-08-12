@@ -63,7 +63,7 @@ Once an audit has been created, you need to specify which product variants you a
     In the **Physical Count** field, enter the quantity you actually counted on the shelf. This is your ground-truth figure.
   </Step>
   <Step title="Record count timestamp">
-    The system records a `counted_at` timestamp for each item automatically when you save the entry. This gives you a precise audit trail.
+    The system automatically records a precise timestamp for each item when you save the entry, giving you a full audit trail of when each count was performed.
   </Step>
   <Step title="Repeat for all items">
     Continue adding all product variants in scope for this audit. You can save progress and return to add more items before completing the audit.
@@ -106,7 +106,7 @@ When all items have been counted and entered, you are ready to finalise the audi
     Hitayu ERP will:
     - Set the warehouse stock quantity for each audited variant to the recorded physical count
     - Create **Adjustment** entries in the Stock Ledger for every item with a discrepancy, referencing this audit
-    - Mark the audit as **Completed** and record the `completed_at` timestamp and the user who completed it
+    - Mark the audit as **Completed** and record the completion time and the user who completed it
   </Step>
 </Steps>
 
@@ -156,7 +156,7 @@ Click on any completed audit to view the full item-by-item breakdown, including 
 </Accordion>
 
 <Accordion title="Does completing an audit affect the Stock Ledger?">
-  Yes. For every item where the physical count differs from the expected quantity, Hitayu ERP creates an **Adjustment** entry in the Stock Ledger. These entries are tagged with the source `stock_audit` and link back to the audit record so you have a full traceability chain.
+  Yes. For every item where the physical count differs from the expected quantity, Hitayu ERP creates an **Adjustment** entry in the Stock Ledger. These entries link back to the audit record so you have a full traceability chain — you can filter the Stock Ledger by movement type **Adjustment** to review them.
 </Accordion>
 
 ---

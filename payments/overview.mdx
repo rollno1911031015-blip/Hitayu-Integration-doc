@@ -13,7 +13,7 @@ Hitayu ERP integrates with three industry-leading payment gateways. You can acti
 | Gateway | Best For | Checkout Route |
 |---|---|---|
 | **PayU** | High-volume domestic orders; supports UPI, cards, net banking | `/payu/checkout/{order}` |
-| **Razorpay** | Subscription billing and instant refunds | Webhook-driven (`payment.razorpay`) |
+| **Razorpay** | Subscription billing and instant refunds | Razorpay-hosted checkout (redirect flow) |
 | **Cashfree** | Instant payouts and payout-link flows | `/cashfree/checkout/{order}` |
 
 <Note>
@@ -35,11 +35,9 @@ Every payment in Hitayu ERP is classified as one of three types:
 Every gateway payment moves through a defined set of statuses. Understanding these statuses helps you know exactly where a transaction stands at any point in time.
 
 ```
-pending → authorized → paid
-                ↓
-             failed
-                ↓
-           refunded
+pending → authorized → paid → refunded
+    ↓          ↓
+  failed      failed
 ```
 
 | Status | What It Means |

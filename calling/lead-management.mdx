@@ -1,7 +1,7 @@
 ---
 title: "Lead Management: Sources, Statuses & Assignment"
 sidebarTitle: "Lead Management"
-description: "Manage leads from Shopify, manual entry, and external webhooks. Update statuses, add notes, assign to agents, and track every interaction in Hitayu ERP."
+description: "Manage leads from Shopify, manual entry, IVR, and WhatsApp. Update statuses, add notes, assign to agents, and track every interaction in Hitayu ERP."
 ---
 
 Leads in Hitayu represent potential customers who have shown interest but have not yet placed a confirmed order. Unlike orders, which are fully committed transactions, leads are prospective — they need nurturing through follow-ups, status updates, and timely outreach before they convert. Hitayu captures leads automatically from multiple sources and gives your team a single workspace to track, qualify, and convert them.
@@ -29,21 +29,7 @@ Hitayu captures leads from five sources. The source is recorded on every lead so
 | **IVR** | Inbound calls that do not match an existing order create a new lead automatically |
 | **Manual** | Team members can create a lead directly from the Leads list page |
 | **WhatsApp** | Incoming WhatsApp enquiries can be linked to leads |
-| **Website** | Contact or enquiry forms on your website post to Hitayu via the webhook API |
-
-### Integrating External Lead Sources via Webhook
-
-Any external platform — a landing page, a third-party form tool, or a custom integration — can push leads directly into Hitayu using the leads webhook endpoint.
-
-```
-POST /api/webhooks/leads/{source}
-```
-
-Replace `{source}` with a slug that identifies the originating platform (for example, `facebook-ads` or `google-forms`). Hitayu records this value as the lead's source and stores the full request payload for reference.
-
-<Note>
-  Webhook leads are created with a status of **New** and are unassigned until a team member or automated rule assigns them. Make sure you have a triage process in place so new webhook leads are actioned promptly.
-</Note>
+| **Website** | Contact or enquiry forms on your website can be integrated to push leads into Hitayu |
 
 ---
 

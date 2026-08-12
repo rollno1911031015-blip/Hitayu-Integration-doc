@@ -67,18 +67,19 @@ This page pre-filters the calling queue to show only calls and leads that have a
 
 ---
 
-## Follow-Up Statuses
+## Follow-Up States
 
-Every follow-up has one of three statuses that reflects where it stands in its lifecycle.
+Every follow-up moves through two states that reflect where it stands in its lifecycle.
 
-| Status | Meaning |
-|--------|---------|
-| **Pending** | The follow-up is scheduled but the callback has not happened yet |
-| **Completed** | The agent called the customer and the follow-up was resolved |
-| **Missed** | The scheduled time passed without the callback being completed |
+| State | Meaning |
+|-------|---------|
+| **Pending** | The follow-up is scheduled but the callback has not been completed yet |
+| **Completed** | The agent called the customer and marked the follow-up as resolved |
+
+Follow-ups that have passed their scheduled time without being completed are considered **overdue**. Monitor overdue follow-ups on the manager dashboard and work to keep that count as close to zero as possible — they represent callbacks that were promised to customers but not yet delivered.
 
 <Warning>
-  Missed follow-ups represent broken promises to customers. Monitor the missed follow-up count on the manager dashboard regularly and work to keep it as close to zero as possible.
+  Overdue follow-ups represent broken promises to customers. Review them regularly and either complete or reschedule them before they grow cold.
 </Warning>
 
 ---
@@ -122,8 +123,8 @@ Managers have visibility into the follow-up activity of the entire team, not jus
   <Step title="Open the IVR Dashboard">
     Navigate to `/ivr-dashboard`. This page requires the `dashboard.ivr` permission.
   </Step>
-  <Step title="Filter by Follow-Up Status">
-    Use the status filters to view **Pending**, **Completed**, or **Missed** follow-ups across all agents. You can also filter by date range or individual agent.
+  <Step title="Filter by Follow-Up State">
+    Use the status filters to view **Pending**, **Completed**, or **Overdue** follow-ups across all agents. You can also filter by date range or individual agent.
   </Step>
   <Step title="Reassign Overdue Follow-Ups">
     If an agent is unavailable and has pending follow-ups that are overdue, use the assign action on each call to transfer it to an available agent immediately.
@@ -131,7 +132,7 @@ Managers have visibility into the follow-up activity of the entire team, not jus
 </Steps>
 
 <Tip>
-  Run a quick end-of-day review of **Missed** follow-ups so that any broken callbacks can be rescheduled for the next morning before they grow cold.
+  Run a quick end-of-day review of overdue follow-ups so that any missed callbacks can be rescheduled for the next morning before they grow cold.
 </Tip>
 
 ---

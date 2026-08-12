@@ -1,5 +1,5 @@
 ---
-title: "Hitayu ERP Integrations — Connect Your Tools"
+title: "Hitayu ERP Integrations — Connect Your Business Tools"
 sidebarTitle: "Overview"
 description: "A complete guide to all integrations available in Hitayu ERP — connect Shopify, Shiprocket, payment gateways, WhatsApp, SMS, and IVR in one place."
 ---
@@ -79,10 +79,10 @@ Hitayu ERP uses a queue-based integration architecture. When an external platfor
 
 - **Your storefront is never slowed down** by ERP processing delays.
 - **Duplicate events are safely ignored** — all webhooks are idempotent, so re-delivered payloads do not create duplicate records.
-- **Failed jobs are retried automatically** — if a downstream service is temporarily unavailable, Hitayu will re-attempt processing without any manual intervention.
+- **Failed events are retried automatically** — if a downstream service is temporarily unavailable, Hitayu will re-attempt processing without any manual intervention.
 
 <Tip>
-  For the smoothest experience, ensure your queue worker is running continuously in production. Ask your technical team to configure a process supervisor (such as Supervisor on Linux) to keep `php artisan queue:work` alive.
+  For the smoothest experience, confirm with your technical team that the background processing service is running continuously in your production environment.
 </Tip>
 
 ---
@@ -115,8 +115,8 @@ Use this checklist when going live with a new integration:
 
 Every inbound webhook endpoint in Hitayu is protected by signature or token verification specific to the sending platform:
 
-- **Shopify** webhooks are verified using HMAC-SHA256 signatures computed against your `SHOPIFY_WEBHOOK_SECRET`.
-- **Shiprocket** tracking webhooks optionally require a bearer token set via `SHIPROCKET_WEBHOOK_TOKEN`.
+- **Shopify** webhooks are verified using HMAC-SHA256 signatures computed against your Webhook Secret.
+- **Shiprocket** tracking webhooks optionally require a bearer token configured in your Shiprocket integration settings.
 - **Payment** webhooks (Razorpay, Cashfree, PayU) use each gateway's own signature scheme.
 
 Requests that fail signature verification are rejected with an HTTP `401` response and logged for audit purposes. See the [Webhook Reference](/integrations/webhooks) for full details.

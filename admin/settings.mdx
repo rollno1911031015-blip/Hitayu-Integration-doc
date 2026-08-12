@@ -1,7 +1,7 @@
 ---
 title: "System Settings & Integrations — Hitayu ERP Configuration"
 sidebarTitle: "Settings"
-description: "Configure Hitayu ERP integrations: Shopify, Shiprocket, payment gateways, WhatsApp, SMS, IVR, and company settings — all from one settings page."
+description: "Configure Hitayu ERP integrations: Shopify, Shiprocket, payment gateways, WhatsApp, SMS, IVR, and notifications — all managed from one settings page."
 ---
 
 The Settings section is where administrators connect Hitayu ERP to the third-party services your business relies on — your Shopify store, payment gateway, shipping partner, WhatsApp notifications, SMS provider, and IVR calling system. Each integration has its own card on the page showing its current status, available toggles, and credential fields.
@@ -119,18 +119,50 @@ Sends automated customer notifications via the Meta Cloud API. See the [Notifica
 
 ### SMS
 
-Sends transactional SMS messages to customers. Multiple providers are supported.
+Sends transactional SMS messages to customers via SMS Wale.
 
-<Accordion title="SMS Wala credentials">
+<Accordion title="SMS Wale credentials">
   | Key | Description |
   |---|---|
   | **Provider** | `smswala` |
-  | **API URL** | SMS Wala API endpoint |
+  | **API URL** | SMS Wale API endpoint |
   | **API Key** | Account API key |
   | **Campaign** | Campaign ID |
   | **Route ID** | Routing identifier for transactional SMS |
   | **Sender ID** | DLT-registered sender name |
   | **PE ID** | Principal Entity ID for TRAI compliance |
+  | **Payment Link Template ID** | DLT template ID for payment link messages (optional) |
+  | **Order Received Template ID** | DLT template ID for order confirmation messages (optional) |
+</Accordion>
+
+---
+
+### Notifications
+
+Controls which notification events are active and which channels they use to reach customers.
+
+<Accordion title="Payment link notification toggles">
+  | Toggle | Description |
+  |---|---|
+  | **Send Payment Links** | Master switch — enable or disable all payment link notifications |
+  | **Payment Links By SMS** | Send payment links via SMS Wale when the customer has a phone number |
+  | **Payment Links By WhatsApp** | Send payment links via WhatsApp when the customer has a phone number |
+  | **Payment Links By Email** | Send payment links via email when the customer has an email address |
+</Accordion>
+
+<Accordion title="Order received notification toggles">
+  | Toggle | Description |
+  |---|---|
+  | **Send Order Received Confirmation** | Master switch — notify customers once their payment is captured and the order is confirmed |
+  | **Order Received By SMS** | Send the order confirmation via SMS Wale |
+  | **Order Received By WhatsApp** | Send the order confirmation via WhatsApp |
+  | **Order Received By Email** | Send the order confirmation via email |
+</Accordion>
+
+<Accordion title="Payment link delivery mode">
+  | Setting | Description |
+  |---|---|
+  | **Payment Link Delivery Mode** | `direct` (send immediately when the link is generated) or `queue` (process via the queue worker for deferred sending) |
 </Accordion>
 
 ---
@@ -162,7 +194,6 @@ Controls payment and discount rules applied to CRM and IVR orders.
   | **Minimum Partial Payment (₹4,000 and above)** | Same rule for orders at or above ₹4,000 |
   | **Discount (Below ₹4,000)** | Discount percentage applied to the order subtotal for orders under ₹4,000 |
   | **Discount (₹4,000 and above)** | Discount percentage for orders at or above ₹4,000 |
-  | **Payment Link Delivery Mode** | `direct` (send immediately) or `queue` (process via queue worker) |
 </Accordion>
 
 ---

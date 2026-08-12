@@ -166,5 +166,5 @@ All webhooks are idempotent — if the same payment event is delivered more than
 | Payments not reconciling | Webhook not registered with the gateway | Add the Hitayu webhook URL in your gateway dashboard |
 | Signature verification failure | Webhook secret mismatch | Re-copy the webhook secret from your gateway into Hitayu |
 | Test payments appearing in live reports | Using test keys in production | Switch to production keys and update the Environment/Base URL |
-| Payment status stuck on Pending | Queue worker not running | Ask your team to verify `php artisan queue:work` is active |
+| Payment status stuck on Pending | Background processing not running | Ask your technical team to verify the background processing service is active |
 | Wrong gateway processing payments | Active provider not updated | Check **Active Payment Provider** in Settings → Integrations |

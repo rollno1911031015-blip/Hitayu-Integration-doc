@@ -82,6 +82,8 @@ Hitayu receives real-time updates from Shopify through webhooks. You must regist
     | `inventory_levels/update` | `POST /api/webhooks/shopify/inventory-levels/update` | Stock level changed — updates inventory |
     | `locations/create` | `POST /api/webhooks/shopify/locations/create` | New warehouse location added |
     | `locations/update` | `POST /api/webhooks/shopify/locations/update` | Location details changed |
+    | `locations/deactivate` | `POST /api/webhooks/shopify/locations/deactivate` | Location deactivated — marks it inactive in Hitayu |
+    | `locations/activate` | `POST /api/webhooks/shopify/locations/activate` | Previously deactivated location re-enabled |
 
   </Step>
   <Step title="Set the Shared Secret">
@@ -99,7 +101,7 @@ Hitayu receives real-time updates from Shopify through webhooks. You must regist
 
 The **Order Sync** toggle controls whether new Shopify orders are automatically imported into Hitayu when a webhook fires.
 
-In **Settings → Integrations → Shopify**, turn on **Automatic Order Sync** (`SHOPIFY_ORDER_SYNC_ENABLED`).
+In **Settings → Integrations → Shopify**, turn on **Automatic Order Sync**.
 
 When enabled:
 - Every `orders/create` webhook creates a corresponding order in Hitayu within seconds.
@@ -130,7 +132,7 @@ To import your existing product catalog without waiting for individual webhook e
 
 Hitayu mirrors your Shopify warehouse locations so inventory levels can be tracked per location.
 
-- Locations are automatically created or updated via the `locations/create` and `locations/update` webhooks once those are registered.
+- Locations are automatically created, updated, deactivated, or re-activated via the `locations/create`, `locations/update`, `locations/deactivate`, and `locations/activate` webhooks once those are registered.
 - Inventory levels update in real time whenever Shopify sends an `inventory_levels/update` event.
 - To do a one-time bulk location import, use the **Sync Locations** button in **Settings → Integrations → Shopify**.
 

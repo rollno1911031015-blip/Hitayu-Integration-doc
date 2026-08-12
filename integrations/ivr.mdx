@@ -99,7 +99,7 @@ When a call is placed from Hitayu (via the order or lead profile):
 2. Exotel dials your agent first, then bridges to the customer.
 3. As the call progresses, Exotel sends status callbacks to `/api/webhooks/ivr/call-status` with events like `ringing`, `in-progress`, and `completed`.
 4. When the call ends, Exotel sends the final status including call duration, a recording URL (if enabled), and the call SID.
-5. Hitayu stores the full call record in `call_recordings` and links it to the order or lead.
+5. Hitayu stores the full call record and links it to the order or lead.
 
 Call recordings can be listened to directly from the order communication timeline in Hitayu.
 

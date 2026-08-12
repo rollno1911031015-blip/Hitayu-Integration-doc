@@ -4,7 +4,7 @@ sidebarTitle: "Shiprocket"
 description: "Connect Shiprocket to Hitayu ERP to create shipments, generate AWB numbers, manage NDR, and receive live carrier tracking updates automatically."
 ---
 
-Hitayu ERP's Shiprocket integration handles the complete post-payment shipping workflow. Once connected, Hitayu can create shipments in Shiprocket the moment an order is ready to pack, assign AWB numbers, generate labels and manifests, and receive live tracking callbacks directly from Shiprocket's carrier network. NDR (Non-Delivery Reports) and RTO (Return to Origin) flows are also handled end-to-end without leaving Hitayu.
+Hitayu ERP's Shiprocket integration handles the complete post-payment shipping workflow. Once connected, Hitayu can create shipments in Shiprocket the moment an order is ready to pack, assign AWB numbers, generate labels and manifests, and receive live tracking callbacks directly from Shiprocket's carrier network. NDR (Non-Delivery Reports), RTO (Return to Origin), and abandoned Shiprocket checkouts are also handled end-to-end without leaving Hitayu.
 
 ---
 
@@ -77,23 +77,36 @@ To find your pickup location name:
 
 ---
 
-## Step 4 — Register the Carrier Tracking Webhook
+## Step 4 — Register Webhooks in Shiprocket
 
-Shiprocket sends live tracking updates to Hitayu via webhook. This is how order statuses (shipped, out for delivery, delivered, NDR) update in real time.
+Shiprocket sends live tracking, NDR, and abandoned checkout updates to Hitayu via webhooks. Register each of the endpoints below in your Shiprocket account.
 
 <Steps>
-  <Step title="Copy the tracking webhook URL">
+  <Step title="Open Webhook settings in Shiprocket">
+    In Shiprocket, go to **Settings → API → Webhooks**.
+  </Step>
+  <Step title="Register the carrier tracking webhook">
     Your Hitayu tracking webhook URL is:
     ```text
     https://your-hitayu-domain.com/api/webhooks/carrier/tracking
     ```
     This is the recommended endpoint. It is identical to `/api/webhooks/shiprocket/tracking` but is named generically to support future carrier additions.
+
+    Paste this URL into the webhook URL field. Select all tracking event types: **Shipped**, **Out for Delivery**, **Delivered**, **NDR**, **RTO Initiated**, **RTO Delivered**.
   </Step>
-  <Step title="Open Webhook settings in Shiprocket">
-    In Shiprocket, go to **Settings → API → Webhooks**.
+  <Step title="Register the NDR webhook">
+    Add a separate webhook entry for Non-Delivery Report events:
+    ```text
+    https://your-hitayu-domain.com/api/webhooks/shiprocket/ndr
+    ```
+    This receives NDR events and queues them for your NDR management workflow.
   </Step>
-  <Step title="Add the webhook URL">
-    Paste your Hitayu tracking URL into the webhook URL field. Select all tracking event types: **Shipped**, **Out for Delivery**, **Delivered**, **NDR**, **RTO Initiated**, **RTO Delivered**.
+  <Step title="Register the abandoned checkout webhook">
+    If you use Shiprocket's checkout product, add a webhook for abandoned checkout events:
+    ```text
+    https://your-hitayu-domain.com/api/webhooks/shiprocket/sr-checkout/abandoned
+    ```
+    This captures checkouts that were started but not completed in Shiprocket's checkout flow.
   </Step>
   <Step title="Configure webhook authentication (recommended)">
     If you set a **Webhook Token** in Hitayu (Step 1), you must also tell Shiprocket to send it as a header with each request.
@@ -112,14 +125,7 @@ Shiprocket sends live tracking updates to Hitayu via webhook. This is how order 
     ```
     </CodeGroup>
 
-    Requests that arrive without a valid token (when `SHIPROCKET_WEBHOOK_TOKEN` is set) will be rejected with HTTP `401`.
-  </Step>
-  <Step title="Register the NDR webhook">
-    Repeat the same steps for the NDR webhook endpoint:
-    ```text
-    https://your-hitayu-domain.com/api/webhooks/shiprocket/ndr
-    ```
-    This receives Non-Delivery Report events and queues them for your NDR management workflow.
+    Requests that arrive without a valid token (when a Webhook Token is configured in Hitayu) will be rejected with HTTP `401`.
   </Step>
 </Steps>
 
@@ -143,7 +149,7 @@ In addition to real-time webhooks, Hitayu can periodically poll Shiprocket to re
 
 ## Step 6 — Enable Automatic Shipment Creation
 
-The **Create Orders in Shiprocket** toggle (`SHIPROCKET_CREATE_ORDERS_ENABLED`) controls whether Hitayu automatically pushes orders to Shiprocket when they reach the packing stage.
+The **Automatic Shipment Creation** toggle controls whether Hitayu automatically pushes orders to Shiprocket when they reach the packing stage.
 
 Go to **Settings → Integrations → Shiprocket** and turn on **Automatic Shipment Creation**.
 
@@ -156,7 +162,7 @@ When enabled:
 
 ## Testing the Webhook (Direct Mode)
 
-During setup, you can bypass the background queue to test webhook processing synchronously:
+During setup, you can test webhook processing by appending `?mode=direct` to the tracking endpoint URL:
 
 ```text
 POST https://your-hitayu-domain.com/api/webhooks/carrier/tracking?mode=direct
@@ -165,7 +171,7 @@ POST https://your-hitayu-domain.com/api/webhooks/carrier/tracking?mode=direct
 Adding `?mode=direct` processes the payload immediately and returns the result in the HTTP response, making it easy to verify your test payload is being parsed correctly.
 
 <Warning>
-  Use `?mode=direct` for testing only. In production, leave out the query parameter so events are processed through the queue with proper retry handling.
+  Use `?mode=direct` for testing only. In production, leave out the query parameter so events are processed with proper retry handling.
 </Warning>
 
 ---
@@ -175,7 +181,7 @@ Adding `?mode=direct` processes the payload immediately and returns the result i
 | Symptom | Likely Cause | Fix |
 |---|---|---|
 | Tracking not updating | Webhook not registered in Shiprocket | Add the carrier tracking URL to Shiprocket webhook settings |
-| HTTP 401 on tracking webhook | Token mismatch | Ensure the token in Shiprocket's header matches `SHIPROCKET_WEBHOOK_TOKEN` in Hitayu |
-| Shipments not auto-creating | Create Orders toggle is off | Enable **Automatic Shipment Creation** in Settings |
+| HTTP 401 on tracking webhook | Token mismatch | Ensure the token sent by Shiprocket matches the Webhook Token configured in Hitayu |
+| Shipments not auto-creating | Automatic Shipment Creation toggle is off | Enable **Automatic Shipment Creation** in Settings |
 | Wrong pickup location | Location name typo | Copy the exact name from Shiprocket's Manage Pickup Addresses screen |
 | Integration shows "Missing" | Email or password not saved | Return to Settings → Integrations → Shiprocket and re-enter credentials |

@@ -1,20 +1,20 @@
 ---
 title: "Notification Channels — WhatsApp, SMS, and Push in Hitayu"
 sidebarTitle: "Channels"
-description: "Set up and manage WhatsApp (Meta), SMS, and FCM push notification channels in Hitayu ERP, including enabling channels and tracking delivery via webhooks."
+description: "Set up WhatsApp, SMS (SMS Wale), and FCM push notification channels in Hitayu ERP, and track message delivery status via provider webhooks."
 ---
 
-Hitayu ERP supports three outbound notification channels: **WhatsApp** (via the Meta Cloud API), **SMS** (via a transactional SMS provider), and **push notifications** (via Firebase Cloud Messaging for the mobile app). Each channel can be enabled or disabled independently in Settings, so you can run only the channels your business needs.
+Hitayu ERP supports three outbound notification channels: **WhatsApp** (via the Meta Cloud API), **SMS** (via SMS Wale), and **push notifications** (via Firebase Cloud Messaging for the mobile app). Each channel can be enabled or disabled independently in Settings, so you can run only the channels your business needs.
 
 ---
 
 ## WhatsApp Channel
 
-WhatsApp messages are sent through the **Meta Cloud API** using pre-approved message templates. This is the richest channel — messages can include order details, payment amounts, tracking links, and formatted text.
+WhatsApp messages are sent through the **Meta Cloud API** as plain-text messages to the customer's phone number. This channel is used for payment link delivery and order confirmation notifications.
 
 ### How It Works
 
-When an event fires (e.g., order confirmed, payment received), Hitayu looks up the matching WhatsApp template, substitutes the variable placeholders with real data, and sends the message via the Meta Cloud API to the customer's phone number. The provider returns a **message ID** which is stored in the notification log.
+When an event fires (e.g., order confirmed, payment link generated), Hitayu builds the message text, substitutes the variable placeholders with real data, and sends the message via the Meta Cloud API to the customer's phone number. The provider returns a **message ID** which is stored in the notification log.
 
 After delivery, Meta sends a **status callback** to Hitayu at:
 
@@ -36,29 +36,27 @@ Go to **Settings → Integrations → WhatsApp** and enter:
 | **Verify Token** | A secret string you define; Meta sends this when verifying the webhook endpoint |
 
 <Warning>
-  WhatsApp will only deliver messages using templates that have been **approved** by Meta. If a template is rejected or pending review, messages queued for that template will fail. Check the notification logs for provider error details.
+  WhatsApp will only deliver messages if all four credentials above are filled in. If any required credential is missing, Hitayu falls back to generating a manual `wa.me` link in the notification log so staff can copy-paste the message to the customer manually.
 </Warning>
 
-### Enabling and Disabling WhatsApp
+### Enabling and Disabling WhatsApp Notifications
 
-In **Settings → Integrations → WhatsApp**, use the channel toggle to enable or disable the WhatsApp channel entirely. When disabled, Hitayu skips WhatsApp delivery for all events and falls back to a manual-send URL in the notification log (so staff can copy-paste a message manually if needed).
+WhatsApp delivery for each event type is controlled by toggle switches in **Settings → Integrations → Notifications**:
+
+- **Payment Links By WhatsApp** — toggle on/off sending payment links via WhatsApp
+- **Order Received By WhatsApp** — toggle on/off sending order confirmations via WhatsApp
+
+When a toggle is off, Hitayu skips WhatsApp delivery for that event and records the log entry without attempting a send.
 
 ---
 
 ## SMS Channel
 
-The SMS channel sends transactional text messages to customers. Hitayu supports multiple SMS providers configurable from the settings page.
-
-### Supported Providers
-
-| Provider | Notes |
-|---|---|
-| **Exotel** | Also used for IVR calling; credentials shared with the IVR integration |
-| **SMS Wala (smswala)** | API-key based provider; requires Sender ID, Campaign, Route ID, and PE ID for DLT compliance |
+The SMS channel sends transactional text messages to customers via **SMS Wale** (`smswala`), an API-key based provider.
 
 ### How It Works
 
-On an event trigger, Hitayu selects the SMS template for that event, substitutes variables, and sends the message to the customer's phone via the configured provider's API. The provider response (including a message ID or error code) is stored in the notification log.
+On an event trigger, Hitayu builds the SMS message text, substitutes variables, and sends the message to the customer's phone via the SMS Wale API. The provider response (including a message ID or error code) is stored in the notification log.
 
 For delivery status callbacks, Hitayu receives provider webhooks at:
 
@@ -70,36 +68,29 @@ The webhook updates the log entry with the final delivery status reported by the
 
 ### Required Configuration
 
-Go to **Settings → Integrations → SMS** and fill in the fields for your chosen provider:
+Go to **Settings → Integrations → SMS** and fill in the SMS Wale settings:
 
-<Accordion title="SMS Wala settings">
-  | Setting | Description |
-  |---|---|
-  | **Provider** | `smswala` |
-  | **API URL** | The SMS Wala API endpoint URL |
-  | **API Key** | Your SMS Wala account API key (stored as a secret) |
-  | **Campaign** | Campaign ID assigned by SMS Wala |
-  | **Route ID** | Routing identifier for transactional messages |
-  | **Sender ID** | Your registered DLT sender ID (e.g., `HTYUHC`) |
-  | **PE ID** | Your Principal Entity ID for TRAI DLT compliance |
-</Accordion>
+| Setting | Description |
+|---|---|
+| **Provider** | `smswala` |
+| **API URL** | The SMS Wale API endpoint URL |
+| **API Key** | Your SMS Wale account API key |
+| **Campaign** | Campaign ID assigned by SMS Wale |
+| **Route ID** | Routing identifier for transactional messages |
+| **Sender ID** | Your registered DLT sender ID (e.g., `HTYUHC`) |
+| **PE ID** | Your Principal Entity ID for TRAI DLT compliance |
+| **Payment Link Template ID** | DLT-registered template ID for payment link messages (optional) |
+| **Order Received Template ID** | DLT-registered template ID for order confirmation messages (optional) |
 
-<Accordion title="Exotel SMS settings">
-  | Setting | Description |
-  |---|---|
-  | **Provider** | `exotel` |
-  | **API Key** | Your Exotel API key |
-  | **API Token** | Your Exotel API token |
-  | **Account SID** | Your Exotel account SID |
-  | **Caller ID** | The Exotel number used as sender |
-</Accordion>
+### Enabling and Disabling SMS Notifications
 
-### Switching Providers
+SMS delivery per event is controlled by toggle switches in **Settings → Integrations → Notifications**:
 
-To change from one SMS provider to another, go to **Settings → Integrations → SMS**, select the new provider from the **Provider** dropdown, and save the credentials for that provider. Hitayu will use the new provider for all subsequent SMS sends.
+- **Payment Links By SMS** — toggle on/off sending payment links via SMS
+- **Order Received By SMS** — toggle on/off sending order confirmations via SMS
 
 <Tip>
-  You can switch providers without losing notification logs. Historical logs retain the provider response from the time they were sent.
+  The **SMS Wale API URL** defaults to `https://sms.smswala.in/app/smsapi/index.php`. Update this only if SMS Wale provides you with a different endpoint.
 </Tip>
 
 ---
@@ -152,7 +143,7 @@ Notification logs (visible under **Notifications** in the sidebar) use the follo
 | `failed` | Provider returned an error; check the provider response column |
 
 <Note>
-  Not all providers report `delivered` or `read` statuses. SMS providers often only confirm `sent`. WhatsApp via Meta Cloud API provides read receipts when the recipient has read receipts enabled.
+  Not all providers report `delivered` or `read` statuses. SMS Wale typically only confirms `sent`. WhatsApp via Meta Cloud API provides read receipts when the recipient has read receipts enabled.
 </Note>
 
 ---

@@ -30,10 +30,10 @@ The **Current Stock** tab shows every product variant alongside its available qu
 |---|---|
 | **Product** | The parent product name |
 | **Variant** | The specific SKU or variant (size, colour, etc.) |
-| **Warehouse** | The warehouse holding this stock |
-| **Quantity** | Total units physically present in that warehouse |
+| **Warehouse(s)** | The warehouse(s) holding this stock, shown per location |
+| **Total Stock** | Total units physically present across all warehouses |
 | **Reserved** | Units held against open orders and not yet shipped |
-| **Available** | Quantity minus reservations — what can still be sold |
+| **Available** | Total stock minus reservations — what can still be sold |
 
 <Tip>
   Use the search bar and warehouse filter at the top of the table to quickly narrow down results when managing a large catalogue.
@@ -41,10 +41,10 @@ The **Current Stock** tab shows every product variant alongside its available qu
 
 ### Low-Stock Indicators
 
-When a variant's **Available** quantity falls at or below the configured low-stock threshold, the row is highlighted and a warning badge appears beside the quantity. This allows your purchasing team to react quickly before a stockout occurs.
+When a variant's **Available** quantity falls to a low level, the row is highlighted and a warning badge appears beside the quantity. This allows your purchasing team to react quickly before a stockout occurs. A separate badge marks variants that have reached zero available stock — these require immediate attention.
 
 <Note>
-  Low-stock thresholds are set per product variant in the Product Master. Ask your product manager to configure thresholds if the badges are not appearing as expected.
+  Stock status badges update automatically as orders are placed and goods are received. No manual configuration is needed for the indicators to appear.
 </Note>
 
 ### How Stock Reservations Work

@@ -1,14 +1,14 @@
 ---
-title: "IVR Calling Workflow: Queue, Actions & Recordings"
+title: "IVR Calling: Queue, Actions & Recordings"
 sidebarTitle: "IVR Calling"
-description: "Learn how to work your IVR calling queue, set availability, take call actions, log manual calls, and review call recordings in Hitayu ERP."
+description: "Work your IVR calling queue, set availability, record call outcomes, log manual calls, and review recordings — all from one workspace in Hitayu ERP."
 ---
 
-The IVR calling module is Hitayu's built-in outbound calling workspace. Orders are automatically distributed to available agents through a round-robin queue, and every interaction — from call outcomes to payment commitments — is logged directly against the order. Agents work from a focused calling view while managers track team performance from a dedicated IVR dashboard.
+The IVR calling module is Hitayu's built-in inbound calling workspace. When a customer call arrives, Hitayu matches it to an existing order and routes it to an available agent. Every interaction — from call outcomes to payment commitments — is logged directly against the order, so agents have full context during the call and managers can track team performance from a dedicated IVR dashboard.
 
 ## Understanding the IVR Calling Queue
 
-When an inbound or outbound call event is created, Hitayu assigns it to an available agent using **round-robin distribution**. Each agent receives calls in turn, ensuring workload is spread evenly across the team. Calls land in the agent's personal queue along with all relevant order information, so there is no need to search for context mid-call.
+When an inbound call event is received, Hitayu assigns it to an available agent using **round-robin distribution**. Each agent receives calls in turn, ensuring workload is spread evenly across the team. Calls land in the agent's personal queue along with all relevant order information, so there is no need to search for context mid-call.
 
 <Note>
   Calls are only distributed to agents who are currently marked as **Available**. If your availability is off, new calls will not be assigned to you.
@@ -88,8 +88,8 @@ After each call, you must record what happened. This creates an audit trail and 
 Sometimes you need to call a customer outside of the automated queue — for example, to re-engage a customer who missed a previous call. Manual calls are logged the same way as queue calls and are fully tracked against the order.
 
 <Steps>
-  <Step title="Open the Manual Calls Form">
-    Go to **Admin → Calling** and click **Log Manual Call**, or navigate directly to `/ivr/manual-calls`.
+  <Step title="Open the Calling Queue">
+    Go to **Admin → Calling** (`/admin/calling`) and click **Log Manual Call** in the toolbar.
   </Step>
   <Step title="Search for the Order">
     Enter the order number or customer phone number in the search field. Search suggestions will surface matching records instantly.
@@ -103,7 +103,7 @@ Sometimes you need to call a customer outside of the automated queue — for exa
 
 ## Viewing Call Details and Recordings
 
-Every call — inbound, outbound, or manual — has a detail page that aggregates everything about that interaction.
+Every call — inbound or manual — has a detail page that aggregates everything about that interaction.
 
 <Steps>
   <Step title="Open the Call Detail Page">
@@ -133,9 +133,7 @@ Hitayu listens for call status updates at the public webhook endpoint (`/webhook
 | Call Status | Meaning |
 |-------------|---------|
 | `answered` / `completed` / `connected` | The customer picked up and the call was completed |
-| `missed` / `no-answer` | The call was not answered |
-| `busy` | The customer's line was busy |
-| `failed` | A technical error prevented the call from connecting |
+| `missed` / `no-answer` / `busy` / `failed` | The call was not connected — customer unavailable, line busy, or a technical error |
 
 ---
 
@@ -154,7 +152,7 @@ Managers access the IVR dashboard at `/ivr-dashboard`. This view provides a real
     Review completed calls with filters by date, agent, outcome, or order status. Click any call to open its full detail page.
   </Card>
   <Card title="Agent Management" icon="user-gear">
-    Admins can create and configure agent profiles under `/ivr/agents`, including assigning calling permissions and setting queue priority.
+    Admins can create and configure agent profiles from the RBAC settings, including assigning calling permissions and setting queue priority.
   </Card>
 </CardGroup>
 

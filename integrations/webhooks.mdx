@@ -16,8 +16,8 @@ Hitayu uses a **queue-based processing model** for all webhook categories except
 
 1. The external platform sends an HTTP POST to a Hitayu webhook endpoint.
 2. Hitayu validates the request signature or token immediately and returns HTTP `200` within milliseconds.
-3. The payload is written to an integration log and dispatched to a background queue job.
-4. The queue job processes the event, updates domain records, and writes an activity log entry.
+3. The payload is dispatched to a background processing queue.
+4. The event is processed, domain records are updated, and an activity log entry is written.
 
 This two-phase approach means external platforms always receive a fast acknowledgement, and processing failures (e.g., a downstream API being temporarily unavailable) are retried automatically without the platform needing to resend.
 
@@ -31,7 +31,7 @@ Certain endpoints support a `?mode=direct` query parameter for testing:
 | **`?mode=direct`** | Payload is processed synchronously in the same HTTP request. Response includes the processing result. Use for testing only. |
 
 <Warning>
-  Never use `?mode=direct` in production configurations. It bypasses the queue's retry and backpressure mechanisms and will cause timeouts under load.
+  Never use `?mode=direct` in production configurations. It bypasses the queue's retry mechanisms and will cause timeouts under load.
 </Warning>
 
 ---
@@ -46,7 +46,7 @@ All webhook handlers in Hitayu are **idempotent**. If a platform re-delivers the
 
 Shopify sends these events to notify Hitayu of changes in your store. Register each URL in **Shopify Admin → Settings → Notifications → Webhooks**.
 
-All Shopify webhooks are verified using HMAC-SHA256 computed against `SHOPIFY_WEBHOOK_SECRET`. Requests with an invalid or missing `X-Shopify-Hmac-Sha256` header are rejected with HTTP `401`.
+All Shopify webhooks are verified using HMAC-SHA256 computed against your Webhook Secret. Requests with an invalid or missing `X-Shopify-Hmac-Sha256` header are rejected with HTTP `401`.
 
 | Method | Endpoint | Shopify Topic | Description | Authentication |
 |---|---|---|---|---|
@@ -65,20 +65,18 @@ All Shopify webhooks are verified using HMAC-SHA256 computed against `SHOPIFY_WE
 | POST | `/api/webhooks/shopify/inventory-levels/update` | `inventory_levels/update` | Stock quantity changed for a product variant at a location. | HMAC-SHA256 |
 | POST | `/api/webhooks/shopify/locations/create` | `locations/create` | A new warehouse/fulfilment location was added in Shopify. | HMAC-SHA256 |
 | POST | `/api/webhooks/shopify/locations/update` | `locations/update` | A location's name or address was updated in Shopify. | HMAC-SHA256 |
-
-<Note>
-  Two additional location endpoints exist for deactivation events: `POST /api/webhooks/shopify/locations/deactivate` and `POST /api/webhooks/shopify/locations/activate`. Register these if your Shopify store frequently adds and removes fulfilment locations.
-</Note>
+| POST | `/api/webhooks/shopify/locations/deactivate` | `locations/deactivate` | A fulfilment location was deactivated in Shopify. Hitayu marks it inactive. | HMAC-SHA256 |
+| POST | `/api/webhooks/shopify/locations/activate` | `locations/activate` | A previously deactivated location was re-enabled in Shopify. | HMAC-SHA256 |
 
 ---
 
 ## Shiprocket / Carrier Webhooks
 
-Shiprocket sends tracking and NDR events to these endpoints. Register them in **Shiprocket → Settings → API → Webhooks**.
+Shiprocket sends tracking, NDR, and abandoned checkout events to these endpoints. Register them in **Shiprocket → Settings → API → Webhooks**.
 
 ### Webhook Authentication
 
-If `SHIPROCKET_WEBHOOK_TOKEN` is set in your Hitayu configuration, the token must be present in any one of these request headers:
+If a Webhook Token is set in your Hitayu Shiprocket configuration, the token must be present in any one of these request headers:
 
 <CodeGroup>
 ```text x-api-key
@@ -96,9 +94,10 @@ Requests without a valid token (when the token is configured) are rejected with 
 
 | Method | Endpoint | Trigger | Description | Authentication |
 |---|---|---|---|---|
-| POST | `/api/webhooks/carrier/tracking` | Shipment status update from any carrier via Shiprocket | **Recommended endpoint.** Receives tracking events (shipped, out for delivery, delivered, RTO initiated, RTO delivered). Queued by default. Supports `?mode=direct` for testing. | Optional token |
-| POST | `/api/webhooks/shiprocket/tracking` | Shipment status update from Shiprocket | Alias of the carrier tracking endpoint. Both paths use the same handler. | Optional token |
+| POST | `/api/webhooks/carrier/tracking` | Shipment status update from any carrier via Shiprocket | **Recommended endpoint.** Receives tracking events (shipped, out for delivery, delivered, RTO initiated, RTO delivered). Supports `?mode=direct` for testing. | Optional token |
+| POST | `/api/webhooks/shiprocket/tracking` | Shipment status update from Shiprocket | Alias of the carrier tracking endpoint. Both paths route to the same handler. | Optional token |
 | POST | `/api/webhooks/shiprocket/ndr` | Non-Delivery Report raised by carrier | Customer not home, address issue, refused delivery, etc. Triggers the NDR management workflow. | Optional token |
+| POST | `/api/webhooks/shiprocket/sr-checkout/abandoned` | Abandoned checkout from Shiprocket's checkout product | A customer started but did not complete a Shiprocket-hosted checkout. Creates a lead for follow-up. | Optional token |
 
 <Tip>
   Use `/api/webhooks/carrier/tracking` as your primary registration URL in Shiprocket. This path is carrier-agnostic and will remain stable if Hitayu adds support for additional shipping partners in the future.
@@ -112,9 +111,9 @@ Payment gateways send transaction events to these endpoints. Register them in yo
 
 Each gateway uses its own signature scheme — Hitayu verifies the signature before processing any event:
 
-- **Razorpay**: validates the `X-Razorpay-Signature` header using HMAC-SHA256 and your `RAZORPAY_WEBHOOK_SECRET`.
-- **Cashfree**: validates the signature header using your `CASHFREE_SECRET_KEY`.
-- **PayU**: validates the hash parameter in the POST body using your `PAYU_MERCHANT_SALT`.
+- **Razorpay**: validates the `X-Razorpay-Signature` header using HMAC-SHA256 and your Razorpay Webhook Secret.
+- **Cashfree**: validates the signature header using your Cashfree Secret Key.
+- **PayU**: validates the hash parameter in the POST body using your Merchant Salt.
 
 | Method | Endpoint | Gateway | Trigger Events | Authentication |
 |---|---|---|---|---|
@@ -130,8 +129,8 @@ WhatsApp and SMS delivery status callbacks arrive at these endpoints. They allow
 
 | Method | Endpoint | Provider | Trigger | Description | Authentication |
 |---|---|---|---|---|---|
-| POST | `/api/webhooks/whatsapp/status` | Meta (WhatsApp Business API) | Message status update | Receives `sent`, `delivered`, `read`, and `failed` status events for outbound WhatsApp messages. Updates `whatsapp_logs`. | Meta webhook signature |
-| POST | `/api/webhooks/sms/status` | Exotel | SMS delivery receipt | Receives delivery confirmations and failure events for outbound SMS messages. Updates `sms_logs`. | None (IP allowlist recommended) |
+| POST | `/api/webhooks/whatsapp/status` | Meta (WhatsApp Business API) | Message status update | Receives `sent`, `delivered`, `read`, and `failed` status events for outbound WhatsApp messages. | Meta webhook signature |
+| POST | `/api/webhooks/sms/status` | Exotel | SMS delivery receipt | Receives delivery confirmations and failure events for outbound SMS messages. | None (IP allowlist recommended) |
 
 <Note>
   When registering the WhatsApp webhook in Meta Business Suite, you must also provide a **Verify Token**. Meta sends a one-time GET challenge to the same endpoint to confirm it is live. Hitayu handles this challenge automatically — no extra setup is required on your end beyond providing the correct Verify Token in both Hitayu and Meta.
@@ -145,7 +144,7 @@ Exotel sends call lifecycle events to this endpoint throughout and after every c
 
 | Method | Endpoint | Provider | Trigger | Description | Authentication |
 |---|---|---|---|---|---|
-| GET or POST | `/api/webhooks/ivr/call-status` | Exotel | Call status change (ringing, answered, completed, missed) | Receives call events and writes them to `call_recordings`. Supports both GET and POST to match Exotel's flexible callback configuration. | None (IP allowlist recommended) |
+| GET or POST | `/api/webhooks/ivr/call-status` | Exotel | Call status change (ringing, answered, completed, missed) | Receives call events and updates the call record. Supports both GET and POST to match Exotel's flexible callback configuration. | None (IP allowlist recommended) |
 
 <Note>
   The IVR endpoint accepts both `GET` and `POST` requests. This is intentional — Exotel's legacy Apps use GET callbacks while newer Apps use POST. Hitayu handles both transparently.
@@ -171,11 +170,11 @@ Replace `{source}` with the identifier for your lead source. For example:
 
 | Category | Authentication Method | Failure Response |
 |---|---|---|
-| Shopify | HMAC-SHA256 (`SHOPIFY_WEBHOOK_SECRET`) | HTTP 401 |
-| Shiprocket tracking | Optional bearer/API-key token (`SHIPROCKET_WEBHOOK_TOKEN`) | HTTP 401 if token configured and missing |
-| Razorpay | HMAC-SHA256 (`RAZORPAY_WEBHOOK_SECRET`) | HTTP 401 |
-| Cashfree | Gateway signature header (`CASHFREE_SECRET_KEY`) | HTTP 401 |
-| PayU | Body hash (`PAYU_MERCHANT_SALT`) | HTTP 401 |
+| Shopify | HMAC-SHA256 (Webhook Secret) | HTTP 401 |
+| Shiprocket tracking | Optional bearer/API-key token (Webhook Token) | HTTP 401 if token configured and missing |
+| Razorpay | HMAC-SHA256 (Razorpay Webhook Secret) | HTTP 401 |
+| Cashfree | Gateway signature header (Cashfree Secret Key) | HTTP 401 |
+| PayU | Body hash (Merchant Salt) | HTTP 401 |
 | WhatsApp | Meta webhook signature | HTTP 401 |
 | SMS (Exotel) | No built-in token — use IP allowlist | N/A |
 | IVR (Exotel) | No built-in token — use IP allowlist | N/A |

@@ -67,7 +67,7 @@ The `/api/webhooks/whatsapp/status` endpoint handles inbound message delivery st
 - **read** — Customer has read the message.
 - **failed** — Delivery failed (e.g., invalid number, blocked).
 
-These statuses are recorded in Hitayu's `whatsapp_logs` table and shown on the order communication timeline.
+These statuses are recorded in Hitayu and shown on the order communication timeline.
 
 ---
 
@@ -126,7 +126,7 @@ The `/api/webhooks/sms/status` endpoint receives delivery receipt callbacks from
 - **failed** — Delivery failed (DND, invalid number, etc.).
 - **undelivered** — Message sent but no delivery confirmation received.
 
-Statuses are logged in the `sms_logs` table and displayed on the order communication timeline alongside WhatsApp and call logs.
+Statuses are logged in Hitayu and displayed on the order communication timeline alongside WhatsApp and call logs.
 
 ---
 
