@@ -1,0 +1,139 @@
+---
+title: "Order Lifecycle and All Status Codes in Hitayu ERP"
+sidebarTitle: "Order Lifecycle"
+description: "A complete reference for every order status and payment state in Hitayu ERP, grouped by phase with clear descriptions and next actions for each."
+---
+
+Every order in Hitayu ERP moves through a well-defined lifecycle — from the moment it arrives from Shopify or is created manually, all the way to delivery, return, or refund. Each stage has a distinct status code that tells you exactly where the order stands and what action should come next. This page documents all statuses, groups them into phases, and explains the payment states that run in parallel with the order journey.
+
+## The Main Order Lifecycle
+
+The diagram below traces the standard path of a successfully fulfilled order. Most orders follow this flow; deviations (cancellation, RTO, NDR) are covered in the Terminal Phase section further down.
+
+<Steps>
+  <Step title="Intake — Order Arrives">
+    The order enters Hitayu ERP from Shopify via webhook (`SHOPIFY_RECEIVED`) or is created manually by your calling team (`ORDER_CREATED`). At this point the order is in the system but has not yet been reviewed by staff.
+  </Step>
+  <Step title="Confirmation">
+    A team member (or the automated assignment service) reviews the order. Once the customer's intent is confirmed, the order moves to `CONFIRMED`. For abandoned checkouts, this is the step where the calling team converts the order.
+  </Step>
+  <Step title="Payment Collection">
+    If the order is not already paid, it enters `PAYMENT_PENDING`. Once the customer completes payment — via a PayU link, Cashfree, or a COD agreement — the status advances to `PAYMENT_PAID`.
+  </Step>
+  <Step title="Verification">
+    Paid orders move to `VERIFICATION_PENDING`. A staff member reviews the order details (items, address, payment confirmation) before authorising fulfilment. After approval the status becomes `VERIFIED`.
+  </Step>
+  <Step title="Warehouse Fulfilment">
+    The warehouse team picks and packs the order: `PICKLIST_CREATED` → `PICKING` → `PACKED`. At each step the system records who performed the action and when.
+  </Step>
+  <Step title="Shipping">
+    Once packed, the order is pushed to Shiprocket. It progresses through `SHIPMENT_CREATED` → `AWB_ASSIGNED` → `PICKUP_SCHEDULED` → `PICKED_UP` → `IN_TRANSIT` → `OUT_FOR_DELIVERY` → `DELIVERED`.
+  </Step>
+</Steps>
+
+---
+
+## Status Reference by Phase
+
+### Phase 1 — Intake
+
+These statuses represent the very first moments of an order's life in Hitayu ERP.
+
+| Status Code | Display Name | What It Means | Typical Next Action |
+|---|---|---|---|
+| `SHOPIFY_RECEIVED` | Shopify Received | The order payload has arrived from Shopify and been saved, but has not yet been processed or assigned | System auto-assigns to order staff; no manual action required |
+| `ORDER_CREATED` | Order Created | A manual or calling-team order has been entered into the system | Assign to a team member or confirm immediately |
+
+---
+
+### Phase 2 — Confirmation
+
+| Status Code | Display Name | What It Means | Typical Next Action |
+|---|---|---|---|
+| `CONFIRMED` | Confirmed | The customer's intent has been confirmed and the order is active | Send a payment link (Pay Now, Pay Later, or Pay Partial) |
+| `PAYMENT_PENDING` | Payment Pending | The order is confirmed but the customer has not yet completed payment | Follow up via calling team; resend payment link if needed |
+| `PAYMENT_PAID` | Payment Paid | Full or partial payment has been received and the gateway has confirmed it | Automatic transition to Verification Pending |
+
+---
+
+### Phase 3 — Verification
+
+| Status Code | Display Name | What It Means | Typical Next Action |
+|---|---|---|---|
+| `VERIFICATION_PENDING` | Verification Pending | A staff member needs to review the order before fulfilment is authorised | Verify payment, address, and items; then approve |
+| `VERIFIED` | Verified | The order has been manually approved and is cleared for warehouse fulfilment | Push to Shiprocket or wait for warehouse to create a picklist |
+
+---
+
+### Phase 4 — Warehouse Fulfilment
+
+| Status Code | Display Name | What It Means | Typical Next Action |
+|---|---|---|---|
+| `PICKLIST_CREATED` | Picklist Created | A warehouse picklist has been generated for this order | Warehouse picker begins collecting items |
+| `PICKING` | Picking | Items are actively being picked from warehouse shelves | Warehouse picker completes pick and hands to packing |
+| `PACKED` | Packed | All items are packed and the parcel is ready for courier collection | Confirm shipment details; await courier pickup |
+
+---
+
+### Phase 5 — Shipping
+
+These statuses are synced from Shiprocket and reflect real-time courier tracking events.
+
+| Status Code | Display Name | What It Means | Typical Next Action |
+|---|---|---|---|
+| `SHIPMENT_CREATED` | Shipment Created | A shipment record has been created in Shiprocket | Assign an AWB number; schedule courier pickup |
+| `AWB_ASSIGNED` | AWB Assigned | An Air Waybill (tracking number) has been assigned by the courier | Schedule pickup with the courier |
+| `PICKUP_SCHEDULED` | Pickup Scheduled | The courier has confirmed a pickup slot | Wait for courier to collect the parcel |
+| `PICKED_UP` | Picked Up | The courier has collected the parcel from the warehouse | Monitor tracking via Shiprocket |
+| `IN_TRANSIT` | In Transit | The parcel is moving through the courier network toward the customer | No action required; monitor for NDR alerts |
+| `OUT_FOR_DELIVERY` | Out for Delivery | The parcel is on the delivery vehicle for the customer's address | Alert customer if needed; monitor for delivery confirmation |
+| `DELIVERED` | Delivered | The courier has confirmed successful delivery to the customer | Close order; trigger satisfaction follow-up if configured |
+
+---
+
+### Phase 6 — Terminal Statuses
+
+Terminal statuses represent final outcomes — both successful and unsuccessful. Once an order reaches a terminal status it will not advance further.
+
+| Status Code | Display Name | What It Means | Typical Next Action |
+|---|---|---|---|
+| `NDR` | NDR (Non-Delivery Report) | The courier attempted delivery but was unsuccessful | Contact customer; reattempt delivery or initiate RTO |
+| `RTO_INITIATED` | RTO Initiated | A return-to-origin has been triggered because delivery could not be completed | Monitor courier return progress |
+| `RTO_RECEIVED` | RTO Received | The returned parcel has arrived back at the warehouse | Inspect goods; decide on reorder, reshipment, or write-off |
+| `CANCELLED` | Cancelled | The order has been cancelled (by customer, staff, or system) | Issue refund if payment was collected |
+| `REFUNDED` | Refunded | A PayU refund has been processed for this order | Notify customer; close order |
+
+<Warning>
+Terminal statuses cannot be reversed. If you need to reship after an RTO, create a new order for the customer rather than attempting to reactivate the original.
+</Warning>
+
+---
+
+## Payment Statuses
+
+Payment status runs alongside order status and tracks the financial state of the transaction independently.
+
+| Payment Status | What It Means |
+|---|---|
+| `pending` | No payment has been collected yet; a payment link may or may not have been sent |
+| `authorized` | The customer's payment method has been authorised by the gateway but funds have not yet been captured |
+| `paid` | Payment has been fully captured and confirmed by the payment gateway |
+| `failed` | The payment attempt was declined or timed out; a new payment link should be sent |
+| `refunded` | The full order amount (or a partial amount) has been refunded via PayU |
+
+<Note>
+An order can have `payment_status = paid` while still showing `status = VERIFICATION_PENDING`. Payment confirmation and order verification are intentionally separate steps to allow a second set of eyes on high-value orders.
+</Note>
+
+---
+
+## Status Transition Audit Trail
+
+Every status change is recorded in the order's **Status History** tab on the order detail page. The log captures:
+
+- The **previous status** and the **new status**
+- The **date and time** of the transition
+- The **team member** who triggered the change (or "system" for automated transitions)
+- Any **notes or remarks** entered at the time of the action
+
+This gives you a complete, tamper-evident history of how every order progressed through the system.

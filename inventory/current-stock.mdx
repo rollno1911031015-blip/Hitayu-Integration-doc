@@ -1,0 +1,149 @@
+---
+title: "Current Stock Management & Warehouse Inventory Overview"
+sidebarTitle: "Current Stock"
+description: "View live per-warehouse stock levels, track every ledger movement, sync Shiprocket locations, and understand how orders automatically reserve inventory."
+---
+
+The Inventory module in Hitayu ERP gives you a single, unified view of your product stock across every warehouse you operate. From live quantity counts to a full audit trail of every item that has moved in or out, this section is your central hub for keeping stock levels accurate and your fulfilment running smoothly.
+
+## Navigating to Inventory
+
+Go to **Admin → Inventory** (`/admin/inventory/current-stock`). The Inventory section is split into three segments you can switch between using the tabs at the top of the page:
+
+| Segment | URL | What it shows |
+|---|---|---|
+| **Current Stock** | `/admin/inventory/current-stock` | Live per-product, per-warehouse quantities |
+| **Stock Ledger** | `/admin/inventory/stock-ledger` | Complete history of all stock movements |
+| **Stock Audit** | `/admin/inventory/stock-audit` | Formal reconciliation records |
+
+<Note>
+  Your access to each segment depends on the permissions assigned to your role. Contact your administrator if a tab is missing or greyed out.
+</Note>
+
+## Current Stock View
+
+The **Current Stock** tab shows every product variant alongside its available quantity in each warehouse. Each row in the table represents a unique combination of product variant and warehouse location.
+
+### Columns at a glance
+
+| Column | Description |
+|---|---|
+| **Product** | The parent product name |
+| **Variant** | The specific SKU or variant (size, colour, etc.) |
+| **Warehouse** | The warehouse holding this stock |
+| **Quantity** | Total units physically present in that warehouse |
+| **Reserved** | Units held against open orders and not yet shipped |
+| **Available** | Quantity minus reservations — what can still be sold |
+
+<Tip>
+  Use the search bar and warehouse filter at the top of the table to quickly narrow down results when managing a large catalogue.
+</Tip>
+
+### Low-Stock Indicators
+
+When a variant's **Available** quantity falls at or below the configured low-stock threshold, the row is highlighted and a warning badge appears beside the quantity. This allows your purchasing team to react quickly before a stockout occurs.
+
+<Note>
+  Low-stock thresholds are set per product variant in the Product Master. Ask your product manager to configure thresholds if the badges are not appearing as expected.
+</Note>
+
+### How Stock Reservations Work
+
+When a customer places an order, Hitayu ERP immediately creates a **stock reservation** for each item in that order. Reserved units are subtracted from the available quantity shown in the current-stock view but remain physically in the warehouse until the shipment is dispatched.
+
+- A reservation is **active** from the moment an order is confirmed.
+- It is **released** automatically when the order is shipped or cancelled.
+- If an order is cancelled, the reserved quantity returns to available stock without any manual intervention.
+
+This prevents overselling across all your connected sales channels in real time.
+
+---
+
+## Stock Ledger
+
+The **Stock Ledger** is an immutable, time-stamped log of every quantity change that has ever occurred for any product variant in your inventory. Think of it as an accounting journal, but for stock.
+
+### What the ledger records
+
+| Movement Type | Triggered by |
+|---|---|
+| **Inward (MRN)** | Goods received against a Purchase Order |
+| **Outward (Order)** | Items dispatched for a customer order |
+| **Reservation** | Stock held when an order is placed |
+| **Release** | Reservation freed on cancellation or return |
+| **Adjustment (Audit)** | Corrections made when a stock audit is completed |
+| **Bootstrap** | Initial stock imported from Shiprocket |
+
+### Filtering the ledger
+
+Use the filters at the top of the Stock Ledger page to narrow down entries:
+
+- **Date range** — view movements within a specific period
+- **Warehouse** — isolate a single location
+- **Product / Variant** — drill into one SKU
+- **Movement type** — show only inward, outward, or adjustment entries
+- **Source channel** — filter by the e-commerce channel that triggered the movement
+
+<Tip>
+  Export the filtered ledger to CSV using the **Export** button on the top-right for reporting or reconciliation with your accounting software.
+</Tip>
+
+---
+
+## Bootstrapping Initial CRM Stock
+
+If you are setting up Hitayu ERP for the first time and already have stock recorded in Shiprocket, you can import those quantities into the CRM in a single action — no manual data entry required.
+
+<Warning>
+  Bootstrap CRM Stock is a **one-time import**. Running it more than once will create duplicate ledger entries and distort your stock history. Only use this action when initialising a brand-new inventory setup.
+</Warning>
+
+<Steps>
+  <Step title="Open the Bootstrap dialog">
+    Navigate to **Admin → Inventory → Current Stock** (`/admin/inventory/current-stock`). Click the **Bootstrap CRM Stock** button in the top-right area of the page. The page will scroll to the launch section automatically.
+  </Step>
+  <Step title="Review the pre-flight summary">
+    Hitayu ERP will display the number of product variants and warehouses it is about to import from Shiprocket. Verify the counts match what you expect before proceeding.
+  </Step>
+  <Step title="Confirm the import">
+    Click **Confirm Bootstrap**. The system will pull current stock quantities from Shiprocket and create corresponding warehouse-stock records and ledger entries in Hitayu ERP.
+  </Step>
+  <Step title="Verify the results">
+    Once complete, the current-stock table will populate with the imported quantities. Check a sample of SKUs against your Shiprocket dashboard to confirm accuracy.
+  </Step>
+</Steps>
+
+---
+
+## Syncing Warehouses from Shiprocket
+
+Hitayu ERP mirrors your Shiprocket warehouse locations so that stock is always attributed to the correct physical site. When you add a new fulfilment centre in Shiprocket, you must sync it into Hitayu ERP before that location appears in stock views and purchase orders.
+
+<Steps>
+  <Step title="Trigger a warehouse sync">
+    From any Inventory page, click **Sync Warehouses** in the toolbar. This calls the Shiprocket API and fetches the latest list of your registered warehouse locations.
+  </Step>
+  <Step title="Review new locations">
+    Any newly discovered warehouses are added to your warehouse list automatically. Existing warehouses are updated with any name or address changes from Shiprocket.
+  </Step>
+  <Step title="Confirm the warehouse list">
+    Navigate to **Admin → Warehouses** to review the full list and ensure all locations are correctly labelled.
+  </Step>
+</Steps>
+
+<Note>
+  Warehouse sync requires the **Inventory: Manage Warehouses** and **Settings: Integrations** permissions. Ensure your Shiprocket API credentials are configured under **Settings → Integrations** before running a sync.
+</Note>
+
+---
+
+## Quick-Navigation Links
+
+<CardGroup cols={2}>
+  <Card title="Purchase Orders" icon="cart-shopping" href="/inventory/purchase-orders">
+    Create and manage purchase orders, approve them, and record received goods with MRNs.
+  </Card>
+  <Card title="Stock Audit" icon="clipboard-check" href="/inventory/stock-audit">
+    Run formal physical counts to reconcile your system stock with what is actually on the shelf.
+  </Card>
+</CardGroup>

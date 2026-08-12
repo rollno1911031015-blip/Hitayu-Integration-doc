@@ -1,0 +1,121 @@
+---
+title: "Notification Templates — Manage Message Content in Hitayu"
+sidebarTitle: "Templates"
+description: "View and understand Hitayu ERP notification templates: what triggers each message, available variables, and how templates map to WhatsApp and SMS channels."
+---
+
+Hitayu ERP sends automated messages to customers whenever key events happen — an order is confirmed, a payment is received, or a shipment is dispatched. The content of each message is controlled by a **notification template** stored in the system. Templates let you keep message wording consistent across all channels without editing code.
+
+<Note>
+  Access the notification template list by going to **Notifications** in the left sidebar. You need the **`notifications.view`** permission to reach this page.
+</Note>
+
+---
+
+## What Is a Notification Template?
+
+A notification template is a pre-written message body that Hitayu fills in with real order and customer data before sending. Each template is tied to:
+
+- **An event** — the action that triggers the message (e.g., order confirmed, payment received)
+- **A channel** — where the message is sent (WhatsApp, SMS, or push notification)
+- **Variable placeholders** — tokens in the message body that are replaced with live values at send time
+
+---
+
+## Viewing Templates
+
+Navigate to **Notifications** in the sidebar. The page shows:
+
+1. **Template list** — all configured templates, with their event name and channel
+2. **Recent notification logs** — the last delivery attempts, with status (queued, sent, failed) and recipient details
+
+Click any template row to preview its full message body and see which variables it uses.
+
+---
+
+## Template Variables
+
+Variables are placeholders inside a template body. When Hitayu sends the message, each placeholder is replaced with the actual value for that customer or order. Common variables include:
+
+| Variable | Replaced with |
+|---|---|
+| `{{customer_name}}` | The customer's full name |
+| `{{order_number}}` | The order reference number |
+| `{{order_total}}` | The total order amount (formatted with currency) |
+| `{{payment_amount}}` | The payment amount received |
+| `{{payment_method}}` | How the customer paid (e.g., UPI, card, COD) |
+| `{{tracking_number}}` | Shipment AWB / tracking number |
+| `{{courier_name}}` | Name of the courier partner |
+| `{{status}}` | Current order or shipment status label |
+| `{{followup_date}}` | Scheduled follow-up date for an agent |
+
+<Warning>
+  Variable names in templates must match exactly — including capitalisation and double curly braces. An unrecognised variable will appear as plain text in the sent message.
+</Warning>
+
+---
+
+## When Templates Are Triggered
+
+Each template is linked to a specific event in the order and payment workflow. The table below lists the standard events and the template that fires:
+
+| Event | Typical channel | What triggers it |
+|---|---|---|
+| **Order Confirmed** | WhatsApp / SMS | A new order is verified and confirmed by staff |
+| **Payment Received** | WhatsApp / SMS | A payment record is marked as received in the system |
+| **Order Dispatched** | WhatsApp / SMS | The order is pushed to Shiprocket and an AWB is assigned |
+| **Shipment Out for Delivery** | WhatsApp / SMS | Shiprocket tracking webhook fires an OFD event |
+| **Shipment Delivered** | WhatsApp / SMS | Shiprocket tracking webhook fires a delivered event |
+| **Order Cancelled** | WhatsApp / SMS | An order is cancelled with remarks |
+| **Call Answered** | Push (FCM) | An IVR call is answered by an agent |
+| **Call Missed** | Push (FCM) | An IVR call is missed (no agent picked up) |
+| **Payment Link Sent** | WhatsApp / SMS | A payment link is generated and dispatched to the customer |
+
+<Tip>
+  Push notifications for call events go to the **staff member's** mobile device (if they have the mobile app installed), not to the customer. All other events in the table above send to the **customer's** phone number.
+</Tip>
+
+---
+
+## How Templates Map to Channels
+
+A single event may have multiple templates — one per channel. For example, an "Order Confirmed" event might have:
+
+- A **WhatsApp template** using an approved Meta message template name and formatted body
+- An **SMS template** with a shorter plain-text version compliant with DLT regulations
+
+When the event fires, Hitayu checks which channels are enabled in **Settings → Integrations** and sends via every active channel that has a template defined for that event.
+
+<Note>
+  WhatsApp templates must be approved by Meta before they can be sent. The template name stored in Hitayu should match the approved template name in your Meta Business account exactly.
+</Note>
+
+---
+
+## Notification Logs
+
+Below the template list, the **Recent Logs** section shows the last 20 notification delivery attempts. Each log entry displays:
+
+| Column | Meaning |
+|---|---|
+| **Event** | Which event triggered the notification |
+| **Channel** | WhatsApp, SMS, or push |
+| **Recipient** | Phone number or device token |
+| **Status** | `queued`, `sent`, or `failed` |
+| **Sent At** | Timestamp of the delivery attempt |
+| **Provider Response** | Raw response code or message from the provider |
+
+Use the logs to diagnose delivery failures. A `failed` status with a provider response will show the error returned by WhatsApp or the SMS gateway, which helps identify issues like invalid phone numbers or unapproved template names.
+
+---
+
+## Related Pages
+
+<CardGroup cols={2}>
+  <Card title="Notification Channels" icon="satellite-dish" href="/notifications/channels">
+    Configure WhatsApp, SMS, and push notification channels and check delivery status
+  </Card>
+  <Card title="System Settings" icon="sliders" href="/admin/settings">
+    Enable or disable notification providers and enter API credentials
+  </Card>
+</CardGroup>

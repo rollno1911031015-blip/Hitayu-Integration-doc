@@ -1,0 +1,83 @@
+---
+title: "Logging In to Hitayu ERP and Managing Your Account"
+sidebarTitle: "Login"
+description: "Learn how to sign in to Hitayu ERP, what happens after failed login attempts, how to log out safely, and how to update your profile details."
+---
+
+Hitayu ERP uses a secure, session-based login system. Every staff member accesses the platform through a single sign-in page — there is no public registration form. Before you can log in for the first time, your administrator must create your account and provide you with your email address and initial password.
+
+## Signing In
+
+<Steps>
+  <Step title="Navigate to the Login Page">
+    Open a web browser and go to the Hitayu ERP URL provided by your administrator. If you are already signed in you will be redirected to your dashboard automatically.
+  </Step>
+  <Step title="Enter Your Credentials">
+    Type your **email address** and **password** into the respective fields on the sign-in form. Both fields are required.
+  </Step>
+  <Step title="Click Sign In">
+    Press the **Sign In** button to submit your credentials. Hitayu ERP validates your details and, if correct, logs you in and redirects you to the dashboard most relevant to your role.
+  </Step>
+</Steps>
+
+<Note>
+  Accounts are created exclusively by your organisation's administrator. If you do not have login credentials yet, or if you need your password reset, please contact your admin directly — there is no self-service password reset link on the login page.
+</Note>
+
+## After a Successful Login
+
+Once signed in, the system redirects you based on your role and your last active section. For example:
+
+- Calling agents land on the **IVR Dashboard** (`/ivr-dashboard`).
+- E-commerce and orders staff land on the **Shopify Dashboard** (`/shopify-dashboard`).
+- Admins and multi-role users are redirected to whichever dashboard section matches their highest-priority permission.
+
+The system remembers the last section you were active in and returns you there on your next login.
+
+## Failed Login Attempts and Account Locking
+
+Hitayu ERP tracks failed sign-in attempts to protect accounts from unauthorised access.
+
+<Warning>
+  After **5 consecutive failed login attempts**, your account is temporarily locked for **15 minutes**. During this period you will see the message: *"This account is temporarily locked. Please try again later."* You cannot log in until the lock expires or an administrator manually unlocks your account.
+</Warning>
+
+If your account is locked and you cannot wait for the lockout to expire, contact your administrator and ask them to reset your failed login count via the user management panel.
+
+Additional reasons your login may be rejected include:
+
+- **Deactivated account** — Your administrator has disabled your account. You will see: *"This account has been deactivated. Please contact your administrator."*
+- **Incorrect credentials** — Your email or password does not match. Each failed attempt increments the failure counter described above.
+
+## Logging Out
+
+Always log out when you have finished using Hitayu ERP, especially on shared computers.
+
+<Steps>
+  <Step title="Open the User Menu">
+    Click your profile name or avatar in the top-right corner of the navigation header to reveal the user dropdown.
+  </Step>
+  <Step title="Click Logout">
+    Select **Logout** from the dropdown. The system invalidates your session immediately and redirects you back to the login page.
+  </Step>
+</Steps>
+
+<Tip>
+  Logging out properly invalidates your session on the server, not just in your browser. This is important if you share a workstation — simply closing the browser tab does **not** end your session.
+</Tip>
+
+## Updating Your Profile
+
+You can update your personal details at any time by visiting your profile page at `/profile`.
+
+From the profile edit page you can:
+
+- **Change your display name** — Updates how your name appears throughout the system.
+- **Change your email address** — Your email is also your login username, so update this carefully.
+- **Add or update your phone number** — Used for internal contact information.
+- **Upload a profile photo** — Accepted formats are standard image files (JPEG, PNG). The photo appears in the navigation header and in team-facing views.
+- **Change your password** — Enter a new password in the **New Password** field and save. Leave this field blank if you do not want to change your password.
+
+<Note>
+  Updating your email address changes your login credential immediately. Make sure you remember your new email before saving, or you may need administrator assistance to regain access.
+</Note>

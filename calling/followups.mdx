@@ -1,0 +1,156 @@
+---
+title: "Followups & Reminders: Schedule, Track & Convert"
+sidebarTitle: "Followups"
+description: "Schedule, track, and complete follow-up callbacks in Hitayu ERP to keep payment commitments on time and turn interested prospects into confirmed orders."
+---
+
+A follow-up in Hitayu is a scheduled callback that an agent creates when a customer is not ready to confirm or pay during an initial call. Rather than losing track of the interaction, the agent logs a promise — a specific date and time to call the customer back — and Hitayu surfaces that reminder automatically when the time comes. Following up consistently and on time is one of the most reliable ways to improve order conversion rates.
+
+## What Followups Are and When to Use Them
+
+Follow-ups are created as the outcome of a call action. Use a follow-up when:
+
+- The customer asks you to call them back at a specific time ("Call me tomorrow morning").
+- You could not reach the customer and want to try again at a set time.
+- The customer needs time to check with someone else before confirming.
+- A payment commitment was made but has not yet been fulfilled and needs a gentle reminder.
+
+<Note>
+  A follow-up is not a permanent deferral — it is a time-bound commitment with a clear next action. Every follow-up should have a scheduled date/time and a brief note explaining the reason.
+</Note>
+
+---
+
+## Scheduling a Followup from a Call Action
+
+Follow-ups are created directly from the calling queue, immediately after a call ends.
+
+<Steps>
+  <Step title="Complete the Call">
+    Finish your conversation with the customer and return to the call card in your calling queue at `/admin/calling`.
+  </Step>
+  <Step title="Select the Follow-Up Action">
+    In the call action panel, choose **Follow Up** from the list of available actions (Pay Now, Pay Later, Follow Up, Cancel).
+  </Step>
+  <Step title="Set the Callback Date and Time">
+    Use the date and time picker to select exactly when you — or a colleague — should call the customer back. Be as specific as possible; a vague date is harder to prioritise than an exact time slot.
+  </Step>
+  <Step title="Add a Note">
+    In the notes field, briefly describe what the customer said and what the purpose of the callback is. For example: "Customer wants to confirm quantity with spouse. Call back Wednesday 10 AM."
+  </Step>
+  <Step title="Save the Follow-Up">
+    Click **Save**. The follow-up is now logged against the lead or order and will appear in the reminder queue when the scheduled time arrives.
+  </Step>
+</Steps>
+
+<Tip>
+  If the customer gave you a specific time window, set the follow-up to the start of that window rather than the end. Calling a few minutes early is always better than missing the window.
+</Tip>
+
+---
+
+## The Follow-Up Reminder Queue
+
+When a scheduled follow-up is due, it surfaces automatically in the dedicated reminder queue. Agents can access this view to see all callbacks that are ready to action right now.
+
+**URL:** `/ecommerce.follow-up-reminder`
+
+This page pre-filters the calling queue to show only calls and leads that have an active, due follow-up action — so there is no manual searching required. The reminder queue works the same way as the main calling queue; each item shows the customer name, contact details, the original call notes, and the follow-up reason.
+
+| Queue View | URL | What It Shows |
+|------------|-----|---------------|
+| Full Calling Queue | `/ecommerce.calling-queue` | All calls assigned to you |
+| Follow-Up Reminders | `/ecommerce.follow-up-reminder` | Only due follow-up callbacks |
+| Pay Now | `/ecommerce.create-order-pay-now` | Calls awaiting payment confirmation |
+| Pay Later | `/ecommerce.create-order-pay-later` | Calls with a pay-later commitment |
+| Cancelled | `/ecommerce.cancel-with-remarks` | Calls marked as cancelled |
+
+---
+
+## Follow-Up Statuses
+
+Every follow-up has one of three statuses that reflects where it stands in its lifecycle.
+
+| Status | Meaning |
+|--------|---------|
+| **Pending** | The follow-up is scheduled but the callback has not happened yet |
+| **Completed** | The agent called the customer and the follow-up was resolved |
+| **Missed** | The scheduled time passed without the callback being completed |
+
+<Warning>
+  Missed follow-ups represent broken promises to customers. Monitor the missed follow-up count on the manager dashboard regularly and work to keep it as close to zero as possible.
+</Warning>
+
+---
+
+## Completing or Rescheduling a Followup
+
+When you reach a customer on a follow-up call, you close the loop by marking the follow-up as completed and recording a new call action.
+
+<Steps>
+  <Step title="Open the Reminder Queue">
+    Go to `/ecommerce.follow-up-reminder` to see all due callbacks.
+  </Step>
+  <Step title="Call the Customer">
+    Use the phone number displayed on the follow-up card to place the call.
+  </Step>
+  <Step title="Record the Outcome">
+    After the call, select an action:
+    - **Pay Now** — Customer is ready to pay. Send the payment link.
+    - **Pay Later** — Customer confirms payment for a future date.
+    - **Follow Up** — Customer still needs more time. Schedule another callback.
+    - **Cancel** — Customer declines. Record a reason.
+  </Step>
+  <Step title="Mark as Completed">
+    Once you record an outcome action, Hitayu automatically marks the follow-up as **Completed** and logs the completion timestamp.
+  </Step>
+</Steps>
+
+**If the customer is still not ready**, use the **Follow Up** action again to schedule another reminder. Each rescheduled follow-up creates a new entry in the follow-up timeline, so the full history of attempts is always visible on the lead detail page.
+
+<Note>
+  You can reschedule a follow-up as many times as needed, but be mindful of how many attempts are reasonable for a single lead. After several missed contacts, it may be more appropriate to mark the lead as **Rejected** and refocus your time on warmer prospects.
+</Note>
+
+---
+
+## Manager View: All Team Followups
+
+Managers have visibility into the follow-up activity of the entire team, not just their own queue.
+
+<Steps>
+  <Step title="Open the IVR Dashboard">
+    Navigate to `/ivr-dashboard`. This page requires the `dashboard.ivr` permission.
+  </Step>
+  <Step title="Filter by Follow-Up Status">
+    Use the status filters to view **Pending**, **Completed**, or **Missed** follow-ups across all agents. You can also filter by date range or individual agent.
+  </Step>
+  <Step title="Reassign Overdue Follow-Ups">
+    If an agent is unavailable and has pending follow-ups that are overdue, use the assign action on each call to transfer it to an available agent immediately.
+  </Step>
+</Steps>
+
+<Tip>
+  Run a quick end-of-day review of **Missed** follow-ups so that any broken callbacks can be rescheduled for the next morning before they grow cold.
+</Tip>
+
+---
+
+## Best Practices for Timely Follow-Ups
+
+Consistent, well-timed follow-ups directly improve your team's conversion rate. Here are the habits that make the biggest difference.
+
+<CardGroup cols={2}>
+  <Card title="Follow Up Within the Hour" icon="clock">
+    Research consistently shows that leads contacted within an hour of their initial enquiry are far more likely to convert. Set your follow-up reminders to land as soon as the customer is available.
+  </Card>
+  <Card title="Always Log a Note" icon="pencil">
+    Write a short note on every follow-up explaining why the callback is needed. This helps any teammate who picks up the call to continue the conversation naturally without making the customer repeat themselves.
+  </Card>
+  <Card title="Keep the Queue Clean" icon="broom">
+    Resolve or reschedule every pending follow-up before the end of the day. An overflowing reminder queue loses urgency; a clean queue makes every item feel important.
+  </Card>
+  <Card title="Three Attempts, Then Decide" icon="phone-slash">
+    If you have made three attempts with no response, make a deliberate decision: schedule one final attempt at a very different time of day, or mark the lead as rejected and move on. Avoid indefinite callbacks that clog the queue.
+  </Card>
+</CardGroup>

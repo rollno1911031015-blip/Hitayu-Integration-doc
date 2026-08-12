@@ -1,0 +1,172 @@
+---
+title: "WhatsApp and SMS Notifications — Meta and Exotel Setup"
+sidebarTitle: "WhatsApp & SMS"
+description: "Set up WhatsApp (Meta Business API) and SMS (Exotel) in Hitayu ERP to send order confirmations, shipping alerts, and follow-up messages to customers."
+---
+
+Hitayu ERP keeps your customers informed at every stage of their order journey through WhatsApp and SMS. Order confirmations, shipping notifications, delivery alerts, and follow-up messages can all be sent automatically using pre-built communication templates. WhatsApp uses the Meta Business Platform API, and SMS is delivered through Exotel — both configured from the same screen in Hitayu.
+
+---
+
+## WhatsApp (Meta Business API)
+
+### Prerequisites
+
+Before connecting WhatsApp, you need:
+
+- A verified **Meta Business Account**.
+- A **WhatsApp Business Account (WABA)** linked to that Meta Business Account.
+- A phone number registered in your WABA and approved for messaging.
+- A **System User** or **User Access Token** with `whatsapp_business_messaging` permission.
+- Your message templates pre-approved by Meta (required for business-initiated messages).
+
+<Note>
+  WhatsApp Business API only allows sending messages to customers who have previously interacted with your business, or through approved template messages. Ensure your order notification templates are submitted and approved in Meta Business Manager before enabling message sending in Hitayu.
+</Note>
+
+### Setup Steps
+
+<Steps>
+  <Step title="Open WhatsApp integration settings">
+    Go to **Settings → Integrations → WhatsApp**.
+  </Step>
+  <Step title="Enter your Meta credentials">
+
+    | Field | Where to Find It | Required |
+    |---|---|---|
+    | **Access Token** | Meta Business Suite → System Users → Generate Token | ✅ Yes |
+    | **Phone Number ID** | Meta Business Suite → WhatsApp → Phone Numbers → select your number | ✅ Yes |
+    | **Verify Token** | A secret string you create yourself (used to verify the Meta webhook challenge) | ✅ Yes |
+
+    <Tip>
+      The **Verify Token** is a string you choose freely — it is not issued by Meta. Pick a long, random string and save it somewhere safe. You will enter this same string in both Hitayu and the Meta webhook configuration.
+    </Tip>
+  </Step>
+  <Step title="Save and copy your webhook URL">
+    Click **Save**. Hitayu will display your WhatsApp status webhook URL:
+    ```text
+    POST https://your-hitayu-domain.com/api/webhooks/whatsapp/status
+    ```
+  </Step>
+  <Step title="Register the webhook in Meta Business Suite">
+    1. Go to **Meta Business Suite → Business Settings → WhatsApp Accounts → Webhooks**.
+    2. Click **Edit** and enter:
+       - **Callback URL**: `https://your-hitayu-domain.com/api/webhooks/whatsapp/status`
+       - **Verify Token**: The same value you entered in Hitayu.
+    3. Click **Verify and Save**. Meta will send a GET challenge request to Hitayu to confirm the endpoint is live.
+    4. Subscribe to the **messages** and **message_status_updates** fields.
+  </Step>
+</Steps>
+
+### What the WhatsApp Webhook Receives
+
+The `/api/webhooks/whatsapp/status` endpoint handles inbound message delivery status events from Meta:
+
+- **sent** — Message dispatched to WhatsApp servers.
+- **delivered** — Message delivered to the customer's device.
+- **read** — Customer has read the message.
+- **failed** — Delivery failed (e.g., invalid number, blocked).
+
+These statuses are recorded in Hitayu's `whatsapp_logs` table and shown on the order communication timeline.
+
+---
+
+## SMS (Exotel)
+
+### Prerequisites
+
+Before connecting SMS, you need:
+
+- An active **Exotel account** with SMS sending enabled.
+- An approved **Sender ID** (the name or short code shown as the SMS sender on your customers' phones).
+- Your Exotel API Key and API Token from the Exotel Dashboard.
+
+<Note>
+  In India, SMS Sender IDs must be registered with TRAI through your telecom operator. Exotel handles this process — make sure your Sender ID is approved before enabling SMS sending in Hitayu.
+</Note>
+
+### Setup Steps
+
+<Steps>
+  <Step title="Open SMS integration settings">
+    Go to **Settings → Integrations → SMS**.
+  </Step>
+  <Step title="Enter your Exotel credentials">
+
+    | Field | Where to Find It | Required |
+    |---|---|---|
+    | **API Key** | Exotel Dashboard → API → API Key | ✅ Yes |
+    | **API Token** | Exotel Dashboard → API → API Token | ✅ Yes |
+    | **Sender ID** | Exotel Dashboard → SMS → Sender IDs | ✅ Yes |
+
+  </Step>
+  <Step title="Save and copy your webhook URL">
+    Click **Save**. Your SMS status webhook URL is:
+    ```text
+    POST https://your-hitayu-domain.com/api/webhooks/sms/status
+    ```
+  </Step>
+  <Step title="Register the webhook in Exotel">
+    1. Log in to your Exotel account.
+    2. Go to **Developer → Webhooks** (or the SMS App settings if using an SMS campaign app).
+    3. Set the **Status Callback URL** to:
+       ```text
+       https://your-hitayu-domain.com/api/webhooks/sms/status
+       ```
+    4. Save the configuration.
+  </Step>
+</Steps>
+
+### What the SMS Webhook Receives
+
+The `/api/webhooks/sms/status` endpoint receives delivery receipt callbacks from Exotel:
+
+- **sent** — SMS submitted to the carrier.
+- **delivered** — Carrier confirmed delivery to the handset.
+- **failed** — Delivery failed (DND, invalid number, etc.).
+- **undelivered** — Message sent but no delivery confirmation received.
+
+Statuses are logged in the `sms_logs` table and displayed on the order communication timeline alongside WhatsApp and call logs.
+
+---
+
+## Testing Message Delivery
+
+Once both integrations are configured, you can send a test message directly from the order or customer profile screen in Hitayu:
+
+<Steps>
+  <Step title="Open any order in Hitayu">
+    Navigate to **Orders** and open a test order with a valid customer phone number.
+  </Step>
+  <Step title="Open the Communication tab">
+    Click the **Communication** tab on the order detail page.
+  </Step>
+  <Step title="Send a test message">
+    Select a template, choose WhatsApp or SMS as the channel, and click **Send**. The message will be dispatched immediately.
+  </Step>
+  <Step title="Verify delivery status">
+    Within a few seconds, the status row in the Communication tab should update to **Delivered** (or **Sent** if the delivery receipt has not arrived yet). If the status shows **Failed**, check the error detail for the reason.
+  </Step>
+</Steps>
+
+---
+
+## Communication Templates
+
+Hitayu uses pre-configured templates for automated messages. Templates are managed in **Settings → Communication Templates** and can be customised with dynamic placeholders such as `{{order_id}}`, `{{customer_name}}`, and `{{tracking_link}}`.
+
+<Warning>
+  For WhatsApp, each template must be approved by Meta before it can be used for business-initiated messages. Unapproved templates will be rejected at send time. Allow 24–48 hours for Meta's review process.
+</Warning>
+
+---
+
+## Troubleshooting
+
+| Symptom | Likely Cause | Fix |
+|---|---|---|
+| WhatsApp messages not sending | Invalid or expired Access Token | Re-generate the token in Meta Business Suite and update Hitayu |
+| Meta webhook verification failing | Wrong Verify Token | Ensure Hitayu and Meta have identical Verify Token values |
+| SMS not delivered | Invalid Sender ID or number on DND list | Check Exotel dashboard for delivery failure reason |
+| No status updates in Hitayu | Webhook URL not registered | Register the status webhook URL in Exotel / Meta settings |
+| Template messages rejected by Meta | Template not approved | Submit and get template approved in Meta Business Manager first |

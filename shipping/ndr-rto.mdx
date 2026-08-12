@@ -1,0 +1,127 @@
+---
+title: "NDR and RTO Management: Handle Failed Deliveries in Hitayu"
+sidebarTitle: "NDR & RTO"
+description: "Understand NDR and RTO workflows in Hitayu ERP, take action on failed deliveries, manage returns to origin, and reduce non-delivery rates."
+---
+
+Not every shipment reaches the customer on the first attempt. When a delivery fails, Shiprocket raises a Non-Delivery Report (NDR) and your team must take action — reattempt delivery, update the customer's address, or initiate a return to origin (RTO). Hitayu ERP surfaces these exceptions directly in your shipment views so nothing falls through the cracks.
+
+## What Is an NDR?
+
+An NDR (Non-Delivery Report) is a formal notification raised by the courier when a delivery attempt fails. It signals that the package is still with the courier but could not be delivered, and that your team needs to provide instructions on what to do next.
+
+### Common Causes of NDR
+
+| Reason | Description |
+|---|---|
+| **Customer Not Available** | The customer was not home or did not answer the door/phone at the time of delivery. |
+| **Wrong or Incomplete Address** | The delivery address is incorrect, incomplete, or does not match the courier's mapping. |
+| **Customer Refused Delivery** | The customer declined to accept the package (e.g., changed mind, unexpected COD amount). |
+| **Out of Delivery Area** | The delivery address is in an area not currently serviceable by the assigned courier. |
+| **Phone Unreachable** | The courier's delivery agent could not reach the customer by phone to confirm delivery. |
+
+When an NDR is raised, Shiprocket sends a webhook event to Hitayu ERP at `POST /api/webhooks/shiprocket/ndr`, and the shipment status updates to **NDR** automatically.
+
+## Finding NDR Shipments
+
+All shipments currently in NDR status appear under the **In Transit** tab on the Shiprocket page in the left sidebar (NDR is grouped within the in-transit stage). You can also filter the **All** tab by status `ndr` to see them in isolation.
+
+Each NDR shipment row shows the courier's stated reason for non-delivery and the date of the failed attempt.
+
+## NDR Management Workflow
+
+<Steps>
+  <Step title="Review the NDR Details">
+    Click on the shipment to open the detail page. Under the **NDR** section, review the courier's reason for non-delivery, the attempt date, and any notes from the delivery agent.
+  </Step>
+  <Step title="Contact the Customer">
+    Reach out to the customer via phone or WhatsApp to understand what went wrong and confirm their availability or correct address. Update the order notes with the outcome of this conversation.
+  </Step>
+  <Step title="Choose an Action">
+    Based on your conversation with the customer, select one of the three available actions:
+
+    | Action | When to Use |
+    |---|---|
+    | **Re-attempt Delivery** | Customer confirms availability for a new delivery window or the issue was a one-time miss. |
+    | **Update Address** | Customer provides a corrected or updated delivery address. |
+    | **Initiate RTO** | Customer refuses delivery, cannot be reached, or the address cannot be corrected. |
+  </Step>
+  <Step title="Submit the Action">
+    Select the appropriate action in the Hitayu ERP NDR panel and confirm. The instruction is sent to Shiprocket, which passes it to the courier.
+  </Step>
+</Steps>
+
+<Note>
+  Shiprocket typically gives couriers a window of 24–72 hours to attempt re-delivery after an NDR action is submitted. Timelines vary by courier partner.
+</Note>
+
+### Re-attempt Delivery
+
+Selecting **Re-attempt Delivery** instructs the courier to make another delivery attempt at the same address. The shipment status remains in the **In Transit** stage. If the re-attempt succeeds, the status moves to **Delivered**. If it fails again, a new NDR is raised.
+
+### Update Address
+
+If the delivery failed due to an incorrect address, you can submit a corrected address:
+
+1. In the NDR panel, click **Update Address**.
+2. Enter the corrected address details (street, city, pincode, landmark).
+3. Confirm. Shiprocket forwards the updated address to the courier for the next delivery attempt.
+
+<Warning>
+  Address updates are accepted only while the shipment is in NDR status and before an RTO has been initiated. Couriers may not accept address changes for all pincodes — confirm feasibility with Shiprocket support for distant addresses.
+</Warning>
+
+### Initiate RTO
+
+If re-delivery is not possible, click **Initiate RTO** to instruct the courier to return the package to your pickup address. The shipment moves to the **RTO** status and the RTO workflow begins.
+
+---
+
+## What Is RTO?
+
+RTO (Return to Origin) means the courier is returning the undelivered package back to your warehouse or pickup location. RTO is a loss-making event — you absorb the forward and return shipping cost, and the order revenue is at risk (for prepaid orders, a refund may be required). Minimizing RTO rates is a key operational goal for any e-commerce business.
+
+## RTO Status Progression
+
+Once RTO is initiated, the shipment moves through three statuses:
+
+```
+ndr → rto → rto_in_transit → rto_delivered
+```
+
+| Status | What It Means |
+|---|---|
+| **RTO** | RTO has been initiated. The courier is preparing to return the package. |
+| **RTO In Transit** | The package is actively moving back through the courier's network toward your pickup address. |
+| **RTO Delivered** | The package has arrived back at your pickup location and been received. |
+
+All three statuses are visible under the **RTO** tab on the Shiprocket page.
+
+## How RTO Updates Inventory
+
+When a shipment reaches **RTO Delivered** status, Hitayu ERP records the return. If your workspace has **automatic RTO inventory reconciliation** enabled:
+
+- The returned items are added back to your product inventory.
+- The order is marked as returned.
+- For prepaid orders, a refund can be initiated from the order detail page.
+
+<Note>
+  Automatic inventory updates on RTO Delivered depend on your inventory settings. Go to **Settings → Inventory** to confirm that RTO stock reconciliation is enabled for your workspace.
+</Note>
+
+## Best Practices to Reduce NDR Rates
+
+Reducing NDRs directly improves your delivery success rate and lowers your shipping costs.
+
+<Tip>
+  **Confirm orders before dispatch.** Use Hitayu ERP's IVR or WhatsApp confirmation workflows to verify the customer's address and delivery availability before pushing the order to Shiprocket. This is especially important for COD orders, which have higher NDR rates.
+</Tip>
+
+| Practice | Impact |
+|---|---|
+| **IVR order confirmation** | Catches wrong numbers and uninterested customers before shipping. |
+| **WhatsApp delivery reminders** | Alert customers the day before and on the day of delivery so they're available. |
+| **Address verification at order entry** | Use pincode validation and landmark fields to capture complete addresses. |
+| **Preferred delivery time slot** | Ask customers for a preferred delivery window to reduce "not available" NDRs. |
+| **Rapid NDR response** | Act on NDR events within 24 hours — delayed responses increase RTO probability significantly. |
+| **Review high-NDR pincodes** | Identify pincodes with consistently high NDR rates and review your courier assignment for those areas in Shiprocket. |

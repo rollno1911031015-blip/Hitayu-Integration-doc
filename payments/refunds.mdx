@@ -1,0 +1,74 @@
+---
+title: "Refunds: Initiate and Track Payment Refunds in Hitayu"
+sidebarTitle: "Refunds"
+description: "Learn when and how to issue refunds for cancelled or returned orders, track refund status, and understand gateway-specific processing timelines."
+---
+
+Refunds in Hitayu ERP allow you to return captured online payments to customers when an order is cancelled after payment has been collected, or when a return is approved. Currently, refunds are supported for orders paid via **PayU**. The entire refund process — from initiation to confirmation — is managed from the order detail page without needing to log into your gateway dashboard.
+
+## When to Issue a Refund
+
+You should initiate a refund when:
+
+- A prepaid order is cancelled after payment has been successfully captured.
+- A customer returns a delivered item and your policy entitles them to a monetary refund (as opposed to store credit or replacement).
+- A duplicate payment has been collected by mistake.
+
+<Note>
+  Refunds apply only to **Paid** prepaid orders. COD orders and orders with a **Pending** or **Failed** payment status do not require a gateway refund — no funds have been captured in those cases.
+</Note>
+
+## How to Initiate a PayU Refund
+
+<Steps>
+  <Step title="Open the Order">
+    Go to **Orders** in the left sidebar and click on the order for which you want to issue a refund. Confirm that the payment status shows **Paid**.
+  </Step>
+  <Step title="Locate the Refund Option">
+    Scroll to the **Payment** section on the order detail page. Click the **Refund via PayU** button. This is only visible on orders with a captured PayU payment and requires the `payments.refund` permission.
+  </Step>
+  <Step title="Confirm the Refund">
+    A confirmation dialog will appear showing the refund amount and the PayU transaction reference. Review the details carefully, then click **Confirm Refund** to proceed.
+  </Step>
+  <Step title="Refund Submitted">
+    Hitayu ERP sends the refund request to PayU. The payment status on the order updates to **Refunded** once PayU acknowledges the request.
+  </Step>
+</Steps>
+
+<Warning>
+  **Refunds are irreversible.** Once confirmed, the refund request is sent immediately to the payment gateway and cannot be cancelled or recalled. Double-check the order and amount before clicking Confirm Refund.
+</Warning>
+
+## Refund Status Tracking
+
+After initiating a refund, you can track its progress in two places:
+
+- **Order Detail → Payment Section** — The payment status badge changes from **Paid** to **Refunded**. The timestamp of the refund initiation is also recorded.
+- **Payments Page** — Filter by **Status: Refunded** to see all refunded transactions. Each row shows the gateway reference ID which you can use to cross-check in the PayU dashboard.
+
+| Status | Meaning |
+|---|---|
+| **Paid** | Refund has not yet been initiated. |
+| **Refunded** | Refund has been successfully submitted to the gateway. |
+
+<Note>
+  There is no intermediate "Refund Processing" status in Hitayu ERP. The status moves directly to **Refunded** once the gateway acknowledges the request. The actual credit to the customer's account happens on the gateway's own timeline.
+</Note>
+
+## How Long Do Refunds Take?
+
+Refund timelines are determined by the payment gateway and the customer's bank — Hitayu ERP has no control over how quickly funds appear in the customer's account.
+
+| Gateway | Typical Refund Timeline |
+|---|---|
+| **PayU** | 5–7 business days to the original payment instrument |
+| **Razorpay** | 2–5 business days (instant refunds available on eligible transactions) |
+| **Cashfree** | 3–5 business days |
+
+<Tip>
+  If a customer reports that they haven't received their refund after 7 business days, share the gateway transaction ID (visible on the order detail page) with them so they can raise a query directly with their bank or card issuer.
+</Tip>
+
+## Permissions Required
+
+Initiating a refund requires the **`payments.refund`** permission. If you do not see the Refund button on a paid order, contact your workspace administrator to check your role permissions.

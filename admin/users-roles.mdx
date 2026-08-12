@@ -1,0 +1,209 @@
+---
+title: "Users, Roles & Permissions — Hitayu ERP Access Control"
+sidebarTitle: "Users & Roles"
+description: "Complete guide to Hitayu ERP RBAC: create and manage users, build and clone roles, assign permissions by category, and activate or deactivate accounts."
+---
+
+Hitayu ERP uses **Role-Based Access Control (RBAC)** to ensure every team member sees only what they need to do their job. An administrator creates roles (e.g., *Sales Agent*, *Support Lead*, *Warehouse Manager*), assigns permissions to those roles, and then grants users one or more roles. Every feature in the system — from viewing orders to issuing refunds — is gated by a specific named permission.
+
+All RBAC management happens on a single page: **Admin → RBAC** (`/admin/rbac`). This page requires at least one of `users.view`, `roles.view`, or `permissions.view`.
+
+---
+
+## Key Concepts
+
+| Concept | Description |
+|---|---|
+| **Permission** | A named capability (e.g., `orders.view`, `payments.refund`). Every route and action in Hitayu is guarded by one or more permissions. |
+| **Role** | A named collection of permissions (e.g., *Customer Support Agent*). Roles are assigned to users. |
+| **User** | A staff member who logs in to Hitayu. A user can hold multiple roles; their effective access is the union of all permissions from all their roles. |
+| **Permission Override** | A per-user permission grant or denial that overrides what their roles provide. Used for one-off exceptions. |
+| **System Role** | A role flagged `is_system = true`. System roles cannot be deleted and have a fixed set of core permissions. |
+
+---
+
+## Managing Roles
+
+### Creating a Role
+
+<Steps>
+  <Step title="Open the Roles tab">
+    On the RBAC page, click the **Roles** tab. You see a list of all active roles with their permission count and user count.
+  </Step>
+  <Step title="Click New Role">
+    Click the **New Role** button. Enter a **Label** (the human-readable name, e.g., *Warehouse Staff*). The system key is derived automatically.
+  </Step>
+  <Step title="Save">
+    Click **Create**. The new role appears in the list with zero permissions. Assign permissions in the next step.
+  </Step>
+</Steps>
+
+Requires `roles.create` permission.
+
+### Assigning Permissions to a Role
+
+<Steps>
+  <Step title="Open the role">
+    Click the role's name in the list, or click the **Permissions** icon on the role row.
+  </Step>
+  <Step title="Check permissions">
+    Permissions are grouped by module (see the permission categories table below). Check or uncheck individual permissions. You can also select / deselect an entire module group.
+  </Step>
+  <Step title="Save changes">
+    Click **Update Permissions**. Changes take effect immediately for all users who hold this role.
+  </Step>
+</Steps>
+
+Requires `permissions.assign` permission.
+
+### Cloning a Role
+
+Cloning copies all permissions from an existing role into a new one — the fastest way to create a variant role (e.g., clone *Sales Agent* to create *Senior Sales Agent*, then add extra permissions).
+
+<Steps>
+  <Step title="Find the source role">
+    In the Roles tab, locate the role you want to copy.
+  </Step>
+  <Step title="Click Clone">
+    Click the **Clone** action on the role row. Enter a **New Role Label** for the copy.
+  </Step>
+  <Step title="Confirm">
+    Click **Clone Role**. The new role is created with identical permissions to the source and appears in the list ready for editing.
+  </Step>
+</Steps>
+
+Requires `roles.clone` permission.
+
+### Editing and Deleting Roles
+
+- **Edit** — Click the edit icon on a role row to rename it. Requires `roles.edit`.
+- **Delete** — Soft-deletes the role. Deleted roles appear in the **Deleted Roles** section and can be **restored**. Requires `roles.delete`.
+
+<Warning>
+  Deleting a role immediately removes it from all users who held it. Those users lose the permissions that role provided. Restore the role or reassign users promptly if this was unintentional.
+</Warning>
+
+---
+
+## Managing Users
+
+### Creating a User
+
+<Steps>
+  <Step title="Open the Users tab">
+    On the RBAC page, click the **Users** tab.
+  </Step>
+  <Step title="Click New User">
+    Click **New User**. Fill in the required fields:
+    - **Full Name**
+    - **Email Address** (used as login)
+    - **Password** (set an initial password; the user should change it)
+    - **Reporting Manager** (optional — sets the manager in the team hierarchy)
+  </Step>
+  <Step title="Assign roles">
+    After the user is created, click on their row and go to the **Access** panel. Select one or more roles to assign.
+  </Step>
+  <Step title="Save access">
+    Click **Update Access**. The user can now log in and access features permitted by their roles.
+  </Step>
+</Steps>
+
+Creating a user requires `users.create`. Assigning access requires `users.permissions`.
+
+### Editing a User Profile
+
+Click a user's name in the list, then click **Edit Profile**. You can update the name, email, and reporting manager. Requires `users.edit`.
+
+### Activating and Deactivating Users
+
+Use the **Active / Inactive** toggle on any user row to immediately enable or disable their ability to log in. Deactivated users cannot access Hitayu but their data and ticket history is preserved.
+
+Requires `users.deactivate`.
+
+<Tip>
+  Deactivating a user is the correct action when someone leaves the company or takes extended leave. Deleting a user is permanent and should be reserved for test accounts.
+</Tip>
+
+### Deleting and Restoring Users
+
+- **Delete** — Soft-deletes the user (requires `users.delete`). Deleted users appear in the **Deleted Users** section.
+- **Restore** — Click **Restore** on a deleted user to reinstate them (requires `users.delete`).
+
+### Per-User Permission Overrides
+
+In rare cases, a user needs one extra permission that their role doesn't include, or should be blocked from a permission their role grants. Use the **Access** panel on the user's record to set individual permission overrides. Overrides take precedence over role permissions.
+
+---
+
+## Permission Categories
+
+Hitayu's permissions are grouped by module. The table below describes each category and gives representative examples.
+
+| Category | Example Permissions | Controls access to |
+|---|---|---|
+| **dashboard** | `dashboard.view`, `dashboard.ivr`, `dashboard.support`, `dashboard.shopify`, `dashboard.shiprocket`, `dashboard.inventory` | Which dashboards are visible in the nav |
+| **orders** | `orders.view`, `orders.edit`, `orders.verify`, `orders.assign`, `orders.delete` | Order list, editing, verifying, assigning to staff |
+| **leads** | `leads.view`, `leads.create`, `leads.edit`, `leads.cancel`, `leads.ivr.view`, `leads.followups.manage` | Lead pipeline, IVR call queue, follow-ups |
+| **payments** | `payments.view`, `payments.refund` | Payments list, initiating refunds |
+| **shipments** | `shipments.view`, `shipments.manage` | Shipment detail pages, Shiprocket sync |
+| **inventory** | `inventory.current_stock`, `inventory.stock_ledger`, `inventory.stock_audit`, `inventory.manage`, `inventory.warehouses`, `inventory.po.generate`, `inventory.po.approve`, `inventory.po.mrn` | All inventory sub-modules |
+| **reports** | `reports.view` | Reports section |
+| **settings** | `settings.integrations.view`, `settings.integrations`, `settings.integrations.manage` | Viewing and editing integration settings |
+| **users** | `users.view`, `users.create`, `users.edit`, `users.deactivate`, `users.delete`, `users.permissions` | User management on the RBAC page |
+| **roles** | `roles.view`, `roles.create`, `roles.edit`, `roles.clone`, `roles.delete` | Role management on the RBAC page |
+| **permissions** | `permissions.view`, `permissions.create`, `permissions.assign` | Viewing, creating, and assigning permissions |
+| **team** | `team.view` | Team member list and hierarchy |
+| **support** | `dashboard.support`, `support.view`, `support.create`, `support.staff.view`, `support.staff.manage` | Support ticket module |
+| **employee** | `employee.attendance` | Attendance clock-in/out |
+| **masters** | `masters.company_settings`, `masters.lead_statuses`, `masters.vendor`, `masters.warehouse` | Company settings and master data |
+| **customers** | `customers.view` | Customer profiles |
+| **products** | `products.view`, `products.create`, `products.edit`, `products.sync` | Product catalog |
+| **notifications** | `notifications.view` | Notification templates and logs |
+| **logs** | `logs.view` | Activity and audit log viewer |
+| **packing** | `packing.view` | Packing / dispatch queue |
+
+<Note>
+  The `permissions.create` permission allows a user to create **custom permissions** (beyond the built-in set). This is an advanced operation intended for system administrators extending the platform.
+</Note>
+
+---
+
+## Creating a Custom Permission
+
+If your deployment requires a permission not covered by the built-in set:
+
+<Steps>
+  <Step title="Go to the Permissions tab">
+    On the RBAC page, click the **Permissions** tab. You need `permissions.view` to see this tab.
+  </Step>
+  <Step title="Click New Permission">
+    Click **New Permission**. Enter:
+    - **Module** — the category group (e.g., `orders`)
+    - **Action** — the specific capability (e.g., `bulk_export`)
+    - The full permission name will be `module.action`
+  </Step>
+  <Step title="Assign to roles">
+    After creation, go to the relevant role and add the new permission in the role's permission list.
+  </Step>
+</Steps>
+
+Requires `permissions.create`.
+
+---
+
+## RBAC Quick-Reference
+
+<CardGroup cols={2}>
+  <Card title="Role needs a new permission?" icon="key">
+    RBAC page → Roles tab → click role → check permission → Update Permissions
+  </Card>
+  <Card title="New staff member joining?" icon="user-plus">
+    RBAC page → Users tab → New User → fill details → assign role(s) → Update Access
+  </Card>
+  <Card title="Staff member leaving?" icon="user-minus">
+    RBAC page → Users tab → find user → toggle to Inactive (or Delete for permanent removal)
+  </Card>
+  <Card title="Need a similar role?" icon="copy">
+    RBAC page → Roles tab → find source role → Clone → give it a new name → edit permissions
+  </Card>
+</CardGroup>

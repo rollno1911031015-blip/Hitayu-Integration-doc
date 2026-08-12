@@ -1,0 +1,93 @@
+---
+title: "Order Management in Hitayu ERP — Complete Overview"
+sidebarTitle: "Overview"
+description: "Manage every order from Shopify, manual entry, and abandoned carts in one place. Learn how to navigate views, filter, and act on orders quickly."
+---
+
+Hitayu ERP gives your team a single command centre for every order your business receives — whether it came in through a Shopify storefront, was created manually by your calling team, or started as an abandoned checkout waiting to be recovered. From the moment an order enters the system to the point it is delivered or refunded, you have full visibility, clear status tracking, and a set of one-click actions to keep fulfilment moving without switching between tools.
+
+## Where Orders Come From
+
+Hitayu ERP collects orders from three distinct sources and normalises them into one unified list.
+
+<CardGroup cols={3}>
+  <Card title="Shopify (Automatic)" icon="shopify">
+    Orders and checkouts are pushed to Hitayu ERP in real time via Shopify webhooks. New orders appear automatically — no manual import needed. Abandoned checkouts from Shopify are also synced so your recovery team can act on them immediately.
+  </Card>
+  <Card title="Manual / Calling Orders" icon="phone">
+    Your calling team can create orders directly inside Hitayu ERP during or after a customer call. These orders follow the same lifecycle as Shopify orders and can be assigned, confirmed, and shipped in exactly the same way.
+  </Card>
+  <Card title="Abandoned Carts" icon="cart-shopping">
+    Shopify abandoned checkouts are imported as a special order type. They sit in dedicated segments until a team member converts them into confirmed orders, either by sending a payment link or marking them as pay-later (COD).
+  </Card>
+</CardGroup>
+
+## Navigating to Orders
+
+The **Orders** section is accessible from the main navigation sidebar. When you open it you land on the default all-orders list. Use the segment links across the top of the page to switch between focused views tailored for different workflows.
+
+### Available Segments
+
+| Segment | What It Shows |
+|---|---|
+| **All Orders** | Every order in the system, regardless of status or source |
+| **Confirmed Orders** | Orders that have been confirmed and are in the active fulfilment pipeline |
+| **Abandoned Orders** | Shopify checkouts and orders that were abandoned, including those already converted |
+| **Abandoned Only** | Strictly unconverted abandoned checkouts still awaiting recovery action |
+| **COD Orders** | Cash-on-delivery orders confirmed as pay-later |
+| **Customer Rejected** | Orders the customer declined or that were rejected by staff |
+| **Cancelled with Remarks** | Cancelled orders that carry a specific cancellation reason |
+
+<Tip>
+Bookmark the segment URLs for your daily workflows. Each segment remembers your last-applied filters so you can pick up where you left off.
+</Tip>
+
+## Summary Cards
+
+At the top of every order list you will find five live summary cards that update in real time based on the orders visible to your account:
+
+| Card | What It Counts |
+|---|---|
+| **Total Orders** | All orders within your data scope |
+| **Paid Orders** | Orders where payment status is **Paid** |
+| **Pending Payment** | Orders awaiting payment from the customer |
+| **Verification Pending** | Orders that need manual verification before fulfilment begins |
+| **Recovery Orders** | Abandoned or at-risk orders still open for follow-up |
+
+<Note>
+Staff members with a restricted data scope — for example, agents assigned to specific channels — will only see totals for orders within their scope. Admins see organisation-wide counts.
+</Note>
+
+## Searching and Filtering
+
+Every segment supports the same set of filters so you can zero in on the exact orders you need to work on.
+
+**Search** — type a Shopify order number, customer name, phone number, or email into the search box and the list updates instantly.
+
+**Status filter** — narrow the list to orders in a specific status (e.g. *Verification Pending*, *Packed*, *In Transit*).
+
+**Payment status filter** — show only orders with a particular payment state: *Pending*, *Authorized*, *Paid*, *Failed*, or *Refunded*.
+
+**Assignee filter** — display only orders assigned to a specific team member. Useful for managers reviewing an agent's workload.
+
+**Channel filter** — if your business operates multiple Shopify storefronts, filter by channel to separate their order lists.
+
+**Shiprocket push status** — filter by whether an order has already been pushed to Shiprocket for shipment creation.
+
+<Tip>
+Combine filters to build precise work queues. For example: Status = *Verified* + Assignee = *your name* gives you a personal fulfilment to-do list.
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Order Lifecycle & Statuses" icon="arrow-right-arrow-left" href="/orders/order-lifecycle">
+    Understand every status an order moves through, from initial receipt to delivery or return.
+  </Card>
+  <Card title="Managing Orders Day to Day" icon="list-check" href="/orders/managing-orders">
+    Learn how to assign, edit, pay, ship, and cancel orders in your daily workflow.
+  </Card>
+  <Card title="Abandoned Cart Recovery" icon="cart-arrow-down" href="/orders/abandoned-carts">
+    See how Hitayu ERP imports abandoned Shopify checkouts and how your team can convert them into revenue.
+  </Card>
+</CardGroup>

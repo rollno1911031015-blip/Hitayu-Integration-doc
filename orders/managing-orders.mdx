@@ -1,0 +1,264 @@
+---
+title: "Complete Day-to-Day Order Management in Hitayu ERP"
+sidebarTitle: "Managing Orders"
+description: "Step-by-step guidance for viewing, assigning, editing, paying, shipping, and cancelling orders in Hitayu ERP's daily order management workflow."
+---
+
+Day-to-day order management in Hitayu ERP is built around a single order detail page that brings together everything your team needs: the customer's information, ordered items, payment links, shipping details, activity log, and every available action — all without leaving the screen. This guide walks through each operation your team performs regularly, in the order you are most likely to encounter them during a shift.
+
+---
+
+## Viewing an Order Detail Page
+
+To open an order, click its row in any order list. The detail page is organised into sections:
+
+- **Order Summary** — order number, source (Shopify or manual), date, assigned team member, and current status badge
+- **Customer & Shipping** — customer name, phone, email, and the delivery address on file
+- **Line Items** — each product, variant, quantity, unit price, discounts, taxes, and the order grand total
+- **Payment Links** — all payment links ever generated for this order, with their amounts, statuses, and direct URLs
+- **Shipment Details** — AWB number, courier name, Shiprocket order ID, and a tracking link once the shipment is live
+- **Activity Log** — a chronological feed of every action taken on the order
+- **Status History** — every status transition with timestamps and responsible team members
+- **Edit History** — a record of every change made to items, address, or totals
+
+---
+
+## Assigning an Order to a Team Member
+
+New orders imported from Shopify are automatically assigned to an available order-staff agent using round-robin rotation. You can change the assignment at any time.
+
+<Steps>
+  <Step title="Open the Order">
+    Navigate to the order detail page.
+  </Step>
+  <Step title="Click Assign">
+    Find the **Assign** action in the order actions panel. A dropdown will appear showing all eligible team members within your data scope.
+  </Step>
+  <Step title="Select the Assignee">
+    Choose the team member you want to assign the order to. Optionally add a remark explaining the reason for the assignment.
+  </Step>
+  <Step title="Confirm">
+    Click **Assign**. The order's assignee field updates immediately and the change is recorded in the activity log.
+  </Step>
+</Steps>
+
+<Note>
+Round-robin auto-assignment runs when an order first arrives from Shopify. It distributes orders evenly across all active agents with the `order_staff` role. Manual reassignment overrides this and is tracked separately.
+</Note>
+
+---
+
+## Converting an Abandoned Order to Confirmed
+
+Abandoned checkouts and unconfirmed orders can be converted into active confirmed orders once the customer has indicated they want to proceed.
+
+<Steps>
+  <Step title="Find the Abandoned Order">
+    Go to **Abandoned Only** or **Abandoned Orders** in the segment tabs to locate the order.
+  </Step>
+  <Step title="Open the Order Detail">
+    Click the order row to open its detail page.
+  </Step>
+  <Step title="Click Convert">
+    Press the **Convert** button. Enter a short remark (e.g. "Customer confirmed via call — wants to pay online") and submit.
+  </Step>
+  <Step title="Select a Payment Flow">
+    Immediately after converting you will typically choose how the customer will pay — see the **Sending a Payment Link** section below.
+  </Step>
+</Steps>
+
+---
+
+## Sending and Resending Payment Links
+
+Hitayu ERP offers three payment flows to match different customer situations. All three send the customer a link they can use to complete payment on their own device.
+
+### Pay Now — Full Payment
+
+Use this when the customer is ready to pay the full order amount immediately.
+
+<Steps>
+  <Step title="Open the Order and Click Pay Now">
+    On the order detail page, select **Pay Now** from the actions panel.
+  </Step>
+  <Step title="Add a Remark (Optional)">
+    Enter a note if needed, then confirm. Hitayu ERP generates a PayU payment link for the full order amount and sends it to the customer's registered phone or email.
+  </Step>
+  <Step title="Customer Completes Payment">
+    Once the customer pays, the order's payment status automatically updates to **Paid** and the order advances to **Verification Pending**.
+  </Step>
+</Steps>
+
+### Pay Later — COD / Deferred Payment
+
+Use this when the customer agrees to pay on delivery or wants to defer payment.
+
+<Steps>
+  <Step title="Open the Order and Click Pay Later">
+    Select **Pay Later** from the actions panel.
+  </Step>
+  <Step title="Confirm">
+    Add a remark and confirm. The order is marked as COD, payment status is set to **Pending**, and a shipment placeholder is created automatically so the warehouse can begin fulfilment.
+  </Step>
+</Steps>
+
+### Pay Partial — Split Payment
+
+Use this when the customer wants to pay a deposit now and the remainder on delivery.
+
+<Steps>
+  <Step title="Open the Order and Click Pay Partial">
+    Select **Pay Partial** from the actions panel.
+  </Step>
+  <Step title="Enter the Partial Amount">
+    Type in the deposit amount. The system enforces commercial rules — minimums and maximums depend on the order total and your configured thresholds.
+  </Step>
+  <Step title="Confirm">
+    Submit the form. A payment link is generated for the partial amount and sent to the customer. The order records both the amount collected and the outstanding balance.
+  </Step>
+</Steps>
+
+### Resending a Payment Link
+
+If a customer says they did not receive a link, or the link has expired:
+
+1. Open the order detail page.
+2. In the **Payment Links** section, find the active link and click **Resend**.
+3. Hitayu ERP re-delivers the existing link to the customer — no new link is created unless the previous one is no longer active.
+
+<Warning>
+You can only resend a link that is in **Created** or **Sent** status. Links in **Paid** or **Failed** status cannot be resent. If a link has failed, use **Pay Now** to generate a fresh one.
+</Warning>
+
+---
+
+## Editing Order Details
+
+You can modify an order's items, quantities, address, or totals at any time before the shipment is picked up. Changes are synced back to Shopify if the Shopify order-edit sync integration is enabled for your account.
+
+<Steps>
+  <Step title="Open the Order and Click Edit">
+    From the order detail page, click the **Edit Order** button. You need the `orders.edit` permission to see this button.
+  </Step>
+  <Step title="Modify Items or Address">
+    Add or remove line items, change quantities, update the shipping address, or adjust discounts. The order total recalculates in real time as you make changes.
+  </Step>
+  <Step title="Choose a Payment Action">
+    Before saving you must decide what to do about payment:
+    - **Save Only** — save the changes without touching the payment link
+    - **Pay Now** — save and immediately generate a new full-payment link
+    - **Partial Payment** — save and generate a partial-payment link for the revised amount
+    - **Pay Later** — save and mark the revised order as COD
+  </Step>
+  <Step title="Save Changes">
+    Click **Update Order**. The system saves the edit, records a snapshot in Edit History, and (if applicable) sends the new payment link to the customer.
+  </Step>
+</Steps>
+
+<Note>
+Every edit is captured in the **Edit History** tab with a full before-and-after snapshot: previous totals, new totals, previous discount, new discount, shipping charges, and tax — plus the name of the team member who made the change.
+</Note>
+
+---
+
+## Pushing an Order to Shiprocket
+
+Once an order is verified and packed, push it to Shiprocket to create the shipment and request courier pickup.
+
+<Steps>
+  <Step title="Confirm the Order is Verified">
+    The order must be in **Verified** status (or further along) before Shiprocket push is available. If it is still pending verification, complete that step first.
+  </Step>
+  <Step title="Click Push to Shiprocket">
+    On the order detail page, click **Push to Shiprocket**. Add an optional remark and confirm.
+  </Step>
+  <Step title="Review the Result">
+    If Shiprocket is configured and credentials are valid, the shipment is created instantly and you will see the Shiprocket Order ID appear in the shipment section. The order status advances to **Shipment Created**.
+  </Step>
+</Steps>
+
+<Warning>
+If you see the message "Shipment placeholder created — enable Shiprocket settings to push it live", it means your Shiprocket API credentials or order-creation settings have not been configured. Contact your administrator to complete the Shiprocket integration setup before retrying.
+</Warning>
+
+---
+
+## Rejecting or Cancelling an Order
+
+### Rejecting an Order
+
+Rejection is used when a customer actively declines the order during a follow-up call, or when the order cannot proceed for a legitimate reason.
+
+1. Open the order detail page.
+2. Click **Reject Order** in the actions panel. You need the `orders.delete` permission.
+3. Enter the customer's reason or a staff remark in the remarks field.
+4. Confirm. The order moves to **Cancelled** status with the rejection reason saved against it.
+
+### Cancelling an Order
+
+Cancellation follows the same flow as rejection but is typically initiated by staff rather than the customer. The order will appear in the **Cancelled with Remarks** segment if a remark was recorded.
+
+<Tip>
+Always enter a clear remark when rejecting or cancelling. The remark is visible in the activity log and helps managers understand rejection patterns when reviewing team performance or product feedback.
+</Tip>
+
+---
+
+## Processing a Refund
+
+For orders where payment was collected through PayU and the order is subsequently cancelled or returned:
+
+<Steps>
+  <Step title="Open the Order and Click Refund">
+    Select **Refund (PayU)** from the actions panel. You need the `payments.refund` permission.
+  </Step>
+  <Step title="Enter the Refund Amount">
+    Type the amount to refund. This can be the full order amount or a partial amount for partial refunds.
+  </Step>
+  <Step title="Enter Confirmation and Remarks">
+    Provide the confirmation text required by the refund form and add a reason for the refund.
+  </Step>
+  <Step title="Submit">
+    Click **Submit Refund**. Hitayu ERP queues the refund request with PayU and records the refund details (including the PayU request reference) in the activity log. The order's payment status updates to **Refunded** once PayU processes the transaction.
+  </Step>
+</Steps>
+
+---
+
+## Calling the Customer
+
+If your account has IVR calling configured, you can queue a call to the customer directly from the order detail page.
+
+1. Click **Call Customer** on the order detail page.
+2. The system queues an IVR call and assigns it to the next available calling agent using the same round-robin logic as order assignment.
+3. A confirmation message shows you which agent the call was assigned to.
+
+---
+
+## Order Edit History (Audit Trail)
+
+The **Edit History** tab on every order detail page shows a complete log of every manual change made to the order after it was created. Each entry records:
+
+- **Date and time** of the edit
+- **Team member** who made the change
+- **Previous totals** vs **new totals** (subtotal, shipping, discount, tax, grand total)
+- A full **before snapshot** and **after snapshot** of the order's items and address at the time of the edit
+
+This provides an immutable audit trail for disputes, returns, or financial reconciliation.
+
+---
+
+## Order Activity Log
+
+Below the order detail, the **Activity Log** tab shows a time-ordered feed of every event that has ever occurred on the order, including:
+
+- Order creation and Shopify import events
+- Status transitions (with the responsible team member)
+- Payment link generation and delivery confirmations
+- Assignment changes
+- Refund submissions
+- Manual notes added by staff
+
+<Tip>
+Use the activity log as your first stop when investigating a customer complaint. It gives you the full story of an order in chronological order without needing to dig through multiple reports.
+</Tip>

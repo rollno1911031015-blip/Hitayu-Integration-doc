@@ -1,0 +1,88 @@
+---
+title: "Reports — Orders, Payments, and Shipments in Hitayu ERP"
+sidebarTitle: "Reports"
+description: "Navigate Hitayu ERP's reports section: run order, payment, and shipment reports, apply date filters, and export data for offline analysis."
+---
+
+The Reports section gives managers and administrators a consolidated view of business performance across orders, payments, and shipments. All report views support date-range filtering and can be exported so you can work with the data in spreadsheet tools or share it with stakeholders.
+
+<Note>
+  Access to reports requires the **`reports.view`** permission. Navigate to **Admin → Reports** in the left sidebar to open the section.
+</Note>
+
+---
+
+## Available Report Types
+
+Hitayu ERP provides three core report categories:
+
+<CardGroup cols={3}>
+  <Card title="Order Reports" icon="cart-shopping">
+    Breakdown of orders by status, source, segment, and date. Track confirmed, cancelled, COD, and abandoned orders over any period.
+  </Card>
+  <Card title="Payment Reports" icon="credit-card">
+    Payment receipts, pending collections, refunds, and partial payments. Filter by payment method and date to reconcile with your bank.
+  </Card>
+  <Card title="Shipment Reports" icon="truck">
+    Dispatch volumes, courier performance, NDR (non-delivery report) rates, RTO (return-to-origin) rates, and delivery success by date range.
+  </Card>
+</CardGroup>
+
+---
+
+## Navigating to a Report
+
+<Steps>
+  <Step title="Open Reports">
+    Click **Admin → Reports** in the sidebar. The reports landing page shows summary cards for each report type.
+  </Step>
+  <Step title="Select a report type">
+    Click the report category you want (Orders, Payments, or Shipments). The report loads with a default date range of the current month.
+  </Step>
+  <Step title="Apply filters">
+    Use the filter bar to narrow the data:
+    - **Date From** and **Date To** — set the reporting period
+    - Additional filters appear depending on report type (e.g., order status, payment method, courier name)
+  </Step>
+  <Step title="Review the data">
+    The report table updates automatically as you adjust filters. Summary totals appear at the top or bottom of the table.
+  </Step>
+</Steps>
+
+---
+
+## Filtering and Date Ranges
+
+Every report supports date range filtering. Enter dates in the **Date From** and **Date To** fields to restrict data to a specific period — a single day, a week, a month, or any custom range.
+
+Report-specific filters:
+
+| Report | Additional filters available |
+|---|---|
+| **Orders** | Status (confirmed, cancelled, COD, etc.), source (Shopify, IVR, manual), assigned staff member |
+| **Payments** | Payment method (UPI, card, COD, partial), payment status |
+| **Shipments** | Courier name, shipment status (dispatched, delivered, NDR, RTO) |
+
+<Tip>
+  To generate a monthly reconciliation report, set **Date From** to the 1st and **Date To** to the last day of the month, then export. The exported file contains the same columns as the on-screen table.
+</Tip>
+
+---
+
+## Exporting Reports
+
+Each report page includes an **Export** button (usually labelled **Export CSV** or **Download**). Clicking it downloads the filtered dataset as a CSV file that you can open in Excel, Google Sheets, or any data tool.
+
+<Note>
+  Exports respect all active filters. If you have set a date range and a status filter, only the matching rows will be included in the downloaded file.
+</Note>
+
+---
+
+## Permissions Reference
+
+| Permission | What it allows |
+|---|---|
+| `reports.view` | View and export all report types in the reports section |
+
+If you need access to reports, ask an administrator to assign the `reports.view` permission to your role on the **Admin → RBAC** page.

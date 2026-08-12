@@ -1,0 +1,163 @@
+---
+title: "IVR Calling Workflow: Queue, Actions & Recordings"
+sidebarTitle: "IVR Calling"
+description: "Learn how to work your IVR calling queue, set availability, take call actions, log manual calls, and review call recordings in Hitayu ERP."
+---
+
+The IVR calling module is Hitayu's built-in outbound calling workspace. Orders are automatically distributed to available agents through a round-robin queue, and every interaction — from call outcomes to payment commitments — is logged directly against the order. Agents work from a focused calling view while managers track team performance from a dedicated IVR dashboard.
+
+## Understanding the IVR Calling Queue
+
+When an inbound or outbound call event is created, Hitayu assigns it to an available agent using **round-robin distribution**. Each agent receives calls in turn, ensuring workload is spread evenly across the team. Calls land in the agent's personal queue along with all relevant order information, so there is no need to search for context mid-call.
+
+<Note>
+  Calls are only distributed to agents who are currently marked as **Available**. If your availability is off, new calls will not be assigned to you.
+</Note>
+
+### Where to Find the Calling Queue
+
+| Role | URL | What You See |
+|------|-----|--------------|
+| Agent | `/admin/calling` | Your personal queue of assigned calls |
+| Manager | `/ivr-dashboard` | Team-wide metrics, all agent queues, and call history |
+
+---
+
+## Setting Your Availability Status
+
+Before you start taking calls, mark yourself as available so the system knows to route calls to you.
+
+<Steps>
+  <Step title="Open the Calling Queue">
+    Navigate to **Admin → Calling** (`/admin/calling`). Your queue and availability toggle appear at the top of the screen.
+  </Step>
+  <Step title="Toggle Availability On">
+    Click the **Available / Unavailable** toggle. When the indicator turns green, you are active and will receive new call assignments.
+  </Step>
+  <Step title="Go Unavailable When Stepping Away">
+    Before a break or at the end of your shift, click the toggle again to set yourself as **Unavailable**. This stops new calls from being routed to you while you are away.
+  </Step>
+</Steps>
+
+<Warning>
+  Leaving yourself marked Available when you are away from your desk will cause calls to be missed or unnecessarily delayed. Always toggle off before stepping away.
+</Warning>
+
+---
+
+## Working Through the Calling Queue
+
+Each card in your queue represents one call assignment and shows the customer name, order details, and any prior interactions.
+
+<Steps>
+  <Step title="Review the Order Details">
+    Click on a call card to expand it. You will see the customer's name and phone number, the order items, the total value, and any notes from previous interactions.
+  </Step>
+  <Step title="Place the Call">
+    Use the phone number shown to call the customer. Hitayu logs the call start time automatically when a call event is received via the IVR webhook.
+  </Step>
+  <Step title="Use Search Suggestions if Needed">
+    If you need to find a specific order outside your queue, use the **search bar** at the top of the calling screen. Search suggestions (`/admin/ivr/search-suggestions`) help you quickly locate orders by order number, customer name, or phone number.
+  </Step>
+  <Step title="Record a Call Action">
+    After the call ends, select the appropriate outcome action (see the table below). This updates the order status and keeps the queue accurate.
+  </Step>
+</Steps>
+
+---
+
+## Call Actions
+
+After each call, you must record what happened. This creates an audit trail and drives next steps for the order.
+
+| Action | When to Use | What Happens |
+|--------|-------------|--------------|
+| **Pay Now** | Customer agrees to pay immediately | Sends a payment link; order moves to payment-pending status |
+| **Pay Later** | Customer wants to pay at a later date | Logs the commitment with an expected payment date |
+| **Follow Up** | Customer needs more time or is unreachable | Schedules a callback reminder (see [Followups](/calling/followups)) |
+| **Cancel** | Customer declines the order | Cancels with a mandatory reason/remarks field |
+
+<Tip>
+  For **Pay Now**, Hitayu can automatically dispatch a PayU or Cashfree payment link directly to the customer's phone via the configured payment gateway.
+</Tip>
+
+---
+
+## Logging Manual (Outbound) Calls
+
+Sometimes you need to call a customer outside of the automated queue — for example, to re-engage a customer who missed a previous call. Manual calls are logged the same way as queue calls and are fully tracked against the order.
+
+<Steps>
+  <Step title="Open the Manual Calls Form">
+    Go to **Admin → Calling** and click **Log Manual Call**, or navigate directly to `/ivr/manual-calls`.
+  </Step>
+  <Step title="Search for the Order">
+    Enter the order number or customer phone number in the search field. Search suggestions will surface matching records instantly.
+  </Step>
+  <Step title="Confirm and Log">
+    Select the correct order, fill in any call notes, and click **Save**. The manual call is now tracked under that order's call history with your name and a timestamp.
+  </Step>
+</Steps>
+
+---
+
+## Viewing Call Details and Recordings
+
+Every call — inbound, outbound, or manual — has a detail page that aggregates everything about that interaction.
+
+<Steps>
+  <Step title="Open the Call Detail Page">
+    From your queue or from a completed call card, click **View Details**. You can also navigate directly to `/admin/ivr/call/{id}/detail`.
+  </Step>
+  <Step title="Play the Call Recording">
+    If your telephony provider recorded the call, the audio player appears at the top of the detail page. Click **Play** to listen to the recording for quality review or dispute resolution.
+  </Step>
+  <Step title="Review Actions Taken">
+    The **Actions** section lists every outcome recorded for this call — who recorded it, when, and what the outcome was (pay now, pay later, follow-up, or cancel).
+  </Step>
+  <Step title="Review Order Details">
+    The order summary on the detail page shows items, pricing, shipping address, and current payment status so you have full context without leaving the page.
+  </Step>
+</Steps>
+
+<Note>
+  Call recording availability depends on your telephony integration. Hitayu receives call status updates automatically via IVR webhooks; no manual upload is required.
+</Note>
+
+---
+
+## IVR Webhook: Automatic Status Updates
+
+Hitayu listens for call status updates at the public webhook endpoint (`/webhook`). When your telephony provider fires an event — such as a call being answered, missed, or completed — the system automatically updates the call record without any manual input from your team.
+
+| Call Status | Meaning |
+|-------------|---------|
+| `answered` / `completed` / `connected` | The customer picked up and the call was completed |
+| `missed` / `no-answer` | The call was not answered |
+| `busy` | The customer's line was busy |
+| `failed` | A technical error prevented the call from connecting |
+
+---
+
+## IVR Dashboard for Managers
+
+Managers access the IVR dashboard at `/ivr-dashboard`. This view provides a real-time overview of the entire calling operation.
+
+<CardGroup cols={2}>
+  <Card title="Team Queue Overview" icon="users">
+    See every agent's current queue length and availability status at a glance, so you can rebalance assignments if one agent is overloaded.
+  </Card>
+  <Card title="Call Metrics" icon="chart-bar">
+    Track total calls handled, missed calls, average handling time, and conversion rates (pay now / pay later outcomes) across the team.
+  </Card>
+  <Card title="Call History" icon="clock-rotate-left">
+    Review completed calls with filters by date, agent, outcome, or order status. Click any call to open its full detail page.
+  </Card>
+  <Card title="Agent Management" icon="user-gear">
+    Admins can create and configure agent profiles under `/ivr/agents`, including assigning calling permissions and setting queue priority.
+  </Card>
+</CardGroup>
+
+<Tip>
+  Use the **Missed Calls** filter on the IVR dashboard to quickly identify customers who were not reached — then reassign those calls to available agents or schedule follow-ups.
+</Tip>

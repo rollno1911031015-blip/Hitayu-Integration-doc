@@ -1,0 +1,127 @@
+---
+title: "Shiprocket Integration Setup for Hitayu ERP Shipping"
+sidebarTitle: "Shiprocket Setup"
+description: "Connect Shiprocket to Hitayu ERP, configure your pickup location and package defaults, and set up webhooks for automatic shipment tracking updates."
+---
+
+Shiprocket is the primary courier aggregator used by Hitayu ERP. It connects your store to a network of courier partners — including Blue Dart, Delhivery, Ekart, and more — and manages the end-to-end shipping workflow from AWB generation to delivery confirmation. Once the integration is live, you can push orders to Shiprocket directly from the order detail page, download labels and manifests, and receive automatic tracking updates without any manual intervention.
+
+## Prerequisites
+
+Before setting up the integration, make sure you have:
+
+- An active Shiprocket account (Business or Enterprise plan recommended).
+- Your Shiprocket **login email** and **password**.
+- A **Webhook Token** generated from your Shiprocket dashboard.
+- At least one **Pickup Location** configured in Shiprocket (your warehouse or fulfillment center address).
+
+## Step 1: Connect Your Shiprocket Account
+
+<Steps>
+  <Step title="Open Integrations Settings">
+    In Hitayu ERP, click your workspace name in the top-left corner, then go to **Settings → Integrations**.
+  </Step>
+  <Step title="Select Shiprocket">
+    Under the **Shipping** section, click on the **Shiprocket** card to open the configuration panel.
+  </Step>
+  <Step title="Enter Your Credentials">
+    Fill in the following fields:
+
+    | Field | Description |
+    |---|---|
+    | **Email** | The email address you use to log in to Shiprocket. |
+    | **Password** | Your Shiprocket account password. |
+    | **Webhook Token** | The secret token used to verify incoming webhook events from Shiprocket. |
+  </Step>
+  <Step title="Save and Authenticate">
+    Click **Save**. Hitayu ERP will attempt to authenticate with the Shiprocket API using your credentials. A green checkmark confirms a successful connection.
+  </Step>
+</Steps>
+
+<Warning>
+  Your Shiprocket password is stored securely and is used only to obtain and refresh API tokens. If you change your Shiprocket password, you must update it here as well — otherwise shipment pushes and syncs will stop working.
+</Warning>
+
+## Step 2: Configure Your Pickup Location
+
+The pickup location tells Shiprocket's courier partners where to collect packages from.
+
+<Steps>
+  <Step title="Go to Pickup Location Settings">
+    In **Settings → Integrations → Shiprocket**, scroll to the **Pickup Location** section.
+  </Step>
+  <Step title="Select a Location">
+    Choose from the pickup locations already configured in your Shiprocket account. If no locations appear, add them first in your Shiprocket dashboard under **Settings → Manage Pickup Addresses**, then return here and refresh.
+  </Step>
+  <Step title="Set as Default">
+    Mark your primary warehouse as the **Default Pickup Location**. This location is used automatically every time you push an order to Shiprocket. You can override it per order if you operate multiple fulfillment centers.
+  </Step>
+</Steps>
+
+## Step 3: Set Default Package Dimensions
+
+Default package dimensions are sent to Shiprocket when an order is pushed, so the correct shipping rate is calculated.
+
+In **Settings → Integrations → Shiprocket**, locate the **Default Package Dimensions** section and fill in:
+
+| Field | Unit | Notes |
+|---|---|---|
+| **Length** | cm | Longest side of the package |
+| **Width** | cm | Second longest side |
+| **Height** | cm | Shortest side |
+| **Weight** | kg | Dead weight of the package including packaging |
+
+<Tip>
+  These are fallback dimensions used when an order's product doesn't have individual dimensions defined. For accuracy, set product-level dimensions in your product catalog — those always take precedence over the defaults.
+</Tip>
+
+## Step 4: Connect the Shiprocket Tracking Webhook
+
+The tracking webhook allows Shiprocket to push real-time shipment status updates to Hitayu ERP automatically, so you don't need to manually sync every shipment.
+
+<Steps>
+  <Step title="Copy the Webhook URL">
+    Your Hitayu ERP tracking webhook endpoint is:
+
+    ```
+    POST /api/webhooks/carrier/tracking
+    ```
+
+    The full URL will be in the format `https://your-domain.com/api/webhooks/carrier/tracking`. Copy this URL.
+  </Step>
+  <Step title="Register the Webhook in Shiprocket">
+    Log in to your Shiprocket dashboard. Navigate to **Settings → API → Webhooks** and add a new webhook:
+
+    - **URL:** Paste your Hitayu ERP webhook URL.
+    - **Events:** Select all shipment tracking events (status update, NDR, RTO, delivered).
+    - **Token:** Enter the same **Webhook Token** you configured in Hitayu ERP.
+  </Step>
+  <Step title="Verify the Connection">
+    Use Shiprocket's **Test Webhook** feature to send a test event. In Hitayu ERP, check the latest shipment — if the status updates, the webhook is working correctly.
+  </Step>
+</Steps>
+
+<Note>
+  The NDR webhook is handled at a separate endpoint: `POST /api/webhooks/shiprocket/ndr`. This is configured automatically when you enable the Shiprocket integration — you do not need to register it separately in Shiprocket's dashboard unless prompted.
+</Note>
+
+## Verifying the Integration
+
+Once all steps are complete, your Shiprocket integration card in **Settings → Integrations** should show:
+
+- ✅ **Connected** — API authentication is active.
+- ✅ **Pickup Location Set** — A default pickup location is selected.
+- ✅ **Webhook Active** — Tracking webhook is receiving events.
+
+If any of these show an error, revisit the relevant step above or contact Hitayu support.
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Shipment Lifecycle" icon="truck" href="/shipping/shipment-lifecycle">
+    Understand every shipment status and how to manage the full journey from order push to delivery.
+  </Card>
+  <Card title="NDR & RTO Management" icon="rotate-left" href="/shipping/ndr-rto">
+    Learn how to handle failed deliveries, re-attempt shipments, and manage returns.
+  </Card>
+</CardGroup>

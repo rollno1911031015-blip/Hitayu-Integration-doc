@@ -1,13 +1,11 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "name": "Hitayu ERP",
+  "projectType": "saas",
+  "projectName": "Hitayu ERP",
+  "projectDescription": "Hitayu ERP is a full-stack CRM and order management system for e-commerce businesses, covering the complete order lifecycle from Shopify intake through payment, packing, shipping, and returns.",
   "theme": "almond",
-  "colors": {
-    "primary": "#2563EB",
-    "light": "#EFF6FF",
-    "dark": "#1E3A8A"
-  },
-  "favicon": "/favicon.svg",
+  "primaryColor": "#2563EB",
+  "lightColor": "#EFF6FF",
+  "darkColor": "#1E3A8A",
   "navigation": {
     "tabs": [
       {
@@ -124,5 +122,49 @@
         ]
       }
     ]
-  }
+  },
+  "keyFeatures": [
+    "Shopify order import with duplicate prevention",
+    "Round-robin calling team assignment",
+    "IVR integration for calling workflows",
+    "Multi-gateway payment collection (PayU, Razorpay, Cashfree)",
+    "Shiprocket shipment creation, AWB assignment, and tracking",
+    "NDR and RTO management",
+    "Lead management with followups",
+    "WhatsApp and SMS notifications",
+    "Inventory management with purchase orders and MRN",
+    "Warehouse and vendor management",
+    "Role-based access control (RBAC)",
+    "Attendance tracking",
+    "Abandoned cart recovery",
+    "Activity and audit logging",
+    "Support ticket management"
+  ],
+  "publicApiSurface": [
+    "POST /api/webhooks/shopify/orders/create",
+    "POST /api/webhooks/shopify/orders/updated",
+    "POST /api/webhooks/shopify/orders/cancelled",
+    "POST /api/webhooks/shopify/refunds/create",
+    "POST /api/webhooks/shopify/checkouts/create",
+    "POST /api/webhooks/shopify/checkouts/update",
+    "POST /api/webhooks/shopify/products/create",
+    "POST /api/webhooks/shopify/products/update",
+    "POST /api/webhooks/shopify/products/delete",
+    "POST /api/webhooks/shopify/customers/create",
+    "POST /api/webhooks/shopify/customers/update",
+    "POST /api/webhooks/shopify/customers/delete",
+    "POST /api/webhooks/shopify/inventory-levels/update",
+    "POST /api/webhooks/shopify/locations/create",
+    "POST /api/webhooks/shopify/locations/update",
+    "POST /api/webhooks/shiprocket/tracking",
+    "POST /api/webhooks/shiprocket/ndr",
+    "POST /api/webhooks/carrier/tracking",
+    "POST /api/webhooks/payment/razorpay",
+    "POST /api/webhooks/payment/cashfree",
+    "POST /api/webhooks/payment/payu",
+    "POST /api/webhooks/whatsapp/status",
+    "POST /api/webhooks/sms/status",
+    "POST /api/webhooks/ivr/call-status",
+    "POST /api/webhooks/leads/{source}"
+  ]
 }

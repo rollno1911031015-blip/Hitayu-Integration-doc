@@ -1,0 +1,193 @@
+---
+title: "Support Ticket Management — Hitayu ERP Help Desk"
+sidebarTitle: "Support Tickets"
+description: "Manage customer support tickets end-to-end: create, assign, track status, log follow-ups, and resolve issues from one central queue."
+---
+
+The Support module is Hitayu ERP's built-in help desk. Every customer issue — whether it arrives through an IVR call or is raised manually by your team — becomes a numbered ticket that moves through a clear lifecycle until it is resolved or closed. Support managers see workload across the whole team; individual agents see only the tickets assigned to them.
+
+<Note>
+  Access to the support module requires the **`dashboard.support`** or **`support.view`** permission. Creating new tickets requires **`support.create`**. Contact your administrator if you do not see the Support menu item.
+</Note>
+
+## Navigating the Support Queue
+
+Go to **Support** in the left sidebar. The default view is the **support dashboard**, which shows summary statistics (open, in-progress, on-hold, resolved, closed, overdue follow-ups) and a workload panel for each support agent.
+
+To browse tickets, click any segment tab or navigate to **Support → All Tickets**. Available segments include:
+
+| Segment | What it shows |
+|---|---|
+| All | Every ticket visible to you |
+| Open | Newly created, not yet assigned |
+| In Progress | Assigned and actively being worked |
+| On Hold | Awaiting a customer response or third party |
+| Resolved | Issue fixed, awaiting confirmation |
+| Closed | Fully completed and archived |
+
+Use the filter bar at the top of the ticket list to narrow results by **source**, **status**, **category**, **priority**, **assignee**, or a **date range**. The search box matches ticket numbers, customer names, phone numbers, subjects, and source references.
+
+---
+
+## Ticket Fields at a Glance
+
+Each ticket carries the following core information:
+
+| Field | Description |
+|---|---|
+| **Ticket Number** | Auto-generated ID in the format `TCKT-YYYYMMDD-NNNN` |
+| **Source** | How the ticket was created — `IVR` (phone call) or `Manual` |
+| **Category** | General, Billing, Technical, Order Issue, Complaint, or Other |
+| **Priority** | Low, Medium, High, or Urgent |
+| **Status** | Open → In Progress → On Hold → Resolved → Closed |
+| **Assignee** | The support agent responsible for this ticket |
+| **Customer** | Linked customer record (name, phone, email) |
+| **Order** | Linked order, if the issue relates to a specific order |
+| **Last Remark** | The most recent agent note |
+| **Follow-up At** | Scheduled date/time for the next follow-up |
+
+---
+
+## Creating a Ticket Manually
+
+<Steps>
+  <Step title="Open the create form">
+    Click the **New Ticket** button on any support page. The form opens as a panel.
+  </Step>
+  <Step title="Enter customer details">
+    Type the customer's **phone number** or **email address**. Hitayu will try to match an existing customer record. Fill in the name if no match is found.
+  </Step>
+  <Step title="Set category and priority">
+    Choose the appropriate **Category** (e.g., Order Issue) and **Priority** (e.g., High). These fields drive how the ticket appears in filtered views.
+  </Step>
+  <Step title="Write the subject and description">
+    Enter a concise **Subject** (what the issue is) and an optional longer **Description** with full context.
+  </Step>
+  <Step title="Submit">
+    Click **Create Ticket**. Hitayu saves the ticket, assigns a ticket number, and — if support staff are configured — automatically assigns it via round-robin to the next available agent.
+  </Step>
+</Steps>
+
+<Tip>
+  If you link a ticket to a specific **Order**, the ticket detail page will show order items, payment status, and shipment info in one view — saving time during resolution.
+</Tip>
+
+---
+
+## Viewing a Ticket
+
+Click any ticket row to open its detail page. The detail page contains four sections:
+
+- **Ticket summary** — all core fields, customer info, and linked order
+- **Activity timeline** — every status change, assignment, note, and follow-up logged automatically with timestamps and actor names
+- **Follow-ups** — scheduled follow-up entries with completion status
+- **Action panel** — buttons and forms to take actions on the ticket
+
+---
+
+## Ticket Actions
+
+From the ticket detail page, use the **Action** panel to progress the ticket. The following actions are available:
+
+<Accordion title="Change Status">
+  Select a new **Status** from the dropdown and optionally enter a remark explaining the change. The activity timeline records the old and new status, the actor, and the timestamp.
+</Accordion>
+
+<Accordion title="Reassign to a Different Agent">
+  Choose a team member from the **Assignee** dropdown and enter a remark. When you reassign, the ticket status automatically moves to **In Progress** if it was still Open. Only users visible in your team scope appear in the list.
+</Accordion>
+
+<Accordion title="Add a Follow-Up Note">
+  Select **Follow-Up** as the action, set a **Follow-Up Date & Time**, and enter your remarks. The scheduled date appears on the ticket card and in the dashboard's overdue-followups counter.
+</Accordion>
+
+<Accordion title="Complete a Follow-Up">
+  When a scheduled follow-up has been actioned, select **Complete Follow-Up** and enter a remark. The follow-up is marked done and no longer appears in the overdue count.
+</Accordion>
+
+<Accordion title="Add an Internal Note">
+  Use the **Note** action to log any internal remark without changing status or scheduling anything. Notes are visible only to staff on the activity timeline.
+</Accordion>
+
+<Accordion title="Resolve the Ticket">
+  Select **Resolve** and enter resolution notes. The status moves to **Resolved** and the resolved timestamp is recorded. The customer can be contacted to confirm before you close.
+</Accordion>
+
+<Accordion title="Close the Ticket">
+  Select **Close** to finalize the ticket. Closed tickets are excluded from open-ticket counts and the workload panel. They remain searchable and readable.
+</Accordion>
+
+<Accordion title="Update Customer Details">
+  If the customer's contact information needs correcting, use **Update Customer** to edit the name, phone, or email. Changes are reflected on the linked customer record too.
+</Accordion>
+
+---
+
+## Ticket Sources
+
+Tickets enter Hitayu ERP through two paths:
+
+**Manual** — A support agent creates the ticket directly using the form described above. This is the usual path for inbound email enquiries, chat messages, or any issue raised outside the IVR system.
+
+**IVR** — When a customer calls an IVR number registered to a support staff member, Hitayu automatically creates or updates a ticket and attaches the call record. The ticket subject is pre-filled from the call status (e.g., *IVR call – answered*) and the assignee is set to the agent who owns that IVR number.
+
+<Note>
+  IVR-sourced tickets are de-duplicated: if an open ticket already exists for the same phone number and source, the incoming call updates that ticket rather than creating a duplicate.
+</Note>
+
+---
+
+## Managing Support Staff
+
+Support staff are the agents authorised to receive ticket assignments. Navigate to **Support → Staff** (requires `support.staff.view` or `support.staff.manage` permission).
+
+The staff list shows each agent's:
+- **Name** and linked user account
+- **IVR Number** — the phone extension used for automatic assignment from IVR calls
+- **Max Open Tickets** — the capacity cap for round-robin assignment
+- **Priority** — lower number = assigned first when capacity is equal
+- **Availability** — whether the agent is currently accepting new assignments
+
+<Steps>
+  <Step title="Add a staff member">
+    Click **Add Support Staff**, select the user, enter their IVR number (if applicable), set their max open ticket capacity, and assign a priority.
+  </Step>
+  <Step title="Toggle availability">
+    Use the **Available / Unavailable** toggle to pause new assignments for an agent who is out of office, without removing them from the staff list.
+  </Step>
+  <Step title="Update or remove">
+    Click the action menu on any staff row to edit their settings or remove them from the support team. Removing a staff member does not delete their tickets.
+  </Step>
+</Steps>
+
+<Warning>
+  If no support staff member has available capacity, new tickets are created but left unassigned. Check the **Open** segment regularly to catch unassigned tickets.
+</Warning>
+
+---
+
+## Filtering and Searching Tickets
+
+The filter bar above the ticket list supports multi-parameter filtering. You can combine:
+
+- **Search** — ticket number, customer name, phone, subject, or source reference
+- **Source** — IVR or Manual
+- **Status** — any single status value
+- **Category** — any category
+- **Priority** — Low, Medium, High, or Urgent
+- **Assigned To** — a specific team member
+- **Date From / Date To** — created date range
+
+All filters are applied simultaneously. Clear any filter field to broaden results.
+
+---
+
+## Permissions Reference
+
+| Permission | What it allows |
+|---|---|
+| `dashboard.support` | View the support dashboard and all-ticket segment |
+| `support.view` | View individual tickets and filtered segments |
+| `support.create` | Create new tickets manually |
+| `support.staff.view` | View the support staff list |
+| `support.staff.manage` | Add, edit, and toggle support staff members |

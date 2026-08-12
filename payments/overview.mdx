@@ -1,0 +1,98 @@
+---
+title: "Payments Overview: Gateways, Statuses & Management"
+sidebarTitle: "Overview"
+description: "Manage all payment activity in Hitayu ERP — view gateway transactions, track statuses from pending to paid, and link payments directly to orders."
+---
+
+Hitayu ERP gives you a single place to track every rupee that flows through your store. Whether a customer pays online at checkout, pays cash on delivery, or settles an invoice through a manually collected payment, every transaction is recorded against its order and surfaced on the **Payments** page with real-time status updates from your connected gateway.
+
+## Supported Payment Gateways
+
+Hitayu ERP integrates with three industry-leading payment gateways. You can activate one or more of them from **Settings → Integrations → Payment Gateway**.
+
+| Gateway | Best For | Checkout Route |
+|---|---|---|
+| **PayU** | High-volume domestic orders; supports UPI, cards, net banking | `/payu/checkout/{order}` |
+| **Razorpay** | Subscription billing and instant refunds | Webhook-driven (`payment.razorpay`) |
+| **Cashfree** | Instant payouts and payout-link flows | `/cashfree/checkout/{order}` |
+
+<Note>
+  You can run more than one gateway simultaneously. Each order's payment link is generated using whichever gateway is configured as the default, but you can override this per order if needed.
+</Note>
+
+## Payment Types
+
+Every payment in Hitayu ERP is classified as one of three types:
+
+| Type | Description |
+|---|---|
+| **Prepaid** | Customer completes payment online before dispatch — via a payment link sent over WhatsApp or SMS. |
+| **COD** | Cash on delivery. No gateway transaction is created upfront; payment is collected by the courier on delivery. |
+| **Manual** | Payment collected outside a gateway (e.g., bank transfer, cash in-person). An agent records and confirms the payment manually. |
+
+## Payment Status Flow
+
+Every gateway payment moves through a defined set of statuses. Understanding these statuses helps you know exactly where a transaction stands at any point in time.
+
+```
+pending → authorized → paid
+                ↓
+             failed
+                ↓
+           refunded
+```
+
+| Status | What It Means |
+|---|---|
+| **Pending** | A payment link has been generated but the customer has not yet completed payment. |
+| **Authorized** | The customer's bank has approved the charge but the funds have not yet been captured by the gateway. |
+| **Paid** | Payment has been successfully captured. The order is cleared for fulfillment. |
+| **Failed** | The payment attempt was declined or timed out. The customer can retry via a new link. |
+| **Refunded** | The captured amount has been returned to the customer through the gateway. |
+
+<Tip>
+  COD orders do not go through the **pending → paid** gateway flow. They remain in a separate collection state until the courier confirms delivery and the COD remittance is received.
+</Tip>
+
+## Navigating the Payments Page
+
+Go to **Payments** in the left sidebar to open the full payments list. The page shows every payment record across all orders.
+
+**Available filters:**
+
+- **Status** — Filter by `pending`, `authorized`, `paid`, `failed`, or `refunded`.
+- **Gateway** — Show only PayU, Razorpay, or Cashfree transactions.
+- **Date range** — Narrow results to a specific period.
+- **Order ID / Reference** — Search by order number or gateway transaction ID.
+
+Click any row to open the payment detail panel, where you can see the full transaction history, gateway reference number, and the linked order.
+
+## How Payments Are Linked to Orders
+
+Each payment record is tied to exactly one order. From any **Order Detail** page you can:
+
+- See the current payment status at a glance in the **Payment** section.
+- Generate or resend a payment link.
+- Trigger a PayU refund (for paid prepaid orders).
+- View the gateway transaction ID and settlement reference.
+
+Conversely, from the **Payments** page, every row carries a clickable order reference that takes you directly to the corresponding order.
+
+## Settlement Tracking
+
+Once a gateway settles funds to your bank account, Hitayu ERP records the settlement against the payment. You can use this to reconcile your bank statements and confirm that every captured payment has been settled.
+
+<Note>
+  Settlement timelines vary by gateway — typically T+1 for Razorpay, T+2 for PayU, and T+1 for Cashfree. Check your gateway dashboard for the exact schedule.
+</Note>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Payment Links" icon="link" href="/payments/payment-links">
+    Learn how to generate and send payment links to customers via WhatsApp or SMS.
+  </Card>
+  <Card title="Refunds" icon="rotate-left" href="/payments/refunds">
+    Step-by-step guide to initiating and tracking refunds for cancelled or returned orders.
+  </Card>
+</CardGroup>

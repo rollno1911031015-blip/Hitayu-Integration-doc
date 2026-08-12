@@ -1,0 +1,181 @@
+---
+title: "Shiprocket Integration — Shipments and Live Tracking"
+sidebarTitle: "Shiprocket"
+description: "Connect Shiprocket to Hitayu ERP to create shipments, generate AWB numbers, manage NDR, and receive live carrier tracking updates automatically."
+---
+
+Hitayu ERP's Shiprocket integration handles the complete post-payment shipping workflow. Once connected, Hitayu can create shipments in Shiprocket the moment an order is ready to pack, assign AWB numbers, generate labels and manifests, and receive live tracking callbacks directly from Shiprocket's carrier network. NDR (Non-Delivery Reports) and RTO (Return to Origin) flows are also handled end-to-end without leaving Hitayu.
+
+---
+
+## Prerequisites
+
+Before connecting Shiprocket, make sure you have:
+
+- An active Shiprocket account with at least one pickup location configured.
+- Your Shiprocket login email and password.
+- Your Hitayu instance accessible via a public HTTPS URL (required for Shiprocket to send webhook callbacks).
+
+---
+
+## Step 1 — Enter Credentials in Hitayu
+
+<Steps>
+  <Step title="Open the Shiprocket integration settings">
+    In Hitayu ERP, go to **Settings → Integrations → Shiprocket**.
+  </Step>
+  <Step title="Fill in the required credentials">
+
+    | Field | Description | Required |
+    |---|---|---|
+    | **Email** | The email address you use to log in to Shiprocket | ✅ Yes |
+    | **Password** | Your Shiprocket account password | ✅ Yes |
+    | **Webhook Token** | A secret token you create to authenticate inbound webhook calls from Shiprocket | Optional but recommended |
+    | **Pickup Location** | The name of your default pickup location as configured in your Shiprocket account | Optional |
+
+    <Warning>
+      Hitayu uses your email and password to obtain a JWT token from the Shiprocket API. These credentials are stored encrypted at rest. You should use a dedicated Shiprocket sub-account for Hitayu rather than your primary admin account.
+    </Warning>
+  </Step>
+  <Step title="Save and verify">
+    Click **Save**. Hitayu will attempt to authenticate with Shiprocket immediately. If the credentials are correct, the status badge will change to **Ready**.
+  </Step>
+</Steps>
+
+---
+
+## Step 2 — Configure Default Package Dimensions
+
+Shiprocket requires package dimensions and weight when creating a shipment. Set your default values in **Settings → Integrations → Shiprocket** so orders without product-level dimensions use these as fallback values.
+
+| Setting | Default Value | Unit |
+|---|---|---|
+| **Default Length** | 10 | cm |
+| **Default Breadth** | 10 | cm |
+| **Default Height** | 10 | cm |
+| **Default Weight** | 0.5 | kg |
+
+<Tip>
+  Set these defaults to the dimensions of your most commonly shipped package. You can override dimensions on a per-order or per-product basis from the packing screen.
+</Tip>
+
+---
+
+## Step 3 — Set Your Pickup Location
+
+The **Pickup Location** field tells Shiprocket which warehouse to dispatch shipments from. This must match the name of a pickup location you have already registered in your Shiprocket account.
+
+To find your pickup location name:
+1. Log in to Shiprocket.
+2. Go to **Settings → Manage Pickup Addresses**.
+3. Copy the exact name shown for your location (it is case-sensitive).
+4. Paste it into the **Pickup Location** field in Hitayu.
+
+<Note>
+  If you operate multiple warehouses, you can override the pickup location on individual orders from the Hitayu order detail page. The value set here serves as the default.
+</Note>
+
+---
+
+## Step 4 — Register the Carrier Tracking Webhook
+
+Shiprocket sends live tracking updates to Hitayu via webhook. This is how order statuses (shipped, out for delivery, delivered, NDR) update in real time.
+
+<Steps>
+  <Step title="Copy the tracking webhook URL">
+    Your Hitayu tracking webhook URL is:
+    ```text
+    https://your-hitayu-domain.com/api/webhooks/carrier/tracking
+    ```
+    This is the recommended endpoint. It is identical to `/api/webhooks/shiprocket/tracking` but is named generically to support future carrier additions.
+  </Step>
+  <Step title="Open Webhook settings in Shiprocket">
+    In Shiprocket, go to **Settings → API → Webhooks**.
+  </Step>
+  <Step title="Add the webhook URL">
+    Paste your Hitayu tracking URL into the webhook URL field. Select all tracking event types: **Shipped**, **Out for Delivery**, **Delivered**, **NDR**, **RTO Initiated**, **RTO Delivered**.
+  </Step>
+  <Step title="Configure webhook authentication (recommended)">
+    If you set a **Webhook Token** in Hitayu (Step 1), you must also tell Shiprocket to send it as a header with each request.
+
+    Hitayu accepts the token via any of these headers — use whichever your Shiprocket account supports:
+
+    <CodeGroup>
+    ```text x-api-key header
+    x-api-key: your-webhook-token
+    ```
+    ```text x-shiprocket-token header
+    x-shiprocket-token: your-webhook-token
+    ```
+    ```text Authorization header
+    Authorization: Bearer your-webhook-token
+    ```
+    </CodeGroup>
+
+    Requests that arrive without a valid token (when `SHIPROCKET_WEBHOOK_TOKEN` is set) will be rejected with HTTP `401`.
+  </Step>
+  <Step title="Register the NDR webhook">
+    Repeat the same steps for the NDR webhook endpoint:
+    ```text
+    https://your-hitayu-domain.com/api/webhooks/shiprocket/ndr
+    ```
+    This receives Non-Delivery Report events and queues them for your NDR management workflow.
+  </Step>
+</Steps>
+
+---
+
+## Step 5 — Configure Sync Settings
+
+In addition to real-time webhooks, Hitayu can periodically poll Shiprocket to reconcile shipment statuses. This is useful as a fallback if webhooks are missed.
+
+| Setting | Description | Default |
+|---|---|---|
+| **Sync Enabled** | Turn periodic shipment status polling on or off | Off |
+| **Sync Limit** | Maximum number of shipments to check per sync run | 100 |
+| **Sync Days** | How many days back to look when polling for status updates | 30 |
+
+<Note>
+  For most businesses, real-time webhooks are sufficient and syncing can remain disabled. Enable syncing only if you notice tracking statuses lagging behind your Shiprocket dashboard.
+</Note>
+
+---
+
+## Step 6 — Enable Automatic Shipment Creation
+
+The **Create Orders in Shiprocket** toggle (`SHIPROCKET_CREATE_ORDERS_ENABLED`) controls whether Hitayu automatically pushes orders to Shiprocket when they reach the packing stage.
+
+Go to **Settings → Integrations → Shiprocket** and turn on **Automatic Shipment Creation**.
+
+When enabled:
+- When an order is marked as **Ready to Ship** in Hitayu, a Shiprocket shipment is created automatically.
+- AWB number is fetched and stored against the order.
+- Label generation is queued immediately.
+
+---
+
+## Testing the Webhook (Direct Mode)
+
+During setup, you can bypass the background queue to test webhook processing synchronously:
+
+```text
+POST https://your-hitayu-domain.com/api/webhooks/carrier/tracking?mode=direct
+```
+
+Adding `?mode=direct` processes the payload immediately and returns the result in the HTTP response, making it easy to verify your test payload is being parsed correctly.
+
+<Warning>
+  Use `?mode=direct` for testing only. In production, leave out the query parameter so events are processed through the queue with proper retry handling.
+</Warning>
+
+---
+
+## Troubleshooting
+
+| Symptom | Likely Cause | Fix |
+|---|---|---|
+| Tracking not updating | Webhook not registered in Shiprocket | Add the carrier tracking URL to Shiprocket webhook settings |
+| HTTP 401 on tracking webhook | Token mismatch | Ensure the token in Shiprocket's header matches `SHIPROCKET_WEBHOOK_TOKEN` in Hitayu |
+| Shipments not auto-creating | Create Orders toggle is off | Enable **Automatic Shipment Creation** in Settings |
+| Wrong pickup location | Location name typo | Copy the exact name from Shiprocket's Manage Pickup Addresses screen |
+| Integration shows "Missing" | Email or password not saved | Return to Settings → Integrations → Shiprocket and re-enter credentials |

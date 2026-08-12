@@ -1,0 +1,153 @@
+---
+title: "Shopify Integration — Connect Your Store to Hitayu"
+sidebarTitle: "Shopify"
+description: "Connect your Shopify store to Hitayu ERP to automatically sync orders, products, customers, inventory, and abandoned checkouts in real time."
+---
+
+Connecting Shopify to Hitayu ERP is the foundation of the entire order lifecycle. Once configured, every new order placed on your Shopify storefront flows into Hitayu automatically — ready for your calling team to confirm, your warehouse to pack, and Shiprocket to ship. Product catalog changes, customer records, and inventory levels stay in sync without any manual imports.
+
+---
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- Admin access to your Shopify store.
+- A **Custom App** created in your Shopify Admin with the necessary API scopes (read/write orders, products, customers, inventory, and locations).
+- The **Admin API Access Token** for that custom app.
+
+<Note>
+  Shopify Private Apps are deprecated. Use a **Custom App** in your Shopify Admin under **Settings → Apps and sales channels → Develop apps**.
+</Note>
+
+---
+
+## Step 1 — Enter Credentials in Hitayu
+
+<Steps>
+  <Step title="Open the Shopify integration settings">
+    In Hitayu ERP, go to **Settings → Integrations → Shopify**.
+  </Step>
+  <Step title="Fill in the required credentials">
+    Enter the following fields:
+
+    | Field | Where to find it | Required |
+    |---|---|---|
+    | **Store Domain** | Your Shopify store URL, e.g. `your-store.myshopify.com` | ✅ Yes |
+    | **Admin Access Token** | Shopify Admin → Apps → Your Custom App → API credentials | ✅ Yes |
+    | **Webhook Secret** | Generate a strong random string; you will paste this into Shopify when registering webhooks | ✅ Yes |
+    | **Admin Client ID** | Shopify Admin → Apps → Your Custom App → Client ID | Optional |
+    | **Admin Client Secret** | Shopify Admin → Apps → Your Custom App → Client Secret | Optional |
+    | **API Version** | Defaults to `2026-04` — only change if directed by Hitayu support | Optional |
+
+    <Warning>
+      The **Store Domain** must be in the format `your-store.myshopify.com` — do not include `https://` or a trailing slash.
+    </Warning>
+  </Step>
+  <Step title="Save and verify">
+    Click **Save**. The integration card should show a **Ready** status badge. If it shows **Missing**, re-check that all required fields are filled.
+  </Step>
+</Steps>
+
+---
+
+## Step 2 — Register Webhooks in Shopify Admin
+
+Hitayu receives real-time updates from Shopify through webhooks. You must register each webhook topic in your Shopify Admin and point it at your Hitayu instance's webhook URL.
+
+<Steps>
+  <Step title="Open Webhook settings in Shopify">
+    In Shopify Admin, go to **Settings → Notifications → Webhooks** (or use the Shopify Partner Dashboard if managing via API).
+  </Step>
+  <Step title="Set the webhook format">
+    Select **JSON** as the webhook format for all topics.
+  </Step>
+  <Step title="Register each webhook topic">
+    Create one webhook entry for every row in the table below. Replace `https://your-hitayu-domain.com` with your actual Hitayu ERP domain.
+
+    | Shopify Topic | Hitayu Endpoint | What It Does |
+    |---|---|---|
+    | `orders/create` | `POST /api/webhooks/shopify/orders/create` | New order placed — imports it into Hitayu |
+    | `orders/updated` | `POST /api/webhooks/shopify/orders/updated` | Order edited in Shopify — syncs changes |
+    | `orders/cancelled` | `POST /api/webhooks/shopify/orders/cancelled` | Order cancelled — updates status in Hitayu |
+    | `refunds/create` | `POST /api/webhooks/shopify/refunds/create` | Refund issued — records refund against the order |
+    | `checkouts/create` | `POST /api/webhooks/shopify/checkouts/create` | Checkout started — creates abandoned cart record |
+    | `checkouts/update` | `POST /api/webhooks/shopify/checkouts/update` | Checkout updated — keeps abandoned cart in sync |
+    | `products/create` | `POST /api/webhooks/shopify/products/create` | New product added — creates product in Hitayu |
+    | `products/update` | `POST /api/webhooks/shopify/products/update` | Product edited — updates title, price, variants |
+    | `products/delete` | `POST /api/webhooks/shopify/products/delete` | Product removed — soft-deletes in Hitayu |
+    | `customers/create` | `POST /api/webhooks/shopify/customers/create` | New customer — creates customer record |
+    | `customers/update` | `POST /api/webhooks/shopify/customers/update` | Customer details changed — syncs updates |
+    | `customers/delete` | `POST /api/webhooks/shopify/customers/delete` | Customer deleted in Shopify |
+    | `inventory_levels/update` | `POST /api/webhooks/shopify/inventory-levels/update` | Stock level changed — updates inventory |
+    | `locations/create` | `POST /api/webhooks/shopify/locations/create` | New warehouse location added |
+    | `locations/update` | `POST /api/webhooks/shopify/locations/update` | Location details changed |
+
+  </Step>
+  <Step title="Set the Shared Secret">
+    For each webhook, paste the same value you entered as **Webhook Secret** in Hitayu into Shopify's **Secret** field. Shopify uses this to sign the payload; Hitayu uses it to verify the signature.
+  </Step>
+</Steps>
+
+<Tip>
+  You can register all webhooks programmatically using the Shopify Admin API or the **Shopify CLI**. If you manage multiple stores, this saves significant time.
+</Tip>
+
+---
+
+## Step 3 — Enable Automatic Order Sync
+
+The **Order Sync** toggle controls whether new Shopify orders are automatically imported into Hitayu when a webhook fires.
+
+In **Settings → Integrations → Shopify**, turn on **Automatic Order Sync** (`SHOPIFY_ORDER_SYNC_ENABLED`).
+
+When enabled:
+- Every `orders/create` webhook creates a corresponding order in Hitayu within seconds.
+- Duplicate orders (re-delivered webhooks) are automatically detected and ignored.
+- The order is immediately assigned to the calling team queue via the round-robin assignment rule.
+
+<Warning>
+  If you disable Order Sync after it was previously enabled, new Shopify orders will **not** appear in Hitayu automatically. Existing orders already imported are not affected.
+</Warning>
+
+---
+
+## Step 4 — Sync Products from Shopify
+
+To import your existing product catalog without waiting for individual webhook events:
+
+1. Go to **Products** in Hitayu ERP.
+2. Click **Sync from Shopify**.
+3. Hitayu calls the Shopify Admin API and imports all active products, variants, and pricing.
+
+<Note>
+  The initial product sync may take a few minutes for large catalogs. You can continue using Hitayu normally while the sync runs in the background.
+</Note>
+
+---
+
+## Step 5 — Sync Inventory and Locations
+
+Hitayu mirrors your Shopify warehouse locations so inventory levels can be tracked per location.
+
+- Locations are automatically created or updated via the `locations/create` and `locations/update` webhooks once those are registered.
+- Inventory levels update in real time whenever Shopify sends an `inventory_levels/update` event.
+- To do a one-time bulk location import, use the **Sync Locations** button in **Settings → Integrations → Shopify**.
+
+---
+
+## Abandoned Cart Recovery
+
+The `checkouts/create` and `checkouts/update` webhooks feed Hitayu's abandoned cart module. When a shopper reaches Shopify checkout but does not complete the purchase, Hitayu captures the details automatically and queues the lead for your calling team.
+
+---
+
+## Troubleshooting
+
+| Symptom | Likely Cause | Fix |
+|---|---|---|
+| Orders not appearing in Hitayu | Order Sync toggle is off, or webhooks not registered | Enable the toggle; verify webhook URLs in Shopify Admin |
+| Webhook verification failures | Wrong Webhook Secret | Re-copy the secret from Hitayu into every Shopify webhook |
+| Products not syncing | Access Token lacks product read scope | Re-generate token with `read_products` scope in Shopify |
+| Duplicate orders | Shopify re-delivered a webhook | No action needed — Hitayu deduplicates automatically |
+| Integration shows "Missing" | Required credential field is empty | Return to Settings → Integrations → Shopify and fill all required fields |

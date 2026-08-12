@@ -1,0 +1,169 @@
+---
+title: "Notification Channels — WhatsApp, SMS, and Push in Hitayu"
+sidebarTitle: "Channels"
+description: "Set up and manage WhatsApp (Meta), SMS, and FCM push notification channels in Hitayu ERP, including enabling channels and tracking delivery via webhooks."
+---
+
+Hitayu ERP supports three outbound notification channels: **WhatsApp** (via the Meta Cloud API), **SMS** (via a transactional SMS provider), and **push notifications** (via Firebase Cloud Messaging for the mobile app). Each channel can be enabled or disabled independently in Settings, so you can run only the channels your business needs.
+
+---
+
+## WhatsApp Channel
+
+WhatsApp messages are sent through the **Meta Cloud API** using pre-approved message templates. This is the richest channel — messages can include order details, payment amounts, tracking links, and formatted text.
+
+### How It Works
+
+When an event fires (e.g., order confirmed, payment received), Hitayu looks up the matching WhatsApp template, substitutes the variable placeholders with real data, and sends the message via the Meta Cloud API to the customer's phone number. The provider returns a **message ID** which is stored in the notification log.
+
+After delivery, Meta sends a **status callback** to Hitayu at:
+
+```
+POST /api/webhooks/whatsapp/status
+```
+
+This webhook updates the notification log status from `sent` to `delivered` or `read` (depending on what Meta reports), giving you end-to-end delivery confirmation.
+
+### Required Configuration
+
+Go to **Settings → Integrations → WhatsApp** and enter:
+
+| Setting | Description |
+|---|---|
+| **Provider** | Set to `meta` (the Meta Cloud API provider) |
+| **Access Token** | Your Meta app's permanent or long-lived access token |
+| **Phone Number ID** | The WhatsApp Phone Number ID from Meta Business Manager |
+| **Verify Token** | A secret string you define; Meta sends this when verifying the webhook endpoint |
+
+<Warning>
+  WhatsApp will only deliver messages using templates that have been **approved** by Meta. If a template is rejected or pending review, messages queued for that template will fail. Check the notification logs for provider error details.
+</Warning>
+
+### Enabling and Disabling WhatsApp
+
+In **Settings → Integrations → WhatsApp**, use the channel toggle to enable or disable the WhatsApp channel entirely. When disabled, Hitayu skips WhatsApp delivery for all events and falls back to a manual-send URL in the notification log (so staff can copy-paste a message manually if needed).
+
+---
+
+## SMS Channel
+
+The SMS channel sends transactional text messages to customers. Hitayu supports multiple SMS providers configurable from the settings page.
+
+### Supported Providers
+
+| Provider | Notes |
+|---|---|
+| **Exotel** | Also used for IVR calling; credentials shared with the IVR integration |
+| **SMS Wala (smswala)** | API-key based provider; requires Sender ID, Campaign, Route ID, and PE ID for DLT compliance |
+
+### How It Works
+
+On an event trigger, Hitayu selects the SMS template for that event, substitutes variables, and sends the message to the customer's phone via the configured provider's API. The provider response (including a message ID or error code) is stored in the notification log.
+
+For delivery status callbacks, Hitayu receives provider webhooks at:
+
+```
+POST /api/webhooks/sms/status
+```
+
+The webhook updates the log entry with the final delivery status reported by the SMS gateway.
+
+### Required Configuration
+
+Go to **Settings → Integrations → SMS** and fill in the fields for your chosen provider:
+
+<Accordion title="SMS Wala settings">
+  | Setting | Description |
+  |---|---|
+  | **Provider** | `smswala` |
+  | **API URL** | The SMS Wala API endpoint URL |
+  | **API Key** | Your SMS Wala account API key (stored as a secret) |
+  | **Campaign** | Campaign ID assigned by SMS Wala |
+  | **Route ID** | Routing identifier for transactional messages |
+  | **Sender ID** | Your registered DLT sender ID (e.g., `HTYUHC`) |
+  | **PE ID** | Your Principal Entity ID for TRAI DLT compliance |
+</Accordion>
+
+<Accordion title="Exotel SMS settings">
+  | Setting | Description |
+  |---|---|
+  | **Provider** | `exotel` |
+  | **API Key** | Your Exotel API key |
+  | **API Token** | Your Exotel API token |
+  | **Account SID** | Your Exotel account SID |
+  | **Caller ID** | The Exotel number used as sender |
+</Accordion>
+
+### Switching Providers
+
+To change from one SMS provider to another, go to **Settings → Integrations → SMS**, select the new provider from the **Provider** dropdown, and save the credentials for that provider. Hitayu will use the new provider for all subsequent SMS sends.
+
+<Tip>
+  You can switch providers without losing notification logs. Historical logs retain the provider response from the time they were sent.
+</Tip>
+
+---
+
+## Push Notifications (FCM)
+
+Push notifications are delivered to **staff members' mobile devices** using **Firebase Cloud Messaging (FCM)**. They are not sent to customers.
+
+### What Triggers Push Notifications
+
+| Event | Who receives it |
+|---|---|
+| **Call Answered** | The agent assigned to the IVR call |
+| **Call Missed** | The agent who was expected to receive the call |
+| **Payment Received** | Configured staff roles (as set by your admin) |
+
+### How It Works
+
+When a staff member logs in on the mobile app, their device registers a **device token** with Hitayu (`POST /device-tokens`). When a push event fires, Hitayu sends the notification payload to that device token via FCM. If the device token is stale or invalid, the delivery fails silently — no error is surfaced to the customer.
+
+### Configuration
+
+FCM credentials (Server Key / Service Account JSON) are configured by your system administrator at the environment level. There is no in-app settings card for FCM — contact your administrator if push notifications are not arriving on mobile devices.
+
+---
+
+## Staff Bell Notifications
+
+In addition to the three outbound channels above, Hitayu has an **in-app notification bell** visible to all logged-in staff in the top header bar.
+
+- The bell icon shows an **unread count badge** for pending notifications
+- Click the bell to open the notification dropdown
+- Click any notification to mark it as read, or use **Mark All Read** to clear the badge
+- Notifications include: new IVR calls, missed calls, order assignments, payment events, and system alerts
+
+These bell notifications are internal only and do not use WhatsApp, SMS, or FCM.
+
+---
+
+## Delivery Status Reference
+
+Notification logs (visible under **Notifications** in the sidebar) use the following statuses:
+
+| Status | Meaning |
+|---|---|
+| `queued` | Notification has been created but not yet sent |
+| `sent` | Hitayu successfully dispatched to the provider |
+| `delivered` | Provider confirmed the message reached the recipient's device |
+| `read` | Recipient opened the message (WhatsApp only) |
+| `failed` | Provider returned an error; check the provider response column |
+
+<Note>
+  Not all providers report `delivered` or `read` statuses. SMS providers often only confirm `sent`. WhatsApp via Meta Cloud API provides read receipts when the recipient has read receipts enabled.
+</Note>
+
+---
+
+## Related Pages
+
+<CardGroup cols={2}>
+  <Card title="Notification Templates" icon="file-lines" href="/notifications/templates">
+    Manage the message content and variables for each notification event
+  </Card>
+  <Card title="System Settings" icon="sliders" href="/admin/settings">
+    Enter API keys and toggle integrations for WhatsApp, SMS, and other providers
+  </Card>
+</CardGroup>

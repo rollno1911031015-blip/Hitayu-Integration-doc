@@ -1,0 +1,114 @@
+---
+title: "Attendance Tracking — Clock In, Breaks & History in Hitayu"
+sidebarTitle: "Attendance"
+description: "Track employee attendance in Hitayu ERP: clock in and out, log breaks, view your own history, and review team attendance records as a manager."
+---
+
+Hitayu ERP includes a built-in attendance module that lets employees record their working hours directly from the CRM. Each punch-in and punch-out captures a **timestamp**, **GPS coordinates**, and an optional **photo**, giving managers an accurate record without manual timesheets.
+
+<Note>
+  All attendance actions require the **`employee.attendance`** permission. If you do not see the Attendance menu item, ask your administrator to assign this permission to your role.
+</Note>
+
+Navigate to **Attendance** in the left sidebar to reach the attendance page.
+
+---
+
+## Clocking In (Starting Your Day)
+
+<Steps>
+  <Step title="Open the Attendance page">
+    Click **Attendance** in the sidebar. If you have not yet clocked in today, you will see the **Start Day** panel.
+  </Step>
+  <Step title="Allow location access">
+    Your browser or mobile app will request location permission. Approve it — GPS coordinates are required to record a valid punch. Hitayu also captures location accuracy so records can be verified.
+  </Step>
+  <Step title="Take a check-in photo">
+    If a camera prompt appears, capture a photo. This is stored alongside the attendance record as proof of presence.
+  </Step>
+  <Step title="Click Start Day">
+    Click **Start Day** (or **Punch In**). Hitayu records your check-in time, location, and photo. You will see a confirmation and your daily timer begins.
+  </Step>
+</Steps>
+
+<Warning>
+  You can only start your day once per calendar day. If you accidentally close the page, your clock-in is already saved — do not try to punch in again.
+</Warning>
+
+---
+
+## Clocking Out (Ending Your Day)
+
+<Steps>
+  <Step title="Return to the Attendance page">
+    Click **Attendance** in the sidebar. Because you have already clocked in, you will now see the **End Day** panel showing your check-in time.
+  </Step>
+  <Step title="Allow location access and take photo">
+    Same as clock-in — allow GPS and capture a photo when prompted.
+  </Step>
+  <Step title="Click End Day">
+    Click **End Day** (or **Punch Out**). Hitayu records your check-out time and location. Your total working hours for the day can be calculated from check-in to check-out, minus any break time.
+  </Step>
+</Steps>
+
+<Note>
+  You must have clocked in before you can clock out. Attempting to end the day without a check-in will return an error.
+</Note>
+
+---
+
+## Logging Breaks
+
+Employees can log breaks during the working day. Break records include start and end times and GPS coordinates, and they are subtracted from net working hours in reports.
+
+**Starting a break:**
+
+1. On the Attendance page, click **Start Break**.
+2. Allow location access when prompted.
+3. Hitayu records the break start time and your location.
+
+**Ending a break:**
+
+1. Return to the Attendance page and click **End Break**.
+2. Allow location access again.
+3. Hitayu closes the break record with the end time and location.
+
+<Warning>
+  You cannot start a new break while one is already open. You also cannot start a break before clocking in, or after you have clocked out for the day.
+</Warning>
+
+---
+
+## Viewing Attendance History
+
+The lower section of the Attendance page shows a **paginated table** of attendance records. Each row displays:
+
+| Column | Description |
+|---|---|
+| **Date** | The attendance date |
+| **Employee** | Name and email of the user (managers see all visible team members; employees see only their own records) |
+| **Check-in Time** | Time and location name for the start of the day |
+| **Check-out Time** | Time and location name for the end of the day |
+| **Breaks** | Count and total duration of breaks taken |
+| **Total Hours** | Net working time (check-out minus check-in minus break durations) |
+
+### Filtering the History
+
+Use the filter bar above the table to narrow records by:
+
+- **Employee** — available to managers who oversee multiple team members
+- **Date From / Date To** — restrict to a specific date range
+
+The table is sorted with the most recent dates first and paginates at 20 records per page.
+
+---
+
+## Manager View
+
+If your role gives you visibility over multiple team members (determined by the reporting hierarchy in RBAC), you will see a **Filter by Employee** dropdown and records for your entire visible team. Employees who report to you — or who are in your scope — appear in the filter list.
+
+Use the date range filter combined with the employee filter to pull up individual attendance records for appraisals, payroll, or compliance reviews.
+
+<Tip>
+  For a printable or exportable attendance summary across the whole team, use **Admin → Reports**, which includes an attendance report with date range filtering and export support.
+</Tip>

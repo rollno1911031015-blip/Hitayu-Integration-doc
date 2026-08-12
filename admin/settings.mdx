@@ -1,0 +1,231 @@
+---
+title: "System Settings & Integrations — Hitayu ERP Configuration"
+sidebarTitle: "Settings"
+description: "Configure Hitayu ERP integrations: Shopify, Shiprocket, payment gateways, WhatsApp, SMS, IVR, and company settings — all from one settings page."
+---
+
+The Settings section is where administrators connect Hitayu ERP to the third-party services your business relies on — your Shopify store, payment gateway, shipping partner, WhatsApp notifications, SMS provider, and IVR calling system. Each integration has its own card on the page showing its current status, available toggles, and credential fields.
+
+Navigate to **Admin → Settings** (`/admin/settings`) or go directly to **Settings → Integrations** (`/settings/integrations`). Both routes open the same integrations dashboard.
+
+<Note>
+  Viewing the settings page requires **`settings.integrations.view`** or **`settings.integrations`** permission. Making changes requires **`settings.integrations.manage`**. Only administrators should hold these permissions.
+</Note>
+
+---
+
+## The Integrations Page
+
+The integrations page displays one card per connected service. Each card shows:
+
+| Element | Meaning |
+|---|---|
+| **Integration name and icon** | Identifies the service (e.g., Shopify, Shiprocket, WhatsApp) |
+| **Status indicator** | Green ✓ if all required credentials are present; amber ⚠ if one or more required keys are missing |
+| **Toggle switches** | Enable or disable specific features within the integration |
+| **Choice dropdowns** | Select a provider or mode from a defined list of options |
+| **Key fields** | Input boxes for API credentials (secret fields are masked) |
+
+---
+
+## Integration Cards
+
+### Shopify
+
+Connects Hitayu to your Shopify store for product catalog sync, order imports, and webhook processing.
+
+<Accordion title="Shopify toggles">
+  | Toggle | Description |
+  |---|---|
+  | **Product Sync** | Receive Shopify product webhooks and import the product catalog |
+  | **Order Sync** | Import new Shopify orders into Hitayu |
+  | **Sync Edited Orders** | Push CRM order edits back to Shopify when staff selects "Sync to Shopify" |
+  | **Customer Sync** | Import Shopify customer records |
+  | **Abandoned Checkout Sync** | Import abandoned checkouts as recovery orders |
+</Accordion>
+
+<Accordion title="Shopify credentials">
+  | Key | Description |
+  |---|---|
+  | **Store Domain** | Your Shopify store domain (e.g., `yourstore.myshopify.com`) |
+  | **Webhook Secret** | Used to verify incoming Shopify webhooks |
+  | **Admin Access Token** | Your Shopify app's admin API access token |
+  | **Admin Client ID** | App client ID (optional, for OAuth-based setups) |
+  | **Admin Client Secret** | App client secret (optional) |
+</Accordion>
+
+---
+
+### Shiprocket
+
+Connects Hitayu to Shiprocket for shipment creation, tracking, and NDR management.
+
+<Accordion title="Shiprocket toggles">
+  | Toggle | Description |
+  |---|---|
+  | **Create Shiprocket Orders** | Allow CRM/IVR orders to be pushed to Shiprocket for shipping |
+  | **Order & Tracking Sync** | Pull Shiprocket orders, AWB numbers, and tracking details into Hitayu |
+  | **SR Checkout Sync** | Import Shiprocket/Fastrr abandoned cart webhooks as recovery orders |
+  | **Tracking Webhooks** | Allow incoming Shiprocket tracking/NDR webhooks to update orders |
+  | **Tracking Webhooks for IVR Orders** | Apply tracking webhooks to orders created via IVR calls |
+  | **Tracking Webhooks for Shopify Orders** | Apply tracking webhooks to Shopify-origin orders |
+</Accordion>
+
+<Accordion title="Shiprocket credentials">
+  | Key | Description |
+  |---|---|
+  | **Email** | Your Shiprocket account email |
+  | **Password** | Your Shiprocket account password |
+  | **Webhook Token** | Token Shiprocket includes in webhook headers for verification |
+  | **Pickup Location** | The default pickup location name configured in Shiprocket (e.g., `Home`) |
+</Accordion>
+
+---
+
+### Payment Gateway
+
+Configure the payment provider used for generating and collecting payment links.
+
+<Accordion title="Payment gateway settings">
+  | Key | Description |
+  |---|---|
+  | **Provider** | Select your active gateway: `razorpay` or `payu` |
+  | **Razorpay Key** | Your Razorpay API key ID |
+  | **Razorpay Secret** | Your Razorpay API secret |
+  | **Razorpay Webhook Secret** | Used to verify Razorpay webhook signatures |
+  | **PayU Merchant Key** | Your PayU merchant key (if using PayU) |
+  | **PayU Merchant Salt** | Your PayU merchant salt |
+  | **PayU Base URL** | PayU checkout endpoint (test or production) |
+</Accordion>
+
+**Switching gateways:** Change the **Provider** dropdown to the new gateway and ensure its credentials are filled in. Hitayu will use the selected provider for all new payment links going forward. Existing unpaid links for the old provider remain valid until they expire.
+
+---
+
+### WhatsApp
+
+Sends automated customer notifications via the Meta Cloud API. See the [Notification Channels](/notifications/channels) page for full configuration details.
+
+<Accordion title="WhatsApp credentials">
+  | Key | Description |
+  |---|---|
+  | **Provider** | Set to `meta` for the Meta Cloud API |
+  | **Access Token** | Long-lived Meta access token |
+  | **Phone Number ID** | WhatsApp Phone Number ID from Meta Business Manager |
+  | **Verify Token** | Custom token for webhook endpoint verification |
+</Accordion>
+
+---
+
+### SMS
+
+Sends transactional SMS messages to customers. Multiple providers are supported.
+
+<Accordion title="SMS Wala credentials">
+  | Key | Description |
+  |---|---|
+  | **Provider** | `smswala` |
+  | **API URL** | SMS Wala API endpoint |
+  | **API Key** | Account API key |
+  | **Campaign** | Campaign ID |
+  | **Route ID** | Routing identifier for transactional SMS |
+  | **Sender ID** | DLT-registered sender name |
+  | **PE ID** | Principal Entity ID for TRAI compliance |
+</Accordion>
+
+---
+
+### IVR (Calling)
+
+Connects Hitayu to your telephony provider for inbound and outbound IVR calling.
+
+<Accordion title="IVR / Exotel credentials">
+  | Key | Description |
+  |---|---|
+  | **Provider** | `exotel` (default) |
+  | **Exotel API Key** | Your Exotel API key |
+  | **Exotel API Token** | Your Exotel API token |
+  | **Exotel Account SID** | Your Exotel account SID |
+  | **Exotel Caller ID** | The virtual number used as the outbound caller ID |
+</Accordion>
+
+---
+
+### Order Commercials
+
+Controls payment and discount rules applied to CRM and IVR orders.
+
+<Accordion title="Order commercial settings">
+  | Setting | Description |
+  |---|---|
+  | **Minimum Partial Payment (Below ₹4,000)** | Minimum percentage of order total the customer must pay as a partial payment on orders under ₹4,000 |
+  | **Minimum Partial Payment (₹4,000 and above)** | Same rule for orders at or above ₹4,000 |
+  | **Discount (Below ₹4,000)** | Discount percentage applied to the order subtotal for orders under ₹4,000 |
+  | **Discount (₹4,000 and above)** | Discount percentage for orders at or above ₹4,000 |
+  | **Payment Link Delivery Mode** | `direct` (send immediately) or `queue` (process via queue worker) |
+</Accordion>
+
+---
+
+### Product Catalog
+
+Defaults for GST, HSN codes, and Shiprocket backfill behaviour.
+
+<Accordion title="Product catalog settings">
+  | Setting | Description |
+  |---|---|
+  | **Backfill HSN From Shiprocket** | Toggle — use recent Shiprocket orders to fill variant HSN/GST by SKU |
+  | **Default Price Tax Mode** | `GST Excluded` or `GST Included` for manually added products |
+  | **Default GST Rate** | Fallback GST percentage when Shopify or Shiprocket does not provide one |
+  | **Shiprocket HSN Backfill Orders** | How many recent Shiprocket orders to check per sync for HSN/GST backfill |
+</Accordion>
+
+---
+
+## How to Add or Update a Credential
+
+<Steps>
+  <Step title="Locate the integration card">
+    Scroll to the relevant card on the Settings → Integrations page (e.g., *Shopify*, *WhatsApp*).
+  </Step>
+  <Step title="Click the field">
+    Click the credential input field you want to update. Secret fields (API keys, tokens, passwords) are masked by default — click the eye icon to reveal the current value.
+  </Step>
+  <Step title="Enter the new value">
+    Type or paste the new credential value.
+  </Step>
+  <Step title="Save">
+    Click **Save** (or the save icon next to the field). Hitayu stores the value and refreshes the card status indicator.
+  </Step>
+</Steps>
+
+<Warning>
+  Changing a live credential (e.g., swapping a Shopify access token) will immediately affect all in-flight operations using that integration. Update credentials during a low-traffic window and verify the integration is working before considering it done.
+</Warning>
+
+---
+
+## How to Toggle a Feature On or Off
+
+Each toggle on an integration card controls a specific feature. Click the toggle switch to flip it — a green filled state means enabled, grey means disabled. Hitayu saves the change immediately; no page reload is needed.
+
+Example: to stop Shopify order webhooks from creating new CRM orders, go to the **Shopify** card and turn off the **Order Sync** toggle.
+
+---
+
+## Company Settings
+
+For business identity settings (company name, logo, address, tax information), navigate to **Masters → Company Settings** (`/masters/company-settings`). This page requires the `masters.company_settings` permission and is separate from the integrations page.
+
+---
+
+## Related Pages
+
+<CardGroup cols={2}>
+  <Card title="WhatsApp & SMS Channels" icon="satellite-dish" href="/notifications/channels">
+    Detailed guide to configuring notification providers and understanding delivery statuses
+  </Card>
+  <Card title="Users & Roles" icon="users" href="/admin/users-roles">
+    Manage who has permission to view or change settings
+  </Card>
+</CardGroup>

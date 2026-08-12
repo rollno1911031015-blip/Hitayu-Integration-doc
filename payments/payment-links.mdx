@@ -1,0 +1,116 @@
+---
+title: "Payment Links: Send, Track, and Resend Customer Links"
+sidebarTitle: "Payment Links"
+description: "Generate and send secure payment links to customers via WhatsApp or SMS directly from an order, and track completion in real time."
+---
+
+Payment links let your team collect prepaid payments from customers without requiring them to visit your website. From any order detail page, you can generate a secure checkout link and share it over WhatsApp or SMS in seconds — the customer taps the link, completes payment on a hosted checkout page, and the order status updates automatically.
+
+## How Payment Links Work
+
+When you create a payment link for an order, Hitayu ERP generates a unique, single-use checkout URL tied to that order's amount and reference number. The link routes the customer to the appropriate gateway checkout page:
+
+- **PayU orders** — customer lands on `/payu/checkout/{order}`
+- **Cashfree orders** — customer lands on `/cashfree/checkout/{order}`
+- **Razorpay orders** — customer completes payment through the Razorpay-hosted flow
+
+Once the customer submits payment, the gateway sends a response back to Hitayu ERP, the payment status updates to **Paid**, and the order moves to the fulfillment queue automatically.
+
+## Sending a Payment Link — Pay Now
+
+Use this flow when you want the customer to pay immediately.
+
+<Steps>
+  <Step title="Open the Order">
+    Navigate to **Orders** and click on the order you want to collect payment for. The order must be in a state where payment has not yet been completed.
+  </Step>
+  <Step title="Click Pay Now">
+    In the **Payment** section of the order detail page, click the **Pay Now** button. Hitayu ERP generates a checkout link for the order amount.
+  </Step>
+  <Step title="Choose Delivery Channel">
+    Select whether to send the link via **WhatsApp** or **SMS**. The customer's registered mobile number is pre-filled.
+  </Step>
+  <Step title="Send the Link">
+    Confirm and send. The customer receives the message within seconds containing the payment link and order summary.
+  </Step>
+  <Step title="Track Completion">
+    The payment status on the order detail page updates in real time. Once the customer pays, the status moves from **Pending** to **Paid**.
+  </Step>
+</Steps>
+
+## Scheduling a Payment Link — Pay Later
+
+Use the Pay Later flow when you want to generate a link now but send it at a scheduled time — for example, after a customer confirms their order over a call.
+
+<Steps>
+  <Step title="Open the Order">
+    Go to **Orders** and open the relevant order.
+  </Step>
+  <Step title="Select Pay Later">
+    In the **Payment** section, choose **Pay Later** instead of Pay Now.
+  </Step>
+  <Step title="Set the Schedule">
+    Pick the date and time at which the payment link notification should be sent to the customer.
+  </Step>
+  <Step title="Confirm">
+    Save the schedule. Hitayu ERP will automatically dispatch the payment link message at the chosen time.
+  </Step>
+</Steps>
+
+<Tip>
+  Pay Later is especially useful for telesales teams that take orders over the phone during off-hours and want customers to receive the link at a more convenient time.
+</Tip>
+
+## Resending a Payment Link
+
+If a customer says they didn't receive the link, or the previous link expired, you can resend it instantly.
+
+<Steps>
+  <Step title="Open the Order">
+    Navigate to the order detail page.
+  </Step>
+  <Step title="Click Resend Payment Link">
+    In the **Payment** section, click **Resend Payment Link**. This triggers the `orders.resend-payment-link` action and sends a fresh link to the customer's registered number.
+  </Step>
+</Steps>
+
+<Note>
+  Resending a payment link invalidates the previous link. If the customer tries to use the old link after a resend, they will see an error and should use the new one.
+</Note>
+
+## The Customer's Experience
+
+When a customer receives a payment link:
+
+1. **WhatsApp** — They receive a templated WhatsApp message containing the order summary and a tap-to-pay button.
+2. **SMS** — They receive a text message with the checkout URL.
+3. They tap the link, which opens the gateway's hosted checkout page in their browser.
+4. They choose their preferred payment method (UPI, card, net banking, wallet) and complete payment.
+5. On success, they are redirected to a confirmation page and receive a payment receipt.
+
+No account creation or login is required for the customer.
+
+## Tracking Payment Link Status
+
+You can monitor the status of every payment link from two places:
+
+- **Order Detail → Payment Section** — Shows the current payment status (`pending`, `paid`, `failed`) and the timestamp of the last status change.
+- **Payments Page** — Filter by **Status: Pending** to see all orders waiting for payment link completion.
+
+## Partial Payment Links
+
+For high-value orders, you may want to collect a partial advance payment upfront and the balance later.
+
+<Note>
+  Partial payment link support depends on your gateway configuration and your plan. Contact your account manager to enable partial payment collection for your workspace.
+</Note>
+
+When partial payments are enabled:
+
+- You can specify the amount to collect (e.g., 50% advance).
+- A separate payment record is created for each partial payment against the same order.
+- The order moves to **Paid** only when the full order value has been collected across all payment records.
+
+<Warning>
+  Do not dispatch an order until the full payment amount has been captured. Always verify the **Paid** status on the order before pushing it for shipment.
+</Warning>

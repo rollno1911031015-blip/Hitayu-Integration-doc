@@ -1,0 +1,186 @@
+---
+title: "Lead Management: Sources, Statuses & Assignment"
+sidebarTitle: "Lead Management"
+description: "Manage leads from Shopify, manual entry, and external webhooks. Update statuses, add notes, assign to agents, and track every interaction in Hitayu ERP."
+---
+
+Leads in Hitayu represent potential customers who have shown interest but have not yet placed a confirmed order. Unlike orders, which are fully committed transactions, leads are prospective — they need nurturing through follow-ups, status updates, and timely outreach before they convert. Hitayu captures leads automatically from multiple sources and gives your team a single workspace to track, qualify, and convert them.
+
+## Leads vs. Orders
+
+| | Lead | Order |
+|-|------|-------|
+| **What it is** | A prospect or enquiry | A confirmed purchase transaction |
+| **Payment status** | Pending, partial, or committed | Paid, COD, or payment-linked |
+| **Primary action** | Qualify, nurture, convert | Fulfil, ship, support |
+| **Where to find it** | `/leads` | `/admin/orders/{segment}` |
+
+Once a lead is successfully converted, Hitayu links it to the resulting order and marks the lead status as **Converted to Order**.
+
+---
+
+## Lead Sources
+
+Hitayu captures leads from five sources. The source is recorded on every lead so you always know where a prospect came from.
+
+| Source | How It Works |
+|--------|-------------|
+| **Shopify** | Abandoned checkouts and new customer sign-ups are pulled in automatically via the Shopify integration |
+| **IVR** | Inbound calls that do not match an existing order create a new lead automatically |
+| **Manual** | Team members can create a lead directly from the Leads list page |
+| **WhatsApp** | Incoming WhatsApp enquiries can be linked to leads |
+| **Website** | Contact or enquiry forms on your website post to Hitayu via the webhook API |
+
+### Integrating External Lead Sources via Webhook
+
+Any external platform — a landing page, a third-party form tool, or a custom integration — can push leads directly into Hitayu using the leads webhook endpoint.
+
+```
+POST /api/webhooks/leads/{source}
+```
+
+Replace `{source}` with a slug that identifies the originating platform (for example, `facebook-ads` or `google-forms`). Hitayu records this value as the lead's source and stores the full request payload for reference.
+
+<Note>
+  Webhook leads are created with a status of **New** and are unassigned until a team member or automated rule assigns them. Make sure you have a triage process in place so new webhook leads are actioned promptly.
+</Note>
+
+---
+
+## Navigating the Leads List
+
+<Steps>
+  <Step title="Open the Leads Section">
+    Go to **Leads** in the main navigation, or navigate directly to `/leads`. The full leads list loads with your most recent leads at the top.
+  </Step>
+  <Step title="Filter by Segment">
+    Use the segment navigation to filter by lead status or source. Each segment has its own URL at `/leads/segment/{segment}`, making it easy to bookmark specific views such as "New Leads" or "Follow Up".
+  </Step>
+  <Step title="Search and Sort">
+    Use the search bar to find leads by customer name, phone number, or email. Sort columns by date created, status, or assignee to prioritise your work.
+  </Step>
+</Steps>
+
+---
+
+## Viewing a Lead Detail Page
+
+Click on any lead in the list to open its full detail page at `/leads/{lead}`. The detail page is your central workspace for everything related to that prospect.
+
+<CardGroup cols={2}>
+  <Card title="Lead Information" icon="address-card">
+    Customer contact details, the originating source, associated product or product variant, and the date the lead was created.
+  </Card>
+  <Card title="Status & Assignment" icon="tag">
+    Current lead status, the assigned team member, assignment history, and the date the lead was last updated.
+  </Card>
+  <Card title="Activities Log" icon="list-check">
+    A chronological log of every interaction — status changes, notes added, assignments made, and calls linked to this lead.
+  </Card>
+  <Card title="Follow-ups" icon="calendar-check">
+    Scheduled callbacks and their completion status. See [Followups](/calling/followups) for full details.
+  </Card>
+</CardGroup>
+
+---
+
+## Updating Lead Status
+
+Keeping statuses accurate is the foundation of a healthy pipeline. Hitayu ships with a set of built-in statuses, and admins can add custom ones to match your team's workflow.
+
+### Built-in Lead Statuses
+
+| Status | Meaning |
+|--------|---------|
+| **New** | Lead just created; not yet reviewed |
+| **Assigned** | A team member has been assigned to work this lead |
+| **Follow Up** | A callback or follow-up action is scheduled |
+| **Payment Pending** | Customer is interested but payment has not been received |
+| **Partial Paid** | Customer has paid a deposit or partial amount |
+| **Converted to Order** | Lead has been successfully converted into an order |
+| **Rejected** | Lead was disqualified (wrong number, not interested, etc.) |
+| **Cancelled** | Lead was closed without conversion |
+
+<Steps>
+  <Step title="Open the Lead">
+    From `/leads`, click the lead you want to update.
+  </Step>
+  <Step title="Select a New Status">
+    On the lead detail page, click the **Status** dropdown and select the appropriate status.
+  </Step>
+  <Step title="Add a Note (Optional but Recommended)">
+    Add a note explaining why the status changed. This note is saved to the **Activities Log** so the full team has context.
+  </Step>
+  <Step title="Save the Action">
+    Click **Save** or **Submit Action**. The status update and note are recorded instantly.
+  </Step>
+</Steps>
+
+---
+
+## Adding Notes to a Lead
+
+Notes let you capture anything relevant — a customer's concerns, a promised callback time, or a product preference — without changing the lead status.
+
+<Steps>
+  <Step title="Open the Lead Detail Page">
+    Navigate to `/leads/{lead}`.
+  </Step>
+  <Step title="Use the Notes / Action Panel">
+    Scroll to the action panel at the bottom of the page. Select **Add Note** from the action type options.
+  </Step>
+  <Step title="Write and Submit">
+    Type your note and click **Submit**. The note is appended to the Activities Log with your name and a timestamp.
+  </Step>
+</Steps>
+
+<Tip>
+  Write notes in full sentences with enough context for a colleague to understand the situation without needing to call the customer again. Good notes save time and reduce duplicate outreach.
+</Tip>
+
+---
+
+## Assigning Leads to Team Members
+
+Leads can be assigned manually to any active team member. Assignments are tracked so you can see the full history of who owned a lead at each stage.
+
+<Steps>
+  <Step title="Open the Lead">
+    Go to `/leads/{lead}`.
+  </Step>
+  <Step title="Select Assign from the Action Panel">
+    In the action panel, choose **Assign** as the action type.
+  </Step>
+  <Step title="Choose a Team Member">
+    Select a team member from the dropdown. Only active users with the appropriate permissions appear in the list.
+  </Step>
+  <Step title="Save">
+    Click **Submit**. The assignee field on the lead updates immediately, and the assignment is logged in the Activities section.
+  </Step>
+</Steps>
+
+<Note>
+  Assigning a lead automatically updates its status to **Assigned** if the lead was previously in the **New** state.
+</Note>
+
+---
+
+## Customising Lead Statuses (Admin)
+
+If your business uses terminology or pipeline stages that differ from the built-in statuses, admins can create custom lead statuses that appear alongside the defaults.
+
+<Steps>
+  <Step title="Open Lead Status Masters">
+    Go to **Masters → Lead Statuses** or navigate to `/masters/lead-statuses`. This page requires admin or masters-level permission.
+  </Step>
+  <Step title="Add a New Status">
+    Click **Add Status**. Enter a status name and (optionally) a colour code so it is visually distinct in the leads list.
+  </Step>
+  <Step title="Save and Use">
+    Click **Save**. The new status becomes available immediately in the lead status dropdown for all team members.
+  </Step>
+</Steps>
+
+<Warning>
+  Deleting or renaming an existing status that is already assigned to leads will not retroactively change those leads — they will retain the old status label until manually updated.
+</Warning>
